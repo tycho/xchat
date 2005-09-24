@@ -1,10 +1,14 @@
 #include "../../config.h"
 
 #include <glib/gslist.h>
+#include <glib/glist.h>
 #include <glib/gutils.h>
 #include <glib/giochannel.h>
 #include <glib/gstrfuncs.h>
 #include <time.h>			/* need time_t */
+
+#ifndef XCHAT_H
+#define XCHAT_H
 
 #include "history.h"
 
@@ -19,11 +23,11 @@
 #ifdef USE_DEBUG
 #define malloc(n) xchat_malloc(n, __FILE__, __LINE__)
 #define realloc(n, m) xchat_realloc(n, m, __FILE__, __LINE__)
-#define free(n) xchat_free(n, __FILE__, __LINE__)
+#define free(n) xchat_dfree(n, __FILE__, __LINE__)
 #define strdup(n) xchat_strdup(n, __FILE__, __LINE__)
 void *xchat_malloc (int size, char *file, int line);
 void *xchat_strdup (char *str, char *file, int line);
-void xchat_free (void *buf, char *file, int line);
+void xchat_dfree (void *buf, char *file, int line);
 void *xchat_realloc (char *old, int len, char *file, int line);
 #endif
 
@@ -47,11 +51,14 @@ void *xchat_realloc (char *old, int len, char *file, int line);
 #define FILEPATH_LEN_MAX MAXPATHLEN
 #endif
 
+/* force a 32bit CMP.L */
+#define CMPL(a, c0, c1, c2, c3) (a == (guint32)(c0 | (c1 << 8) | (c2 << 16) | (c3 << 24)))
+#define WORDL(c0, c1, c2, c3) (guint32)(c0 | (c1 << 8) | (c2 << 16) | (c3 << 24))
+#define WORDW(c0, c1) (guint16)(c0 | (c1 << 8))
+
 #ifdef WIN32						/* for win32 */
 #define OFLAGS O_BINARY
 #define sleep(t) _sleep(t*1000)
-#define strcasecmp stricmp
-#define strncasecmp strnicmp
 #include <direct.h>
 #define	F_OK	0
 #define	X_OK	1
@@ -67,12 +74,14 @@ void *xchat_realloc (char *old, int len, char *file, int line);
 
 #define FONTNAMELEN	127
 #define PATHLEN		255
+#define DOMAINLEN	100
 #define NICKLEN		64				/* including the NULL, so 63 really */
-#define CHANLEN		202
+#define CHANLEN		300
 #define PDIWORDS		32
+#define USERNAMELEN 10
 
-#define safe_strcpy(dest,src,len)	{strncpy(dest,src,len); \
-												dest[len-1] = 0;}
+#define safe_strcpy(dest,src,len)	{strncpy((dest),(src),(len)); \
+												(dest)[len-1] = 0;}
 
 #if defined(ENABLE_NLS) && !defined(_)
 #  include <libintl.h>
@@ -111,29 +120,30 @@ struct xchatprefs
 	char quitreason[256];
 	char partreason[256];
 	char font_normal[FONTNAMELEN + 1];
-#ifdef USE_ZVT
-	char font_shell[FONTNAMELEN + 1];
-#endif
 	char doubleclickuser[256];
 	char sounddir[PATHLEN + 1];
 	char soundcmd[PATHLEN + 1];
 	char background[PATHLEN + 1];
 	char dccdir[PATHLEN + 1];
 	char dcc_completed_dir[PATHLEN + 1];
-	char bluestring[300];
+	char irc_extra_hilight[300];
+	char irc_no_hilight[300];
+	char irc_nick_hilight[300];
 	char dnsprogram[72];
 	char hostname[127];
 	char cmdchar[4];
-#ifdef USE_TRANS
-	char trans_file[256];
-#endif
 	char logmask[256];
 	char stamp_format[64];
 	char timestamp_log_format[64];
+	char irc_id_ytext[64];
+	char irc_id_ntext[64];
 
 	char proxy_host[64];
 	int proxy_port;
 	int proxy_type; /* 0=disabled, 1=wingate 2=socks4, 3=socks5, 4=http */
+	unsigned int proxy_auth;
+	char proxy_user[32];
+	char proxy_pass[32];
 
 	int first_dcc_send_port;
 	int last_dcc_send_port;
@@ -142,6 +152,9 @@ struct xchatprefs
 	int tint_green;
 	int tint_blue;
 
+	int away_timeout;
+	int away_size_max;
+	int paned_pos;
 	int tabs_position;
 	int max_auto_indent;
 	int dcc_blocksize;
@@ -157,19 +170,25 @@ struct xchatprefs
 	int mainwindow_top;
 	int mainwindow_width;
 	int mainwindow_height;
+	int gui_win_state;
+	int dialog_left;
+	int dialog_top;
+	int dialog_width;
+	int dialog_height;
 	int dccpermissions;
 	int recon_delay;
 	int bantype;
 	int userlist_sort;
-	int nu_color;
 	unsigned long local_ip;
 	unsigned long dcc_ip;
-	char dcc_ip_str[16];
+	char dcc_ip_str[DOMAINLEN + 1];
 
+	unsigned int tab_small;
+	unsigned int tab_dnd;
+	unsigned int tab_sort;
 	unsigned int mainwindow_save;
 	unsigned int perc_color;
 	unsigned int perc_ascii;
-	unsigned int use_trans;
 	unsigned int autosave;
 	unsigned int autodialog;
 	unsigned int autosave_url;
@@ -185,7 +204,7 @@ struct xchatprefs
 	unsigned int userlistbuttons;
 	unsigned int showhostname_in_userlist;
 	unsigned int nickcompletion;
-	unsigned int old_nickcompletion;
+	unsigned int completion_amount;
 	unsigned int tabchannels;
 	unsigned int paned_userlist;
 	unsigned int autodccchat;
@@ -202,31 +221,34 @@ struct xchatprefs
 	unsigned int dcc_send_fillspaces;
 	unsigned int dcc_remove;
 	unsigned int slist_skip;
-	unsigned int slist_edit;
 	unsigned int slist_select;
 	unsigned int filterbeep;
 	unsigned int beepmsg;
 	unsigned int beepchans;
+	unsigned int beephilight;
+	unsigned int flash_hilight;
 	unsigned int truncchans;
 	unsigned int privmsgtab;
 	unsigned int logging;
 	unsigned int timestamp_logs;
 	unsigned int newtabstofront;
 	unsigned int dccwithnick;
-	unsigned int hilitenotify;
 	unsigned int hidever;
 	unsigned int ip_from_server;
 	unsigned int raw_modes;
 	unsigned int show_away_once;
 	unsigned int show_away_message;
 	unsigned int auto_unmark_away;
+	unsigned int away_track;
 	unsigned int userhost;
+	unsigned int irc_whois_front;
 	unsigned int use_server_tab;
 	unsigned int notices_tabs;
 	unsigned int style_namelistgad;
 	unsigned int style_inputbox;
 	unsigned int windows_as_tabs;
 	unsigned int indent_nicks;
+	unsigned int show_marker;
 	unsigned int show_separator;
 	unsigned int thin_separator;
 	unsigned int auto_indent;
@@ -239,18 +261,23 @@ struct xchatprefs
 	unsigned int perlwarnings;
 	unsigned int lagometer;
 	unsigned int throttlemeter;
-	unsigned int hebrew;
 	unsigned int pingtimeout;
 	unsigned int whois_on_notifyonline;
 	unsigned int wait_on_exit;
 	unsigned int confmode;
 	unsigned int utf8_locale;
+	unsigned int identd;
 
 	unsigned int ctcp_number_limit;	/*flood */
 	unsigned int ctcp_time_limit;	/*seconds of floods */
 
 	unsigned int msg_number_limit;	/*same deal */
 	unsigned int msg_time_limit;
+
+	/* Tells us if we need to save, only when they've been edited.
+		This is so that we continue using internal defaults (which can
+		change in the next release) until the user edits them. */
+	unsigned int save_pevents:1;
 };
 
 /* Session types */
@@ -263,10 +290,12 @@ struct xchatprefs
 typedef struct session
 {
 	struct server *server;
-	GSList *userlist;
+	void *usertree_alpha;			/* pure alphabetical tree */
+	void *usertree;					/* ordered with Ops first */
+	struct User *me;					/* points to myself in the usertree */
 	char channel[CHANLEN];
-	char waitchannel[CHANLEN];		  /* waiting to join this channel */
-	char willjoinchannel[CHANLEN];	  /* /join done for this channel */
+	char waitchannel[CHANLEN];		  /* waiting to join channel (/join sent) */
+	char willjoinchannel[CHANLEN];	  /* will issue /join for this channel */
 	char channelkey[64];			  /* XXX correct max length? */
 	int limit;						  /* channel user limit */
 	int logfd;
@@ -306,6 +335,7 @@ typedef struct session
 	int hide_join_part:1;	/* hide join & part messages? */
 	int beep:1;				/* beep enabled? */
 	int color_paste:1;
+	int done_away_check:1;	/* done checking for away status changes */
 } session;
 
 typedef struct server
@@ -325,14 +355,16 @@ typedef struct server
 	void (*p_quit)(struct server *, char *reason);
 	void (*p_kick)(struct server *, char *channel, char *nick, char *reason);
 	void (*p_part)(struct server *, char *channel, char *reason);
+	void (*p_nickserv)(struct server *, char *pass);
 	void (*p_join)(struct server *, char *channel, char *key);
 	void (*p_login)(struct server *, char *user, char *realname);
 	void (*p_join_info)(struct server *, char *channel);
-	void (*p_chan_mode)(struct server *, char *channel, char *mode);
-	void (*p_nick_mode)(struct server *, char *nick, char *mode);
+	void (*p_mode)(struct server *, char *target, char *mode);
 	void (*p_user_list)(struct server *, char *channel);
+	void (*p_away_status)(struct server *, char *channel);
 	void (*p_whois)(struct server *, char *nicks);
 	void (*p_get_ip)(struct server *, char *nick);
+	void (*p_get_ip_uh)(struct server *, char *nick);
 	void (*p_set_back)(struct server *);
 	void (*p_set_away)(struct server *, char *reason);
 	void (*p_message)(struct server *, char *channel, char *text);
@@ -345,12 +377,13 @@ typedef struct server
 	void (*p_ping)(struct server *, char *to, char *timestring);
 /*	void (*p_set_away)(struct server *);*/
 	int (*p_raw)(struct server *, char *raw);
-	int (*p_cmp)(char *s1, char *s2);
+	int (*p_cmp)(const char *s1, const char *s2);
 
 	int port;
 	int sok;					/* is equal to sok4 or sok6 (the one we are using) */
 	int sok4;				/* tcp4 socket */
 	int sok6;				/* tcp6 socket */
+	int id;					/* unique ID number (for plugin API) */
 #ifdef USE_OPENSSL
 	SSL *ssl;
 	int ssl_do_connect_tag;
@@ -358,9 +391,6 @@ typedef struct server
 	int childread;
 	int childwrite;
 	int childpid;
-#ifdef WIN32
-	int childhandle;
-#endif
 	int iotag;
 	int recondelay_tag;				/* reconnect delay timeout */
 	char hostname[128];				/* real ip number */
@@ -371,10 +401,7 @@ typedef struct server
 	char *last_away_reason;
 	int pos;								/* current position in linebuf */
 	int nickcount;
-
-	char *username;
-	char *realname;
-	char *networkname;
+	int nickservtype;					/* 0=/MSG nickserv 1=/NICKSERV 2=/NS */
 
 	char *chantypes;					/* for 005 numeric - free me */
 	char *chanmodes;					/* for 005 numeric - free me */
@@ -383,11 +410,11 @@ typedef struct server
 	char *bad_nick_prefixes;		/* for ircd that doesn't give the modes */
 	int modes_per_line;				/* 6 on undernet, 4 on efnet etc... */
 
-	char *eom_cmd;						/* end-of-motd command, free it! */
-	void *network;						/* for servlistgui.c */
+	void *network;						/* points to entry in servlist.c or NULL! */
 
 	GSList *outbound_queue;
-	int next_send;						/* cptr->since in ircu */
+	time_t next_send;						/* cptr->since in ircu */
+	time_t prev_now;					/* previous now-time */
 	int sendq_len;						/* queue size */
 
 	struct session *front_session;	/* front-most window/tab */
@@ -409,20 +436,26 @@ typedef struct server
 	char *encoding;					/* NULL for system */
 
 	int motd_skipped:1;
-	int connected:1;
-	int connecting:1;
+	unsigned int connected:1;
+	unsigned int connecting:1;
 	int no_login:1;
-	int skip_next_who:1;			  /* used for "get my ip from server" */
+	int skip_next_userhost:1;			/* used for "get my ip from server" */
 	int inside_whois:1;
-	int doing_who:1;				  /* /dns has been done */
-	int end_of_motd:1;			  /* end of motd reached (logged in) */
-	int sent_quit:1;				  /* sent a QUIT already? */
+	int doing_dns:1;				/* /dns has been done */
+	unsigned int end_of_motd:1;	/* end of motd reached (logged in) */
+	int sent_quit:1;				/* sent a QUIT already? */
 	int use_listargs:1;			/* undernet and dalnet need /list >0,<10000 */
-	int is_away:1;
+	unsigned int is_away:1;
 	int reconnect_away:1;		/* whether to reconnect in is_away state */
 	int dont_use_proxy:1;		/* to proxy or not to proxy */
 	int supports_watch:1;		/* supports the WATCH command */
 	int bad_prefix:1;				/* gave us a bad PREFIX= 005 number */
+	unsigned int have_whox:1;	/* have undernet's WHOX features */
+	unsigned int have_capab:1;	/* supports CAPAB (005 tells us) */
+	unsigned int have_idmsg:1;	/* freenode's IDENTIFY-MSG */
+	unsigned int have_except:1;	/* ban exemptions +e */
+	unsigned int using_cp1255:1;	/* encoding is CP1255/WINDOWS-1255? */
+	int use_who:1;				/* whether to use WHO command to get dcc_ip */
 #ifdef USE_OPENSSL
 	int use_ssl:1;					  /* is server SSL capable? */
 	int accept_invalid_cert:1;	  /* ignore result of server's cert. verify */
@@ -438,6 +471,7 @@ struct commands
 	cmd_callback callback;
 	char needserver;
 	char needchannel;
+	char handle_quotes;
 	char *help;
 };
 
@@ -456,3 +490,5 @@ struct popup
 	char *cmd;
 	char *name;
 };
+
+#endif

@@ -16,6 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
+#define __APPLE_API_STRICT_CONFORMANCE
+
+#define _FILE_OFFSET_BITS 64
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -24,9 +27,10 @@
 #include <sys/stat.h>
 #ifdef WIN32
 #include <sys/timeb.h>
-#include <winsock.h>
 #include <process.h>
 #else
+#include <sys/types.h>
+#include <pwd.h>
 #include <sys/time.h>
 #include <sys/utsname.h>
 #endif
@@ -38,7 +42,11 @@
 #include <ctype.h>
 #include "util.h"
 #include "../../config.h"
-#ifdef USING_FREEBSD
+
+#define WANTSOCKET
+#include "inet.h"
+
+#if defined (USING_FREEBSD) || defined (__APPLE__)
 #include <sys/sysctl.h>
 #endif
 #ifdef SOCKS
@@ -107,7 +115,7 @@ xchat_realloc (char *old, int len, char *file, int line)
 	if (ret)
 	{
 		strcpy (ret, old);
-		xchat_free (old, file, line);
+		xchat_dfree (old, file, line);
 	}
 	return ret;
 }
@@ -185,7 +193,7 @@ xchat_mem_list (void)
 }
 
 void
-xchat_free (void *buf, char *file, int line)
+xchat_dfree (void *buf, char *file, int line)
 {
 	struct mem_block *cur, *last;
 
@@ -225,7 +233,7 @@ xchat_free (void *buf, char *file, int line)
 
 #define malloc(n) xchat_malloc(n, __FILE__, __LINE__)
 #define realloc(n, m) xchat_realloc(n, m, __FILE__, __LINE__)
-#define free(n) xchat_free(n, __FILE__, __LINE__)
+#define free(n) xchat_dfree(n, __FILE__, __LINE__)
 #define strdup(n) xchat_strdup(n, __FILE__, __LINE__)
 
 #endif /* MEMORY_DEBUG */
@@ -256,9 +264,12 @@ file_part (char *file)
 void
 path_part (char *file, char *path, int pathlen)
 {
+	unsigned char t;
 	char *filepart = file_part (file);
+	t = *filepart;
 	*filepart = 0;
 	safe_strcpy (path, file, pathlen);
+	*filepart = t;
 }
 
 char *				/* like strstr(), but nocase */
@@ -283,7 +294,9 @@ errorstring (int err)
 		return "";
 	case 0:
 		return _("Remote host closed socket");
-#ifdef WIN32
+#ifndef WIN32
+	}
+#else
 	case WSAECONNREFUSED:
 		return _("Connection refused");
 	case WSAENETUNREACH:
@@ -295,28 +308,71 @@ errorstring (int err)
 		return _("Cannot assign that address");
 	case WSAECONNRESET:
 		return _("Connection reset by peer");
-	default:
-		{
-			static char tbuf[16];
-			sprintf (tbuf, "(%d)", err);
-			return tbuf;
-		}
-#else
-	default:
-		return strerror (err);
-#endif
 	}
+
+	/* can't use strerror() on Winsock errors! */
+	if (err >= WSABASEERR)
+	{
+		static char tbuf[384];
+		OSVERSIONINFO osvi;
+
+		osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
+		GetVersionEx (&osvi);
+
+		/* FormatMessage works on WSA*** errors starting from Win2000 */
+		if (osvi.dwMajorVersion >= 5)
+		{
+			if (FormatMessageA (FORMAT_MESSAGE_FROM_SYSTEM |
+									  FORMAT_MESSAGE_IGNORE_INSERTS |
+									  FORMAT_MESSAGE_MAX_WIDTH_MASK,
+									  NULL, err,
+									  MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),
+									  tbuf, sizeof (tbuf), NULL))
+			{
+				int len;
+				char *utf;
+
+				tbuf[sizeof (tbuf) - 1] = 0;
+				len = strlen (tbuf);
+				if (len >= 2)
+					tbuf[len - 2] = 0;	/* remove the cr-lf */
+
+				/* now convert to utf8 */
+				utf = g_locale_to_utf8 (tbuf, -1, 0, 0, 0);
+				if (utf)
+				{
+					safe_strcpy (tbuf, utf, sizeof (tbuf));
+					g_free (utf);
+					return tbuf;
+				}
+			}
+		}	/* ! if (osvi.dwMajorVersion >= 5) */
+
+		/* fallback to error number */
+		sprintf (tbuf, "%s %d", _("Error"), err);
+		return tbuf;
+	} /* ! if (err >= WSABASEERR) */
+#endif	/* ! WIN32 */
+
+	return strerror (err);
 }
 
 int
-waitline (int sok, char *buf, int bufsize)
+waitline (int sok, char *buf, int bufsize, int use_recv)
 {
 	int i = 0;
 
 	while (1)
 	{
-		if (read (sok, &buf[i], 1) < 1)
-			return -1;
+		if (use_recv)
+		{
+			if (recv (sok, &buf[i], 1, 0) < 1)
+				return -1;
+		} else
+		{
+			if (read (sok, &buf[i], 1) < 1)
+				return -1;
+		}
 		if (buf[i] == '\n' || bufsize == i + 1)
 		{
 			buf[i] = 0;
@@ -332,12 +388,32 @@ char *
 expand_homedir (char *file)
 {
 #ifndef WIN32
-	char *ret;
+	char *ret, *user;
+	struct passwd *pw;
 
 	if (*file == '~')
 	{
-		ret = malloc (strlen (file) + strlen (g_get_home_dir ()) + 1);
-		sprintf (ret, "%s%s", g_get_home_dir (), file + 1);
+		if (file[1] != '\0' && file[1] != '/')
+		{
+			user = strdup(file);
+			if (strchr(user,'/') != NULL)
+				*(strchr(user,'/')) = '\0';
+			if ((pw = getpwnam(user + 1)) == NULL)
+			{
+				free(user);
+				return strdup(file);
+			}
+			free(user);
+			user = strchr(file, '/') != NULL ? strchr(file,'/') : file;
+			ret = malloc(strlen(user) + strlen(pw->pw_dir) + 1);
+			strcpy(ret, pw->pw_dir);
+			strcat(ret, user);
+		}
+		else
+		{
+			ret = malloc (strlen (file) + strlen (g_get_home_dir ()) + 1);
+			sprintf (ret, "%s%s", g_get_home_dir (), file + 1);
+		}
 		return ret;
 	}
 #endif
@@ -345,22 +421,31 @@ expand_homedir (char *file)
 }
 
 char *
-strip_color (char *text)
+strip_color (char *text, int len, int do_color, int do_attr)
 {
 	int nc = 0;
 	int i = 0;
 	int col = 0;
-	int len = strlen (text);
-	char *new_str = malloc (len + 2);
+	char *new_str;
+
+	if (len == -1)
+		len = strlen (text);
+
+	new_str = malloc (len + 2);
 
 	while (len > 0)
 	{
-		if ((col && isdigit (*text) && nc < 2) ||
-			 (col && *text == ',' && isdigit (*(text+1)) && nc < 3))
+		if ((col && isdigit ((unsigned char) *text) && nc < 2) ||
+			 (col && *text == ',' && isdigit ((unsigned char) *(text+1)) && nc < 3))
 		{
 			nc++;
 			if (*text == ',')
 				nc = 0;
+			if (!do_color)
+			{
+				new_str[i] = *text;
+				i++;
+			}
 		} else
 		{
 			col = 0;
@@ -369,12 +454,22 @@ strip_color (char *text)
 			case '\003':			  /*ATTR_COLOR: */
 				col = 1;
 				nc = 0;
+				if (!do_color)
+				{
+					new_str[i] = *text;
+					i++;
+				}
 				break;
 			case '\007':			  /*ATTR_BEEP: */
 			case '\017':			  /*ATTR_RESET: */
 			case '\026':			  /*ATTR_REVERSE: */
 			case '\002':			  /*ATTR_BOLD: */
 			case '\037':			  /*ATTR_UNDERLINE: */
+				if (!do_attr)
+				{
+					new_str[i] = *text;
+					i++;
+				}
 				break;
 			default:
 				new_str[i] = *text;
@@ -390,10 +485,10 @@ strip_color (char *text)
 	return new_str;
 }
 
-#if defined (USING_LINUX) || defined (USING_FREEBSD)
+#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__)
 
 static void
-get_cpu_info (int *mhz, int *cpus)
+get_cpu_info (double *mhz, int *cpus)
 {
 
 #ifdef USING_LINUX
@@ -413,7 +508,7 @@ get_cpu_info (int *mhz, int *cpus)
 
 	while (1)
 	{
-		if (waitline (fh, buf, sizeof buf) < 0)
+		if (waitline (fh, buf, sizeof buf, FALSE) < 0)
 			break;
 		if (!strncmp (buf, "cycle frequency [Hz]\t:", 22))	/* alpha */
 		{
@@ -440,6 +535,7 @@ get_cpu_info (int *mhz, int *cpus)
 	u_long freq;
 	size_t len;
 
+	freq = 0;
 	*mhz = 0;
 	*cpus = 0;
 
@@ -451,7 +547,30 @@ get_cpu_info (int *mhz, int *cpus)
 
 	len = sizeof(freq);
 	sysctlbyname("machdep.tsc_freq", &freq, &len, NULL, 0);
-	
+
+	*cpus = ncpu;
+	*mhz = (freq / 1000000);
+
+#endif
+#ifdef __APPLE__
+
+	int mib[2], ncpu;
+	unsigned long long freq;
+	size_t len;
+
+	freq = 0;
+	*mhz = 0;
+	*cpus = 0;
+
+	mib[0] = CTL_HW;
+	mib[1] = HW_NCPU;
+
+	len = sizeof(ncpu);
+	sysctl(mib, 2, &ncpu, &len, NULL, 0);
+
+	len = sizeof(freq);
+        sysctlbyname("hw.cpufrequency", &freq, &len, NULL, 0);
+
 	*cpus = ncpu;
 	*mhz = (freq / 1000000);
 
@@ -486,7 +605,7 @@ get_cpu_str (void)
 	static char verbuf[64];
 	OSVERSIONINFO osvi;
 	SYSTEM_INFO si;
-	int mhz;
+	double mhz;
 
 	osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
 	GetVersionEx (&osvi);
@@ -494,9 +613,13 @@ get_cpu_str (void)
 
 	mhz = get_mhz ();
 	if (mhz)
-		sprintf (verbuf, "Windows %ld.%ld [i%d86/%dMHz]",
-			osvi.dwMajorVersion, osvi.dwMinorVersion, si.wProcessorLevel, mhz);
-	else
+	{
+		double cpuspeed = ( mhz > 1000 ) ? mhz / 1000 : mhz;
+		const char *cpuspeedstr = ( mhz > 1000 ) ? "GHz" : "MHz";
+		sprintf (verbuf, "Windows %ld.%ld [i%d86/%.2f%s]",
+					osvi.dwMajorVersion, osvi.dwMinorVersion, si.wProcessorLevel, 
+					cpuspeed, cpuspeedstr);
+	} else
 		sprintf (verbuf, "Windows %ld.%ld [i%d86]",
 			osvi.dwMajorVersion, osvi.dwMinorVersion, si.wProcessorLevel);
 
@@ -508,9 +631,10 @@ get_cpu_str (void)
 char *
 get_cpu_str (void)
 {
-#if defined (USING_LINUX) || defined (USING_FREEBSD)
-	int mhz, cpus;
+#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__)
+	double mhz;
 #endif
+	int cpus = 1;
 	struct utsname un;
 	static char *buf = NULL;
 
@@ -521,15 +645,21 @@ get_cpu_str (void)
 
 	uname (&un);
 
-#if defined (USING_LINUX) || defined (USING_FREEBSD)
+#if defined (USING_LINUX) || defined (USING_FREEBSD) || defined (__APPLE__)
 	get_cpu_info (&mhz, &cpus);
 	if (mhz)
+	{
+		double cpuspeed = ( mhz > 1000 ) ? mhz / 1000 : mhz;
+		const char *cpuspeedstr = ( mhz > 1000 ) ? "GHz" : "MHz";
 		snprintf (buf, 128,
-					 (cpus == 1) ? "%s %s [%s/%dMHz]" : "%s %s [%s/%dMHz/SMP]",
-					 un.sysname, un.release, un.machine, mhz);
-	else
+					(cpus == 1) ? "%s %s [%s/%.2f%s]" : "%s %s [%s/%.2f%s/SMP]",
+					un.sysname, un.release, un.machine,
+					cpuspeed, cpuspeedstr);
+	} else
 #endif
-		snprintf (buf, 128, "%s %s [%s]", un.sysname, un.release, un.machine);
+		snprintf (buf, 128,
+					(cpus == 1) ? "%s %s [%s]" : "%s %s [%s/SMP]",
+					un.sysname, un.release, un.machine);
 
 	return buf;
 }
@@ -675,18 +805,19 @@ tolowerStr (char *str)
 	}
 }*/
 
-/* thanks BitchX */
-
-char *
-country (char *hostname)
+typedef struct
 {
-	typedef struct _domain
-	{
-		char *code;
-		char *country;
-	}
-	Domain;
-	static const Domain domain[] = {
+	char *code, *country;
+} domain_t;
+
+static int
+country_compare (const void *a, const void *b)
+{
+	return strcasecmp (a, ((domain_t *)b)->code);
+}
+
+static const domain_t domain[] =
+{
 		{"AD", N_("Andorra") },
 		{"AE", N_("United Arab Emirates") },
 		{"AF", N_("Afghanistan") },
@@ -698,8 +829,10 @@ country (char *hostname)
 		{"AO", N_("Angola") },
 		{"AQ", N_("Antarctica") },
 		{"AR", N_("Argentina") },
+		{"ARPA", N_("Reverse DNS") },
 		{"AS", N_("American Samoa") },
 		{"AT", N_("Austria") },
+		{"ATO", N_("Nato Fiel") },
 		{"AU", N_("Australia") },
 		{"AW", N_("Aruba") },
 		{"AZ", N_("Azerbaijan") },
@@ -711,6 +844,7 @@ country (char *hostname)
 		{"BG", N_("Bulgaria") },
 		{"BH", N_("Bahrain") },
 		{"BI", N_("Burundi") },
+		{"BIZ", N_("Businesses"), },
 		{"BJ", N_("Benin") },
 		{"BM", N_("Bermuda") },
 		{"BN", N_("Brunei Darussalam") },
@@ -724,17 +858,19 @@ country (char *hostname)
 		{"BZ", N_("Belize") },
 		{"CA", N_("Canada") },
 		{"CC", N_("Cocos Islands") },
+		{"CD", N_("Democratic Republic of Congo") },
 		{"CF", N_("Central African Republic") },
 		{"CG", N_("Congo") },
 		{"CH", N_("Switzerland") },
-		{"CI", N_("Cote D'ivoire") },
+		{"CI", N_("Cote d'Ivoire") },
 		{"CK", N_("Cook Islands") },
 		{"CL", N_("Chile") },
 		{"CM", N_("Cameroon") },
 		{"CN", N_("China") },
 		{"CO", N_("Colombia") },
+		{"COM", N_("Internic Commercial") },
 		{"CR", N_("Costa Rica") },
-		{"CS", N_("Former Czechoslovakia") },
+		{"CS", N_("Serbia and Montenegro") },
 		{"CU", N_("Cuba") },
 		{"CV", N_("Cape Verde") },
 		{"CX", N_("Christmas Island") },
@@ -747,6 +883,7 @@ country (char *hostname)
 		{"DO", N_("Dominican Republic") },
 		{"DZ", N_("Algeria") },
 		{"EC", N_("Ecuador") },
+		{"EDU", N_("Educational Institution") },
 		{"EE", N_("Estonia") },
 		{"EG", N_("Egypt") },
 		{"EH", N_("Western Sahara") },
@@ -771,10 +908,11 @@ country (char *hostname)
 		{"GL", N_("Greenland") },
 		{"GM", N_("Gambia") },
 		{"GN", N_("Guinea") },
+		{"GOV", N_("Government") },
 		{"GP", N_("Guadeloupe") },
 		{"GQ", N_("Equatorial Guinea") },
 		{"GR", N_("Greece") },
-		{"GS", N_("S. Georgia and S. Sandwich Isles.") },
+		{"GS", N_("S. Georgia and S. Sandwich Isles") },
 		{"GT", N_("Guatemala") },
 		{"GU", N_("Guam") },
 		{"GW", N_("Guinea-Bissau") },
@@ -789,6 +927,8 @@ country (char *hostname)
 		{"IE", N_("Ireland") },
 		{"IL", N_("Israel") },
 		{"IN", N_("India") },
+		{"INFO", N_("Informational") },
+		{"INT", N_("International") },
 		{"IO", N_("British Indian Ocean Territory") },
 		{"IQ", N_("Iraq") },
 		{"IR", N_("Iran") },
@@ -822,8 +962,10 @@ country (char *hostname)
 		{"MA", N_("Morocco") },
 		{"MC", N_("Monaco") },
 		{"MD", N_("Moldova") },
+		{"MED", N_("United States Medical") },
 		{"MG", N_("Madagascar") },
 		{"MH", N_("Marshall Islands") },
+		{"MIL", N_("Military") },
 		{"MK", N_("Macedonia") },
 		{"ML", N_("Mali") },
 		{"MM", N_("Myanmar") },
@@ -843,6 +985,7 @@ country (char *hostname)
 		{"NA", N_("Namibia") },
 		{"NC", N_("New Caledonia") },
 		{"NE", N_("Niger") },
+		{"NET", N_("Internic Network") },
 		{"NF", N_("Norfolk Island") },
 		{"NG", N_("Nigeria") },
 		{"NI", N_("Nicaragua") },
@@ -854,6 +997,7 @@ country (char *hostname)
 		{"NU", N_("Niue") },
 		{"NZ", N_("New Zealand") },
 		{"OM", N_("Oman") },
+		{"ORG", N_("Internic Non-Profit Organization") },
 		{"PA", N_("Panama") },
 		{"PE", N_("Peru") },
 		{"PF", N_("French Polynesia") },
@@ -864,16 +1008,18 @@ country (char *hostname)
 		{"PM", N_("St. Pierre and Miquelon") },
 		{"PN", N_("Pitcairn") },
 		{"PR", N_("Puerto Rico") },
+		{"PS", N_("Palestinian Territory") },
 		{"PT", N_("Portugal") },
 		{"PW", N_("Palau") },
 		{"PY", N_("Paraguay") },
 		{"QA", N_("Qatar") },
 		{"RE", N_("Reunion") },
 		{"RO", N_("Romania") },
+		{"RPA", N_("Old School ARPAnet") },
 		{"RU", N_("Russian Federation") },
 		{"RW", N_("Rwanda") },
 		{"SA", N_("Saudi Arabia") },
-		{"Sb", N_("Solomon Islands") },
+		{"SB", N_("Solomon Islands") },
 		{"SC", N_("Seychelles") },
 		{"SD", N_("Sudan") },
 		{"SE", N_("Sweden") },
@@ -916,7 +1062,7 @@ country (char *hostname)
 		{"UY", N_("Uruguay") },
 		{"UZ", N_("Uzbekistan") },
 		{"VA", N_("Vatican City State") },
-		{"VC", N_("St. Vincent and the grenadines") },
+		{"VC", N_("St. Vincent and the Grenadines") },
 		{"VE", N_("Venezuela") },
 		{"VG", N_("British Virgin Islands") },
 		{"VI", N_("US Virgin Islands") },
@@ -929,33 +1075,45 @@ country (char *hostname)
 		{"YU", N_("Yugoslavia") },
 		{"ZA", N_("South Africa") },
 		{"ZM", N_("Zambia") },
-		{"ZR", N_("Zaire") },
 		{"ZW", N_("Zimbabwe") },
-		{"COM", N_("Internic Commercial") },
-		{"EDU", N_("Educational Institution") },
-		{"GOV", N_("Government") },
-		{"INT", N_("International") },
-		{"MIL", N_("Military") },
-		{"NET", N_("Internic Network") },
-		{"ORG", N_("Internic Non-Profit Organization") },
-		{"RPA", N_("Old School ARPAnet") },
-		{"ATO", N_("Nato Fiel") },
-		{"MED", N_("United States Medical") },
-		{"ARPA", N_("Reverse DNS") },
-		{NULL, NULL}
-	};
+};
+
+char *
+country (char *hostname)
+{
 	char *p;
-	int i;
-	if (!hostname || !*hostname || isdigit (hostname[strlen (hostname) - 1]))
+	domain_t *dom;
+
+	if (!hostname || !*hostname || isdigit ((unsigned char) hostname[strlen (hostname) - 1]))
 		return _("Unknown");
 	if ((p = strrchr (hostname, '.')))
 		p++;
 	else
 		p = hostname;
-	for (i = 0; domain[i].code; i++)
-		if (!strcasecmp (p, domain[i].code))
-			return domain[i].country;
-	return _("Unknown");
+
+	dom = bsearch (p, domain, sizeof (domain) / sizeof (domain_t),
+						sizeof (domain_t), country_compare);
+
+	if (!dom)
+		return _("Unknown");
+
+	return _(dom->country);
+}
+
+void
+country_search (char *pattern, void *ud, void (*print)(void *, char *, ...))
+{
+	const domain_t *dom;
+	int i;
+
+	for (i = 0; i < sizeof (domain) / sizeof (domain_t); i++)
+	{
+		dom = &domain[i];
+		if (match (pattern, dom->country) || match (pattern, _(dom->country)))
+		{
+			print (ud, "%s = %s\n", dom->code, _(dom->country));
+		}
+	}
 }
 
 /* I think gnome1.0.x isn't necessarily linked against popt, ah well! */
@@ -998,7 +1156,7 @@ int my_poptParseArgvString(const char * s, int * argcPtr, char *** argvPtr) {
 		if (*src != quote) *buf++ = '\\';
 	    }
 	    *buf++ = *src;
-	} else if (isspace(*src)) {
+	} else if (isspace((unsigned char) *src)) {
 	    if (*argv[argc]) {
 		buf++, argc++;
 		if (argc == argvAlloced) {
@@ -1058,6 +1216,7 @@ util_exec (char *cmd)
 	int pid;
 	char **argv;
 	int argc;
+	int fd;
 
 	if (my_poptParseArgvString (cmd, &argc, &argv) != 0)
 		return -1;
@@ -1068,6 +1227,8 @@ util_exec (char *cmd)
 		return -1;
 	if (pid == 0)
 	{
+		/* Now close all open file descriptors except stdin, stdout and stderr */
+		for (fd = 3; fd < 1024; fd++) close(fd);
 		execvp (argv[0], argv);
 		_exit (0);
 	} else
@@ -1110,7 +1271,7 @@ make_ping_time (void)
  */
 
 int
-rfc_casecmp (char *s1, char *s2)
+rfc_casecmp (const char *s1, const char *s2)
 {
 	register unsigned char *str1 = (unsigned char *) s1;
 	register unsigned char *str2 = (unsigned char *) s2;
@@ -1221,23 +1382,39 @@ download_move_to_completed_dir (char *dcc_dir, char *dcc_completed_dir,
 	char *output_name, int dccpermissions)
 {
 	/* Move a complete file to move_file_path */
+	/* mgl: this used to take just a filename and move it between dirs */
+	/* now it takes the full path of the target download and moves it */
 
 	char dl_src[4096];
 	char dl_dest[4096];
 	char dl_tmp[4096];
+	char *output_fname;
 	int return_tmp, return_tmp2;
-	struct stat buf;
 
 	/* if dcc_dir and dcc_completed_dir are the same then we are done */
 	if (0 == strcmp (dcc_dir, dcc_completed_dir) ||
 		 0 == dcc_completed_dir[0])
 		return;			/* Already in "completed dir" */
 
-	snprintf (dl_src, sizeof (dl_src), "%s/%s", dcc_dir, output_name);
-	snprintf (dl_dest, sizeof (dl_dest), "%s/%s", dcc_completed_dir,
-			   output_name);
-
+	/* mgl: since output_name is a full path, we just copy it */
+	strncpy (dl_src, output_name, sizeof(dl_src));
 	dl_src[sizeof(dl_src)-1] = '\0';
+
+	/* mgl: output_name being a full path, we need to extract the filename */
+	/* off the end of it before continuing */
+
+	/* no path sep or no file after pathsep?  very suspicious, bail now! */
+	if ((NULL == (output_fname = strrchr(output_name, '/')))
+			|| !*(output_fname + 1))
+		return;
+	/* get the next char after the pathsep */
+	++output_fname;
+	/* throw the filename onto the directory name of the completed directory */
+	/* FIXME: dcc_completed_dir is UTF8, not fs encoding! */
+	snprintf (dl_dest, sizeof (dl_dest), "%s/%s", dcc_completed_dir,
+			   output_fname);
+	/* the rest should continue as before, but use output_fname */
+
 	dl_dest[sizeof(dl_dest)-1] = '\0';
 
 	/*
@@ -1251,10 +1428,11 @@ download_move_to_completed_dir (char *dcc_dir, char *dcc_completed_dir,
 	 *		--RAM, 03/11/2001
 	 */
 
-	if (-1 != stat (dl_dest, &buf))
+	if (access (dl_dest, F_OK) == 0)
 	{
 		int destlen = strlen (dl_dest);
 		int i;
+		struct stat buf;
 
 		/*
 		 * There must be enough room for us to append the ".xx" extensions.
@@ -1264,7 +1442,7 @@ download_move_to_completed_dir (char *dcc_dir, char *dcc_completed_dir,
 		if (destlen >= sizeof (dl_dest) - 4)
 		{
 			fprintf(stderr, "Found '%s' in completed dir, and path already too long",
-				output_name);
+				output_fname);
 			return;
 		}
 
@@ -1285,7 +1463,7 @@ download_move_to_completed_dir (char *dcc_dir, char *dcc_completed_dir,
 		{
 			fprintf (stderr, "Found '%s' in completed dir, "
 				"and was unable to find another unique name",
-				output_name);
+				output_fname);
 			return;
 		}
 
@@ -1308,7 +1486,7 @@ download_move_to_completed_dir (char *dcc_dir, char *dcc_completed_dir,
 		if ((tmp_src = open (dl_src, O_RDONLY | OFLAGS)) == -1)
 		{
 			fprintf (stderr, "Unable to open() file '%s' (%s) !", dl_src,
-					  g_strerror (errno));
+					  strerror (errno));
 			return;
 		}
 
@@ -1363,20 +1541,58 @@ download_move_to_completed_dir (char *dcc_dir, char *dcc_completed_dir,
 	}
 }
 
-void
-play_wave (const char *file)
+int
+mkdir_utf8 (char *dir)
 {
-	char buf[512];
+	int ret;
 
-	snprintf (buf, sizeof (buf), "%s/%s", prefs.sounddir, file);
-	if (access (buf, R_OK) == 0)
+	dir = g_filename_from_utf8 (dir, -1, 0, 0, 0);
+	if (!dir)
+		return -1;
+
+#ifdef WIN32
+	ret = mkdir (dir);
+#else
+	ret = mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+#endif
+	g_free (dir);
+
+	return ret;
+}
+
+/* separates a string according to a 'sep' char, then calls the callback
+   function for each token found */
+
+int
+token_foreach (char *str, char sep,
+					int (*callback) (char *str, void *ud), void *ud)
+{
+	char t, *start = str;
+
+	while (1)
 	{
-		snprintf (buf, sizeof (buf), "%s %s/%s", prefs.soundcmd, prefs.sounddir, file);
-		buf[sizeof (buf) - 1] = '\0';
-		xchat_exec (buf);
-	} else
-	{
-		snprintf (buf, sizeof (buf), "Cannot read %s/%s", prefs.sounddir, file);
-		fe_message (buf, FALSE);
+		if (*str == sep || *str == 0)
+		{
+			t = *str;
+			*str = 0;
+			if (callback (start, ud) < 1)
+			{
+				*str = t;
+				return FALSE;
+			}
+			*str = t;
+
+			if (*str == 0)
+				break;
+			str++;
+			start = str;
+
+		} else
+		{
+			/* chars $00-$7f can never be embedded in utf-8 */
+			str++;
+		}
 	}
+
+	return TRUE;
 }

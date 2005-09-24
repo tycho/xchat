@@ -2,6 +2,538 @@
 --|   X-Chat ChangeLog   |--------------------------------------------
   `----------------------'
 
+To see more details of bugs, go to this URL:
+http://sf.net/tracker/?func=detail&atid=100239&group_id=239&aid=NUMBER
+Where "NUMBER" is the bug number.
+
+----------------------------------------------------------------------
+ 2.4.6
+----------------------------------------------------------------------
+
+ - Updated translations (de, gu, hu, ru).
+ - xc245-fix-te-notify.diff.
+ - Fixed alignment and Endianess issues (Christian Biere), doesn't
+   affect x86.
+ - 
+ - 
+
+
+----------------------------------------------------------------------
+ 2.4.5
+----------------------------------------------------------------------
+
+ - Updated translations (cs, el, fr, gl, it, nl, sl, sr, vi, zh_TW).
+ - Fixed incorrect information displayed in Plugins & scripts window
+   under unix (xc244-fixpluginns.diff).
+ - Added "/set irc_whois_front 1" option to show WHOIS in front tab.
+ - Lots of speed ups under the hood, mainly in handling of URL
+   highlighting during mouse motion. Also now allows underlining
+   .name and .info domains [1230265].
+ - Moved the "Insert color code" menu into the input box's right-
+   click menu.
+ - Fixed "Your Message" messing up when starting with a comma
+   [1230269].
+ - Added /id command to identify yourself to nickserv.
+ - Added /gui MSGBOX <text> for scripters.
+ - Added /menu command which lets plugins/scripts add their own
+   menu items.
+ - Added support for passive DCC chat via /DCC PCHAT <nick>.
+ - Added support for DCC sending and receiving very large files
+   (above 4 GB).
+ - Improved layout of "Info" button in the DCC windows.
+ - Improved layout of the nick-name right-click menu.
+ - Improved /help command's display of plugins/script commands.
+ - Fixed two bugs in detaching tabs (or CTRL-I) [1228926].
+ - Added /uselect command for scripters to select nick names in the
+   channel userlist (Daniel P. Stasinski).
+ - Fixed possible crashes while using the SJIS (Japanese) charset.
+ - Fixed various memory leaks in right-click menus.
+
+
+----------------------------------------------------------------------
+ 2.4.4
+----------------------------------------------------------------------
+
+ - Updated translations (hi, ko, lt, pa, ru, vi, zh_TW).
+ - People's away message is now shown in the right-click menu, if
+   known (Christopher Aillon).
+ - The "Bind to:" setting can now be set to 0.0.0.0 [1176256].
+ - Plugin API: Don't crash if a print-event closes the current context
+   and doesn't eat the event [1175674].
+ - Disabled parsing of quotation marks for /JOIN, so you can join
+   channels with a quote in them (Dan Fruehauf).
+ - Fixed truncation of the URL in the right-click menu. Now handles
+   UTF-8 properly [1188229].
+ - Fixed use of CP1255 charset, which would chop the last char when
+   receiving messages [1122089].
+ - The DCC windows now allow multiple selection and the columns auto
+   resize (Dan Fruehauf).
+ - Added "CTCP Sound to Channel" event [1159445].
+ - You can now drag and drop files into dialog windows to start file
+   transfers.
+ - Perl:
+   - Fix to allow fully qualified variable names to work as well.
+   - Enabled individual script unloading.
+   - Enabled reloading scripts using XS modules.
+   - Fixed handling of filenames with spaces in them.
+   - Added /reload which works like /load but it will do an unload first
+     it is not necessary to use the full path with this command, just
+     the file name is enough.
+   - Fix print callbacks for cases where there are NULL elements between
+     non-NULL elements.
+ - Fixed: "XChat can't ban users with long idents" (Dan Fruehauf)
+   [1159447].
+ - Implemented taskbar flashing on unix. Requires a window manager
+   or taskbar that supports XUrgency flag (Adil).
+
+
+----------------------------------------------------------------------
+ 2.4.3
+----------------------------------------------------------------------
+
+ - Updated translations (de, sq, zh_CN).
+ - Fixed crash of server list connect button when no network is
+   selected while using GTK's auto-find feature [1166669].
+ - Fixed handling of WhoIs Special event on some networks where it
+   could chop off the first character [1164315].
+ - Plugin API changes: Added "nickserv" field to xchat_get_info.
+ - Python: Fixed get_list() incorrectly failing when the list
+   contained a time field [1171525].
+ - Perl: Make scripts using calls with fully qualified subs work again
+   [1170139] (Lian Wan Situ).
+ - Fixed input-box input-method (GTK I.M.) problem [1168239].
+ - Fixed: Ignore and Notify windows incorrectly used the stock CLOSE
+   button instead of DELETE [1170655].
+ - Placed Close/Connect buttons in correct position in server list
+   [1165474].
+
+
+----------------------------------------------------------------------
+ 2.4.2
+----------------------------------------------------------------------
+
+ - Updated translations (ca, de, lt, nl, ru, sk, sr, vi).
+ - Added command line args -u and -p.
+ - Fixed handling of "MODE -o+o nick nick" (#1094026).
+ - Plugin API changes:
+   * Added "Key Press" print event.
+   * Added "state_cursor" for xchat_get_prefs.
+   * Added xchat_strip and xchat_free functions.
+   * Added "lasttalk" field to "users" list.
+   * Added "charset" field to xchat_get_info.
+ - Perl plugin changes (Lian Wan Situ):
+   * Move each script into their own unique package/namespace. Scripts
+     containing multiple packages will not be loaded.
+   * When warning messages are emitted you will now be told which
+     script it came from.
+   * Xchat::set_context will now accept Xchat::set_context( $channel )
+     and Xchat::set_context( $channel, $server ) in addition to
+     Xchat::set_context( $context ).
+   * Fix display of loaded scripts in the Plugins and Scripts window.
+ - TCL: Fixed crash with invalidated TCL timer (#1110306) (Daniel P.
+   Stasinski).
+ - /TIMER now supports timeouts to one decimal place.
+ - Fixed possible crash of open-file dialog on 64-bit machines.
+ - Pressing CTRL-O in the DCC Receive window will now open your
+   downloads folder.
+ - Win32: Default download folder changed to "My Documents\Downloads".
+ - Added -quiet arg to the /charset command.
+ - The /country command now supports a wildcard search.
+ - The user is now warned when real/user name is left blank in the
+   server list window.
+ - Added the /URL command.
+ - Added a text event for all unknown WHOIS reply lines.
+ - Added /ALLCHANL which sends to the current server only.
+ - Actions (/ME) are now treated like PRIV/CHAN for purposes of the
+   ignore list.
+
+
+----------------------------------------------------------------------
+ 2.4.1
+----------------------------------------------------------------------
+
+ - Updated translations (ca, de, eu, it, ko, mk, nb, nl, pt, ru, sl,
+                         sq, uk, zh_TW).
+ - Fixed custom marker-line color not reloading.
+ - Brought back the "Connect to selected server only" option in the
+   Serverlist edit window (it's like the reverse of "Cycle until
+   connected" in 2.0.x).
+ - You can now move networks and servers via Shift+Up/Down (in the
+   ServerList window).
+ - Small efficiency improvements in receiving dcc. It will now not
+   send ACKs while the input buffer is non-empty.
+ - Python: Fixed crash when a timer callback routine executes
+   xchat.unhook() and returns false.
+ - Fixed playing sound files with spaces in them.
+ - Added support for NickServ on DalNet and FreeNode.
+ - Plugin API: Added xchat_get_info(ph,"inputbox");.
+ - Added /settext and /setcursor commands for scripters.
+ - You can now scroll tabs with the mouse-wheel while hovering over
+   the arrow buttons.
+ - Fixed connecting to a SSL server via http proxy (#1054152).
+ - Fixed: Opened server tab doesn't count as "requested" (#1044227).
+
+
+----------------------------------------------------------------------
+ 2.4.0
+----------------------------------------------------------------------
+
+ - Updated translations (ca, de, eu, it, ko, lt, nl, sk, sr, zh_CN).
+ - Fixed a possible crash in loading pevents.conf.
+ - Made default URL handlers work with Firefox 0.9.x by adding the
+   "-a firefox" argument.
+ - Plugin API: Added xchat_get_info field "libdirfs".
+ - Fixed crash when trying to dcc send a filename which has encoding
+   that doesn't match G_FILENAME_ENCODING.
+
+
+----------------------------------------------------------------------
+ 2.1.1
+----------------------------------------------------------------------
+
+ - Updated translations (de, kr, lt, sk, sr, zh_CN).
+ - Added some rudimentary support for the IDENTIFY-MSG feature.
+ - Perl: Added Xchat::context_info (Lian Situ).
+ - TCL: Added support for time fields in getlist (Daniel P.Stasinski).
+ - Added "Open Dialog" event, so you can add a sound-file to it.
+ - The standard beep can now be overridden with a sound-file.
+ - Fixed tab-nick-completion's cycling behaviour.
+ - New keyboard shortcut for line up and down (shift-arrow up/down).
+ - Fixed: [986958] tab completion with GTK Input-Methods.
+
+
+----------------------------------------------------------------------
+ 2.1.0
+----------------------------------------------------------------------
+
+ - Updated translations (eu).
+ - Tab nick completion fixes: Crash with space-tab and glib critical
+   warning (Ian Kumlien).
+ - Heavily reworked the Preferences window. It should be alot clearer
+   now, and more gnome-like.
+ - 'Pop new tabs to front' setting now has three options (Kyoshiro).
+ - New colors and text-events, using a white background.
+ - Config files are not saved to disk unless you edit the defaults.
+   This makes it easier to change language (for print events, popup
+   menu etc).
+ - Brand new Server List window. Now much simpler and intuitive. Also
+   includes an entry box for NickServ password.
+ - The vertical separator line now has its own pointer when you hover
+   over it (Richard Gobeille).
+ - Alphabetical tab sorting now works and is enabled by default.
+ - Added "Small Tabs" option (reduces the font size).
+ - Brand new Sound-Events editor in the Preferences window.
+ - Added socks5 authentication support (Benjamin Foster).
+ - Win32: fixed auto-loading of TCL scripts.
+
+
+----------------------------------------------------------------------
+ 2.0.10
+----------------------------------------------------------------------
+
+ - Updated translations (ru, sr).
+ - Fixed compiling on systems other than linux/freebsd [969643].
+   (Samuel Mimram).
+ - Fixed compiling with an old version of GTK (2.0.x).
+ - Further BiDi fixes in xtext (Ilya Konstantinov).
+ - Brand-new tab completion code (Ian Kumlien). This also fixes:
+   Tab expansion not working behind umlauts [956127].
+   Plugin commands can now be tab-completed too (Frank Thieme).
+ - Fixed parsing URIs on userlist drag-n-drop (Jonas Heylen).
+ - Added Sort button to the server list window (David Oftedal and
+   Tim-Philipp Mueller).
+ - Tab button selection fix (Guillaume Knispel).
+ - Added marker-line feature. Shows a red-line to indicate the place
+   where you last read up to (Thomas Kockerbauer).
+ - The "Get my IP from Server" feature now works on networks that
+   hide your hostname too (by using the USERHOST command).
+ - Win32: Fixed CPS calculation for file transfers [824934].
+ - Fixed: Ping timeout when the system clock changes [789140].
+ - Fixed: Private messages delivered to status window when nickname
+   is the same as the network [977550].
+ - Maximised window-state is now saved.
+ - Double middle-clicking a nickname in the text area will now select
+   it in the userlist.
+ - Included a work-around to stop X-Sys plugin crashing with GTK 2.4.
+ - Fixed: /list output going to the current tab [970746].
+ - Fixed: Serverlist crash while editing a port-number, and switching
+   to another network before pressing enter [968652].
+ - Made it possible to execute multiple "Connect Command:"s in the
+   ServerList window, when they're separated by ctrl-shift-a.
+
+
+----------------------------------------------------------------------
+ 2.0.9
+----------------------------------------------------------------------
+
+ - Updated translations (bg, cs, de, en_GB, eu, fi, lt, nl, ru, sk,
+                         uk, wa).
+ - Fixed the Socks5 overflow security bug.
+ - DCC IP address setting can now be a hostname too (Flavio
+   Chierichetti) [773229].
+ - Don't try random DCC ports when a range is set (mib) [889987].
+ - Fix: Spurious nick completion (mib) [916944].
+ - Serverlist passwd box is now masked (Cristian Peraferrer) [920113].
+ - Fix: Sometimes messes up the tab order on reconnect (Gabor Szeder)
+   [941773].
+ - Fix: Crashes when setting $CHARSET to nonexistant charset [945855].
+ - Plugin API: Added some fields to the "channels" list.
+ - Plugin API: Added "win_status" and "xchatdirfs" fields to
+   xchat_get_info.
+ - Plugin API: Added xchat_send_modes() function.
+ - Fix: Unload, then reload a plugin on FreeBSD fails (Kevin Leung).
+ - Plugins should now work on HPUX too.
+ - Perl-plugin: Fixes for 3 arg version of emit_print, unhooking the
+   same hook multiple times and get_list returning correct values for
+   address32 field and some memory leaks (Lian Situ).
+ - Made menu keybindings work when the menubar is hidden on GTK 2.4.
+ - Added support for the new GTK 2.4 file chooser dialog.
+ - Fix for BiDi in xtext (Ilya Konstantinov).
+ - Smaller bug fixes [962211] [958599] [950353] and
+   [945617] (Frederic Krueger).
+
+
+----------------------------------------------------------------------
+ 2.0.8
+----------------------------------------------------------------------
+
+ - Updated translations (az, es, fi, lt, mk, nl, ru, sk, sl, sr, sv,
+   zh_CN).
+ - Added color, flash and iconify args to /GUI command (this is for
+   use in scripts and plugins only).
+ - Plugin API: Added "notify" list.
+ - Plugin API: Added id, users, flags fields for "channels" list.
+ - Win32: Better error messages for file i/o and winsock errors.
+ - New Perl interface (with backward compatibility)! (Lian Situ).
+ - Fixed command-character buglet [873541].
+ - Win32: Improved incorrect CPS display for file transfers.
+ - Added "Copy Selected URL" option to URL popupmenu (Mike Battersby).
+ - Added work-around for "Get my IP from server" not working on PTNet
+   (Mario Freitas).
+ - Fixed: Alt+numbers do not work with X Input Method [896968] (Marius
+   Gedminas).
+ - Added support for "+port" to indicate SSL connections.
+ - Fixed non-ASCII chars in time-stamp bug [918445].
+ - Smaller bug fixes: [870073] [890891].
+
+
+----------------------------------------------------------------------
+ 2.0.7
+----------------------------------------------------------------------
+
+ - Updated translations (fi, nl).
+ - Fixed dcc psend crash [858539].
+ - Fixed bug where an error message was erroneously displayed while
+   transfering files with fast-send turned off. Also, allow fastsend
+   to be used with psend (Daniel Dubois).
+ - Print more informative messages when Perl scripts fail to load
+   (Andy).
+ - Win32: Added native sound playing support.
+ - Win32: Fixed possible crash upon exit while still connected.
+ - Fixed notify's Lastseen column for offline users [864185].
+ - Report more informative error when DCC write to disk fails.
+ - Fixed crash when xchat.conf contains oversized strings [750403].
+
+
+----------------------------------------------------------------------
+ 2.0.6
+----------------------------------------------------------------------
+
+ - Updated translations (de, lt, sl, sr).
+ - Fixed detection of Python on amd64 (Mads Martin Joergensen).
+ - Don't loose editbox contents when pressing up, then down arrow
+   (Ricky Clarkson).
+ - Fixed missing dcc flag on new ignores via gui.
+ - Fixed missing separator bar on PseudoColor displays.
+ - Fixed some 64-bit issues (xc205-fix64bit.diff).
+ - Apply tint changes instantly.
+ - Fixed DCC resume with mirc >= 6.1.
+ - Python plugin changes:
+   * Fixed the reentrancy problem which made xchat freeze when some
+     python code made xchat trigger a python callback somewhere.
+   * Implemented xchat_emit_print() and xchat_get_prefs() support.
+   * Fixed softspace support for python 2.3. This problem was making
+     print statements yield an extra space at the next line start.
+   * Other minor changes.
+     (Gustavo Niemeyer, Gustavo J. A. M. Carneiro, Marko Kreen).
+ - Fixed request of a MODE on a channel you're not in changing the
+   current titlebar [820998].
+ - Restored compatibility with older Perl that lacks call_pv().
+ - Use sigaction inplace of signal() for better compatibility.
+ - Win32: Don't try to open logfiles with a "\" in them, windows wont
+   allow it. Instead, the "\" is replaced by a "_".
+ - Backported HTTP authentication code from 1.8.11 (you can now
+   specify a username and password for HTTP proxies).
+ - When beep on highlight is on, beep on channel actions too
+   (Christopher A. Aillon)
+ - Added active dcc send feature (/dcc PSEND). More info here:
+   http://mail.nl.linux.org/xchat-discuss/2003-10/msg00124.html
+   (Daniel Dubois and Emmanuel Jeandel).
+ - URL Handlers menu now removes programs that arn't in PATH.
+ - Added "away" users field for plugin API.
+ - Smaller bug fixes: 822199, 786267, 783172, 811971, 756048, 844919.
+
+
+----------------------------------------------------------------------
+ 2.0.5
+----------------------------------------------------------------------
+
+ - Updated translations (ca, fi, lt, nl, sk, sv, zh_CN).
+ - Fixed detection of Python 2.3 in configure script (anonymous).
+ - DCC Send file-selection dialog now supports multi-select.
+ - Reset away status after auto-reconnect from a ping timeout.
+ - Perl: Fixed IRC::user_info always matching the first entry.
+ - More C89 fixes for non-gcc compilers (Albert Chin). [781809].
+ - xtext: now double buffered and flicker free. Also some efficiency
+   tweaks for exposure events and multi-wrapped lines.
+ - Removed buggy numeric 338 support [783945].
+ - Nick completion in dialogs and channel completion (Jay Cornwall).
+ - Print informative error messages when dcc resume isn't possible.
+ - Fixed performance of dcc recv, send and chat windows.
+ - Fixed tab-arrow buttons show/hide (Lloyd Williams) [783681].
+ - Fixed lastlog bugs [791220].
+ - win32: Faster tinting, and uses MMX when in 16 or 32bit color.
+ - Execute /sigusr2 on receiving SIGUSR2 signal (Michael Guidero).
+ - /IGNORE command and window now have an extra "DCC" category.
+ - Alert user when logfiles fail to open (Jay Cornwall).
+ - Fixed missing underlining of IP numbers (2.0.4 only).
+ - Allow accepting DCC sends from ports below 1024.
+ - Connect to URL given on commandline even if 'No Serverlist on
+   Startup' is off [804648].
+ - Fixed problem in allocating colors while in 8bit PseudoColor.
+ - xtext: tinting now shades towards your background color, making it
+   usable with white backgrounds. Tints can also use XShm for extra
+   speed with --enable-shm at ./configure time (experimental).
+ - Perl: IRC::add_print_handler callbacks now get parameters in
+   $_[1...x], with $_[0] left for compatibility (Lian wan Situ).
+ - Perl: added command_with_channel command (Alexander Werth)
+   [801711].
+ - Smaller bug fixes: [798655].
+
+
+----------------------------------------------------------------------
+ 2.0.4
+----------------------------------------------------------------------
+
+ - Updated translations (lt, sv, zh_CN).
+ - Fixed crash on tinted transparency (xc203-fixtint.diff).
+ - Fixed incorrect dcc cps calculation (xc203-fix-cps.diff).
+ - Allow fullpath and relative filenames for Text Events sound files
+   (Anthony Dragunov).
+ - Added /GUI command (mainly for use by scripts).
+ - Solaris build fixes for ipv6.
+ - Added -n, --no-plugins command-line arg.
+ - Added a feature to change the color of away users.
+ - Moved default dcc and sound dirs inside ~/.xchat2/ (SilvereX).
+ - Fixed bug [753742] When server tab and query had the same name,
+   private messages could go to the wrong tab.
+ - Support others users too, when expanding ~ in filenames (Neox).
+   [767514].
+ - Underline "ipnumber:port" style urls too (Alex & dobler).
+ - Added support for ircu numerics 330 and 338 (phaseburn).
+ - C89 fixes, should now compile with HP UX and Sun C Compilers
+   (Albert Chin). [777106].
+ - Smaller bug fixes: [773245] [779166].
+ - Close tabs on shift-leftclick (Jay Cornwall).
+
+
+----------------------------------------------------------------------
+ 2.0.3
+----------------------------------------------------------------------
+
+ - Updated translations (ca, fr, ja, sv).
+ - Fixed URL grabber not filling up (xc202-fixurlg.diff).
+ - Fixed crash when holding down Ctrl-I (xc202-fixdetach.diff).
+ - Use Shift-Ctrl-W for Close only when Emacs key theme is enabled.
+ - Fixed corrupt left margin with indent-nicks off and timestamp on.
+ - Remove invalid chars from inbound text when conversion fails. Fall
+   back to ISO-8859-1 when using UTF-8 only (Ilya Konstantinov).
+ - Fixed perl IRC::get_info(3) crash when not connected [732496].
+ - Fixed crash on long output lines for /exec -o [731187].
+ - Made "Move completed files to:" and "Save nickname in filenames"
+   work at the same time (Matthew Gabeler-Lee).
+ - xtext: fix redraw when new additions not on current page.
+ - win32: Added /set identd 0 switch to turn off built-in identd. 
+ - Added 6-8 for perl's IRC::get_info to retreive network, host and
+   topic (Ryan).
+ - Iterate in alpha order instead of op-alpha for nickcompletion
+   (Gauss_Z88).
+ - Fixed ChannelList crash on invalid regex match string.
+ - Added hide join/parts setting to gui (Jason Wies).
+ - Added Delete All button to ignore window (Mohammed Sameer).
+ - Don't allow adding empty names to notify list [741589].
+ - Made message fragmentation code utf8 friendly so it always splits
+   on a multibyte char boundary [748653].
+ - Support 2 to 4 GB files in DCC (contrary to 1.9.4 changelog, it
+   didn't work until now).
+ - Python: Fixed crash when returning 0 from a timer (Steve Green).
+ - Multihead fixes for popup menus.
+ - Added support for numeric 307 and 320 "is an identified user".
+ - Allow setting a blank topic via the GUI [720407].
+
+
+----------------------------------------------------------------------
+ 2.0.2
+----------------------------------------------------------------------
+
+ - Updated translations (lt, ms, nl, pt, sv, zh_CN).
+ - Fixed a few minor mem leaks in the server and user list.
+ - Changes to: UrlGrabber, Notify, Plugins, Ignore and Banlist GUIs.
+   Changed GtkCList to GtkTreeview, and general enhancement to these
+   guis (Vincent Ho).
+ - win32: made it possible to compile with ipv6.
+ - Added /MOP.
+ - Fixed pageup/pagedown wrong window bug [710784].
+ - Fixed no timestamps in top-level windows bug [710787].
+ - Fixed first word being skipped in perl add_command_handler("", cb);
+   [711802].
+ - Fixed WHOIS away line appearing in different tab [695932].
+ - win32: fixed transparency [699425].
+ - win32: fixed ssl "Error 2" connection bug.
+ - Made all toplevel dialog windows transients of the main window.
+ - Show filesize/pos in DCC window as KB and MB (Aaron Chernosky).
+ - Added /set tab_dnd 0/1 option.
+ - Fixed userlist insertion/deletion GUI performance problem [704233].
+ - Each toplevel window now has a "role".
+ - Smaller bugs fixed: [698449] [718851].
+ - TCL plugin fixes for context lookups (Daniel P. Stasinski).
+ - Changed Close Tab keybinding to Shift-Ctrl-W to avoid conflict with
+   emacs editing.
+ - Used a new algorithm for Userlist and UrlGrabber. This one does
+   insertion, lookup and deletion in O(log n).
+
+
+----------------------------------------------------------------------
+ 2.0.1
+----------------------------------------------------------------------
+
+ - Updated translations (am, ca, lt).
+ - Save serverlist before connecting (Joe Drew).
+ - OpenBSD compile fixes.
+ - (Encoding) Fallback outgoing text to "?" for unconvertable chars.
+   [674798].
+ - Hide tab scrolling buttons when they're not needed.
+ - Fixed --disable-xlib compiles.
+ - Fixed use of %h in dialog-tab buttons [688937].
+ - Fixed printing/logging timestamps that contain invalid utf8
+   [688548].
+ - Added "Resizable userlist" option (default ON).
+ - Strip colors on topic change.
+ - Fixed (snotice) and (notice) tabs being swapped [687437].
+ - Made more strings translatable.
+ - Allow loading empty text events [691191].
+ - Fixed xtext race condition [678874].
+ - Added ability to show/hide the channel-mode buttons (default OFF).
+ - Use the network name in server-tab rather than full hostname.
+ - Added keybindings for moving tab-families, default is ctrl-shift
+   PageUp and PageDown (Vincent Ho).
+ - Added 'Beep on highlighted messages' option (Jirka Kosina).
+ - Use DND to detach tabs.
+ - Interpret %C, %B etc in quit reasons.
+ - Added more items to the right-click tab menu.
+ - Some misc UI cleanups.
+
+
 ----------------------------------------------------------------------
  2.0.0
 ----------------------------------------------------------------------

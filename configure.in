@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(src)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(xchat, 2.0.0)
+AM_INIT_AUTOMAKE(xchat, 2.4.5)
 AM_MAINTAINER_MODE
 AC_PROG_CC
 AC_PROG_CPP
@@ -10,22 +10,25 @@ AM_PROG_AS
 AM_DISABLE_STATIC
 AM_PROG_LIBTOOL
 
-ALL_LINGUAS="am de el es et lt lv nl no sk sl sv"
+ALL_LINGUAS="am az bg ca cs de el en_GB es et eu fi fr hi hu it ja ko lt lv mk ms nb nl no pa pt pt_BR ru sk sl sq sr sv uk vi wa zh_CN zh_TW"
 AM_GNU_GETTEXT
 
 dnl displaced from acconfig.h
 AH_VERBATIM([OLD_PERL],[#undef OLD_PERL])
 AH_VERBATIM([PREFIX],[#undef PREFIX])
+AH_VERBATIM([XCHATLIBDIR],[#undef XCHATLIBDIR])
+AH_VERBATIM([XCHATSHAREDIR],[#undef XCHATSHAREDIR])
 AH_VERBATIM([SOCKS],[#undef SOCKS])
 AH_VERBATIM([USE_DEBUG],[#undef USE_DEBUG])
-AH_VERBATIM([USE_GNOME],[#undef USE_GNOME])
-AH_VERBATIM([USE_HEBREW],[#undef USE_HEBREW])
+dnl AH_VERBATIM([USE_GNOME],[#undef USE_GNOME])
+AH_VERBATIM([USE_SHM],[#undef USE_SHM])
 AH_VERBATIM([USE_IPV6],[#undef USE_IPV6])
 AH_VERBATIM([USE_MMX],[#undef USE_MMX])
 AH_VERBATIM([USE_OPENSSL],[#undef USE_OPENSSL])
 AH_VERBATIM([USE_PLUGIN],[#undef USE_PLUGIN])
 AH_VERBATIM([USE_XFT],[#undef USE_XFT])
 AH_VERBATIM([USE_XLIB],[#undef USE_XLIB])
+AH_VERBATIM([USE_SIGACTION],[#undef USE_SIGACTION])
 dnl AH_VERBATIM([USE_ZVT],[#undef USE_ZVT])
 AH_VERBATIM([USING_FREEBSD],[#undef USING_FREEBSD])
 AH_VERBATIM([USING_LINUX],[#undef USING_LINUX])
@@ -55,17 +58,13 @@ dnl *********************************************************************
 dnl ** configure switches ***********************************************
 dnl *********************************************************************
 
-AC_ARG_ENABLE(debug,
+AC_ARG_ENABLE(memdebug,
 [  --enable-memdebug       enable use of Memory Debug (default: no)],
-        debug=$enableval, debug=no)
+        memdebug=$enableval, memdebug=no)
 
 AC_ARG_ENABLE(socks,
-[  --enable-socks          enable use of SOCKS5 (default: no)],
+[  --enable-socks          link with SOCKS5 library (default: no)],
         socks=$enableval, socks=no)
-
-AC_ARG_ENABLE(hebrew,
-[  --enable-hebrew         enable Hebrew support (default: no)],
-        hebrew=$enableval, hebrew=no)
 
 AC_ARG_ENABLE(ipv6,
 [  --enable-ipv6           enable IPv6 (default: no)],
@@ -84,8 +83,8 @@ AC_ARG_ENABLE(gtkfe,
         gtkfe=$enableval, gtkfe=yes)
 
 AC_ARG_ENABLE(textfe,
-[  --disable-textfe        disable building text frontend],
-        textfe=$enableval, textfe=yes)
+[  --enable-textfe         build the text frontend (default: no)],
+        textfe=$enableval, textfe=no)
 
 dnl AC_ARG_ENABLE(gnome,
 dnl [  --disable-gnome         disable use of gnome],
@@ -107,6 +106,10 @@ AC_ARG_ENABLE(perl,
 [  --disable-perl          don't build the perl plugin],
         perl=$enableval, perl=yes)
 
+AC_ARG_ENABLE(perl_old,
+[  --disable-perl_old      no backwards compatibility for perl plugin],
+        perl_old=$enableval, perl_old=yes)
+
 AC_ARG_ENABLE(tcl,
 [  --enable-tcl[=PATH]       directory with Tcl config file: tclConfig.sh],
         tcl=$enableval, tcl=yes)
@@ -119,21 +122,16 @@ AC_ARG_ENABLE(mmx,
 [  --disable-mmx           disable MMX assembly routines],
         mmx=$enableval, mmx=yes)
 
+AC_ARG_ENABLE(shm,
+[  --enable-shm            enable use of XShm for fast tinting (default: no)],
+        shm=$enableval, shm=no)
 
 dnl *********************************************************************
 dnl ** DEBUG ************************************************************
 dnl *********************************************************************
 
-if test "$debug" = yes; then
+if test "$memdebug" = yes; then
 	AC_DEFINE(USE_DEBUG)
-fi
-
-dnl *********************************************************************
-dnl ** XLIB *************************************************************
-dnl *********************************************************************
-
-if test "$xlib" = yes; then
-	AC_DEFINE(USE_XLIB)
 fi
 
 dnl *********************************************************************
@@ -152,7 +150,7 @@ dnl *********************************************************************
 dnl ** GTK **************************************************************
 dnl *********************************************************************
 
-AM_PATH_GTK_2_0(2.0.3, havegtk=yes, havegtk=no)
+AM_PATH_GTK_2_0(2.4.0, havegtk=yes, havegtk=no)
 
 if test "$havegtk" = no; then
 	gtkfe=no
@@ -166,21 +164,6 @@ if test "$gtkfe" != yes; then
 	zvt=no
 	COMMON_LIBS="$GLIB_LIBS"
 	COMMON_CFLAGS="$GLIB_CFLAGS"
-fi
-
-dnl *********************************************************************
-dnl ** XFT **************************************************************
-dnl *********************************************************************
-
-if test "$xft" = yes; then
-	xft=no
-	oldCPPFLAGS=$CPPFLAGS
-	CPPFLAGS="$CPPFLAGS $GTK_CFLAGS"
-	AC_CHECK_HEADERS(X11/Xft/Xft.h, xft=yes)
-	CPPFLAGS=$oldCPPFLAGS
-	if test "$xft" = yes; then
-		AC_DEFINE(USE_XFT)
-	fi
 fi
 
 dnl *********************************************************************
@@ -206,6 +189,40 @@ gnome=no
 #		AC_MSG_RESULT(ok)
 #	fi
 #fi
+
+dnl *********************************************************************
+dnl ** XFT **************************************************************
+dnl *********************************************************************
+
+if test "$xft" = yes; then
+	AC_PATH_PROG(pkgconfigpath, pkg-config)
+	if $pkgconfigpath xft --exists; then
+		GUI_CFLAGS="$GUI_CFLAGS `$pkgconfigpath xft --cflags`"
+		GUI_LIBS="$GUI_LIBS `$pkgconfigpath xft --libs`"
+	else
+		xft=no
+		oldCPPFLAGS=$CPPFLAGS
+		CPPFLAGS="$CPPFLAGS $GTK_CFLAGS"
+		AC_CHECK_HEADERS(X11/Xft/Xft.h, xft=yes)
+		CPPFLAGS=$oldCPPFLAGS
+	fi
+	if test "$xft" = yes; then
+		AC_DEFINE(USE_XFT)
+	fi
+fi
+
+dnl *********************************************************************
+dnl ** XLIB *************************************************************
+dnl *********************************************************************
+
+if test "$xlib" = yes; then
+	AC_DEFINE(USE_XLIB)
+	if test "$system" = "SunOS"; then
+		LIBS="$LIBS -L/usr/openwin/lib -lX11"
+	fi
+else
+	shm=no
+fi
 
 dnl *********************************************************************
 dnl ** ZVT/SHELLTAB *****************************************************
@@ -249,18 +266,27 @@ if test "$perl" = yes; then
 		PERL_LDFLAGS=`echo $PERL_LDFLAGS |$sedpath 's/-lc //'`
 		AC_MSG_RESULT(ok)
 
-		oldLIBS=$LIBS
-		LIBS="$LIBS $PERL_LDFLAGS"
-		AC_CHECK_FUNCS(eval_pv)
-		LIBS=$oldLIBS
+#		oldLIBS=$LIBS
+#		LIBS="$LIBS $PERL_LDFLAGS"
+#		AC_CHECK_FUNC(eval_pv)
+#		AC_CHECK_FUNC(call_pv)
+#		LIBS=$oldLIBS
 
-		AC_MSG_CHECKING(for old perl)
-		PERL_OLD=`$perlpath -e 'if($]<5.006){printf"yes\n";}else{printf"no\n";}'`
-		if test "$PERL_OLD" = "yes"; then
-			AC_DEFINE(OLD_PERL)
+		AC_MSG_CHECKING(for perl >= 5.8.0)
+		PERL_VER=`$perlpath -e 'print $]>= 5.008?"yes":"no"'`
+		if test "$PERL_VER" = "yes"; then
 			AC_MSG_RESULT(yes)
+			AC_MSG_CHECKING(if perl plugin will be backward compatible)
+			if test "$perl_old" = "yes"; then
+					  AC_MSG_RESULT(yes)
+					  AC_DEFINE(OLD_PERL)
+			else
+					  AC_MSG_RESULT(no)
+			fi
 		else
 			AC_MSG_RESULT(no)
+			echo "perl version too old, building without perl."
+			perl=no
 		fi
 	fi
 fi
@@ -279,17 +305,19 @@ if test "$python" = yes; then
         else
                 AC_MSG_CHECKING(Python version)
                 changequote(<<, >>)dnl
-                PY_VERSION=`$pythonpath -c 'import sys; print sys.version[:3]'`
+                PY_VER=`$pythonpath -c 'import distutils.sysconfig; print distutils.sysconfig.get_config_vars("VERSION")[0];'`
+                PY_LIB=`$pythonpath -c 'import distutils.sysconfig; print distutils.sysconfig.get_python_lib(standard_lib=1);'`
+                PY_INC=`$pythonpath -c 'import distutils.sysconfig; print distutils.sysconfig.get_config_vars("INCLUDEPY")[0];'`
                 $pythonpath -c "import sys; map(int,sys.version[:3].split('.')) >= [2,2] or sys.exit(1)"
                 changequote([, ])dnl
-                AC_MSG_RESULT($PY_VERSION)
+                AC_MSG_RESULT($PY_VER)
                 if test "$?" != "1"; then
                         AC_MSG_CHECKING(Python compile flags)
                         PY_PREFIX=`$pythonpath -c 'import sys; print sys.prefix'`
                         PY_EXEC_PREFIX=`$pythonpath -c 'import sys; print sys.exec_prefix'`
-                        if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h; then
-                                PY_LIBS="-L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config -lpython$PY_VERSION -lpthread -lutil"
-                                PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
+                        if test -f $PY_INC/Python.h; then
+                                PY_LIBS="-L$PY_LIB/config -lpython$PY_VER -lpthread -lutil"
+                                PY_CFLAGS="-I$PY_INC"
                                 AC_MSG_RESULT(ok)
                         else
                                 python=no
@@ -330,6 +358,16 @@ fi
 dnl *********************************************************************
 dnl ** IPv6 *************************************************************
 dnl *********************************************************************
+
+dnl purely for Solaris
+AC_CHECK_FUNC(select, ,
+	AC_CHECK_LIB(socket, select, ,
+		AC_CHECK_LIB(nsl, select, ,
+			AC_CHECK_LIB(inet, select, ,
+				AC_CHECK_LIB(cposix, select, ,
+					AC_CHECK_LIB(net, select, ,
+						AC_MSG_WARN(i can not find select.  you might need to help me)))))))
+AC_CHECK_LIB(socket, select)
 
 if test "$ipv6" = yes; then
 	AC_CHECK_FUNCS(getaddrinfo, have_getaddrinfo=yes)
@@ -413,7 +451,7 @@ if test "$plugin" = yes; then
 		dnl we just need the -Wl,--export-dynamic, but not -lgmodule-2.0
 		RDYNAMIC_FLAGS="`$pkgconfigpath gmodule-2.0 --libs | $sedpath 's/ -lgmodule-2.0//'`"
 		LIBS="$LIBS $RDYNAMIC_FLAGS"
-		VS="`ld --help | grep version-script`"
+		VS="`ld --help | grep version-script 2> /dev/null`"
 		if test "$VS" != ""; then
 			GUI_LIBS="$GUI_LIBS -Wl,--version-script,\$(srcdir)/../version-script"
 		fi
@@ -452,11 +490,32 @@ if test "$socks" = yes; then
 fi
 
 dnl *********************************************************************
-dnl ** Hebrew support ***************************************************
+dnl ** XShm *************************************************************
 dnl *********************************************************************
 
-if test "$hebrew" = yes; then
-	AC_DEFINE(USE_HEBREW)
+if test "$shm" = yes; then
+	oldl=$LIBS
+	oldc=$CPPFLAGS
+	LIBS="$LIBS `$pkgconfigpath --libs-only-L xft`"
+	CPPFLAGS="$CPPFLAGS `$pkgconfigpath --cflags-only-I xft`"
+	shm=no
+	AC_CHECK_LIB(Xext, XShmAttach, shm=yes)
+	if test "$shm" = yes; then
+		shm=no
+		AC_CHECK_HEADERS(sys/ipc.h, shm=yes)
+		if test "$shm" = yes; then
+			shm=no
+			AC_CHECK_HEADERS(sys/shm.h, shm=yes)
+		fi
+	fi
+
+	LIBS=$oldl
+	if test "$shm" = yes; then
+		GUI_LIBS="$GUI_LIBS `$pkgconfigpath --libs-only-L xft` -lX11 -lXext"
+		AC_DEFINE(USE_SHM)
+	else
+		CPPFLAGS=$oldc
+	fi
 fi
 
 dnl *********************************************************************
@@ -504,9 +563,67 @@ if test "x$GCC" = "xyes"; then
 	fi
 fi
 
+dnl does this compiler support -Wno-pointer-sign ?
+AC_MSG_CHECKING([if gcc accepts -Wno-pointer-sign ])
+
+safe_CFLAGS=$CFLAGS
+CFLAGS="-Wno-pointer-sign"
+
+AC_TRY_COMPILE(, [
+int main () { return 0 ; }
+],
+[
+no_pointer_sign=yes
+AC_MSG_RESULT([yes])
+], [
+no_pointer_sign=no
+AC_MSG_RESULT([no])
+])
+CFLAGS=$safe_CFLAGS
+
+if test x$no_pointer_sign = xyes; then
+	CFLAGS="$CFLAGS -Wno-pointer-sign"
+fi
+
+dnl does this compiler support -funsigned-char ?
+AC_MSG_CHECKING([if gcc accepts -funsigned-char ])
+
+safe_CFLAGS=$CFLAGS
+CFLAGS="-funsigned-char"
+
+AC_TRY_COMPILE(, [
+int main () { return 0 ; }
+],
+[
+unsigned_char=yes
+AC_MSG_RESULT([yes])
+], [
+unsigned_char=no
+AC_MSG_RESULT([no])
+])
+CFLAGS=$safe_CFLAGS
+
+if test x$unsigned_char = xyes; then
+	CFLAGS="$CFLAGS -funsigned-char"
+fi
+
 dnl *********************************************************************
 dnl ** FUNCTIONS/LIBS/CFLAGS ********************************************
 dnl *********************************************************************
+
+AC_MSG_CHECKING(for modern sigaction)
+dnl libc5 on linux and FreeBSD 3.x doesn't have siginfo_t
+dnl and the sa_sigation field.
+AC_TRY_COMPILE(
+	[#include <signal.h>],
+	[struct sigaction act;
+	 siginfo_t *si;
+	 act.sa_sigaction = 0;],
+	[
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(USE_SIGACTION) 
+	],
+	AC_MSG_RESULT(no))
 
 AC_PATH_PROG(gdkpixbufcsourcepath, gdk-pixbuf-csource)
 AC_SUBST(gdkpixbufcsourcepath)
@@ -515,23 +632,8 @@ if test "$gtkfe" != no -a "_$gdkpixbufcsourcepath" = _; then
 fi
 
 dnl if we don't have this, use g_snprintf instead
-AC_CHECK_FUNCS(snprintf)
-AC_CHECK_FUNCS(vsnprintf)
-
-dnl old solaris doesn't have this
-AC_CHECK_FUNCS(setenv)
-
-dnl purely for Solaris
-AC_CHECK_FUNC(select, ,
-	AC_CHECK_LIB(socket, select, ,
-		AC_CHECK_LIB(nsl, select, ,
-			AC_CHECK_LIB(inet, select, ,
-				AC_CHECK_LIB(cposix, select, ,
-					AC_CHECK_LIB(net, select, ,
-						AC_MSG_WARN(i can not find select.  you might need to help me)))))))
-
-dnl purely for Solaris
-AC_CHECK_LIB(socket, select)
+AC_CHECK_FUNCS(snprintf vsnprintf)
+AC_CHECK_FUNCS(memrchr strtoull atoll)
 
 AC_CHECK_FUNC(gethostbyname, ,
 	AC_CHECK_LIB(resolv, gethostbyname, ,
@@ -559,6 +661,7 @@ fi
 
 dnl freebsd needs this
 LIBS="$LIBS $INTLLIBS"
+CFLAGS="$CFLAGS $CPPFLAGS"
 
 dnl make these visible to all Makefiles
 AC_SUBST(GUI_LIBS)
@@ -571,19 +674,25 @@ AC_SUBST(PY_CFLAGS)
 AC_SUBST(PY_LIBS)
 AC_SUBST(TCL_LIBS)
 AC_SUBST(TCL_CFLAGS)
-xchatlibdir=${libdir}/xchat
-xchatsharedir=${datadir}/xchat
-AC_SUBST(xchatlibdir)
-AC_SUBST(xchatsharedir)
 
 PLUGIN_INCLUDES='-I$(top_srcdir)/plugins'
 AC_SUBST(PLUGIN_INCLUDES)
 
-if test "x${prefix}" = "xNONE"; then
-	AC_DEFINE_UNQUOTED(PREFIX, "${ac_default_prefix}")
-else
-	AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
-fi
+dnl for plugin.c and pixmaps.c
+test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+test "x$exec_prefix" = xNONE && exec_prefix="$prefix"
+
+AC_DEFINE_UNQUOTED(PREFIX, "${prefix}")
+
+XCHATLIBDIR=`eval echo ${libdir}/xchat`
+AC_DEFINE_UNQUOTED(XCHATLIBDIR, "$XCHATLIBDIR")
+
+XCHATSHAREDIR=`eval echo ${datadir}/xchat`
+AC_DEFINE_UNQUOTED(XCHATSHAREDIR, "$XCHATSHAREDIR")
+
+dnl for plugins/xxx/Makefile.am
+xchatlibdir=${libdir}/xchat
+AC_SUBST(xchatlibdir)
 
 AC_OUTPUT([
 Makefile
@@ -609,11 +718,11 @@ echo
 echo PLUGINS: Perl: $perl Python: $python TCL: $tcl
 echo
 echo mmx tinting ......... : $mmx
-echo plugin interface .... : $plugin\	nls/gettext ......... : $USE_NLS
+echo XShm tinting ........ : $shm\	plugin interface .... : $plugin
 if test "$xft" = no; then
-  echo link with socks5 .... : $socks\	text backend ........ : pango
+  echo text backend ........ : pango\	nls/gettext ......... : $USE_NLS
 else
-  echo link with socks5 .... : $socks\	text backend ........ : xft
+  echo text backend ........ : xft\	nls/gettext ......... : $USE_NLS
 fi
 echo openssl support ..... : $openssl\	ipv6 support ........ : $ipv6
 echo
