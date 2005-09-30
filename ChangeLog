@@ -10,7 +10,7 @@ Where "NUMBER" is the bug number.
  2.4.6
 ----------------------------------------------------------------------
 
- - Updated translations (de, gu, hu, ru).
+ - Updated translations (de, fr, gu, hu, ru, sk).
  - xc245-fix-te-notify.diff.
  - Fixed alignment and Endianess issues (Christian Biere), doesn't
    affect x86.

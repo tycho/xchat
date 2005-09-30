@@ -29,6 +29,7 @@
 #include "fe.h"
 #include "server.h"
 #include "text.h"
+#include "util.h" /* token_foreach */
 #include "xchatc.h"
 
 #include "servlist.h"
@@ -39,35 +40,49 @@ struct defaultserver
 	char *network;
 	char *host;
 	char *channel;
+	char *charset;
 };
 
 static const struct defaultserver def[] =
 {
 	{"2600net",	0},
 	{0,			"irc.2600.net"},
-	{0,			"irc.dc2600.com"},
-	{0,			"irc.nyc2600.com"},
 
-	{"AbleNET",	0},
-	{0,			"california.ablenet.org"},
-	{0,			"amazon.ablenet.org"},
-	{0,			"agora.ablenet.org"},
-	{0,			"extreme.ablenet.org"},
-	{0,			"irc.ablenet.org"},
+	{"AccessIRC",	0},
+	{0,			"irc.accessirc.net"},
+	{0,			"eu.accessirc.net"},
 
 	{"AfterNET",	0},
 	{0,			"irc.afternet.org"},
-	{0,			"ic5.eu.afternet.org"},
-	{0,			"baltimore.md.us.afternet.org"},
-	{0,			"boston.afternet.org"},
+	{0,			"us.afternet.org"},
+	{0,			"eu.afternet.org"},
+
+	{"Aitvaras",	0},
+#ifdef USE_IPV6
+#ifdef USE_OPENSSL
+	{0,			"irc6.ktu.lt/+7668"},
+#endif
+	{0,			"irc6.ktu.lt/7666"},
+#endif
+#ifdef USE_OPENSSL
+	{0,			"irc.data.lt/+6668"},
+#endif
+	{0,			"irc.data.lt"},
+	{0,			"irc.ktu.lt"},
+	{0,			"irc.le.lt"},
+	{0,			"irc.omnitel.net"},
+	{0,			"irc.takas.lt"},
+	{0,			"irc.5ci.net"},
+	{0,			"irc.interneka.lt"},
+	{0,			"irc.elekta.lt"},
+	{0,			"irc.if.lt"},
 
 	{"AmigaNet",	0},
-	{0,			"linux.us.amiganet.org"},
-	{0,			"whiterose.us.amiganet.org"},
-	{0,			"thule.no.amiganet.org"},
-	{0,			"dynarc.se.amiganet.org"},
-	{0,			"fullcomp.au.amiganet.org"},
-	{0,			"spod.uk.amiganet.org"},
+	{0,			"irc.amiganet.org"},
+	{0,			"us.amiganet.org"},
+	{0,			"uk.amiganet.org"},
+	{0,			"no.amiganet.org"},
+	{0,			"au.amiganet.org"},
 
 	{"ARCNet",	0},
 	{0,			"se1.arcnet.vapor.com"},
@@ -89,9 +104,9 @@ static const struct defaultserver def[] =
 	{0,			"irc.astrolink.org"},
 
 	{"AustNet",	0},
+	{0,			"au.austnet.org"},
 	{0,			"us.austnet.org"},
 	{0,			"ca.austnet.org"},
-	{0,			"au.austnet.org"},
 
 	{"AxeNet",	0},
 	{0,			"irc.axenet.org"},
@@ -103,6 +118,9 @@ static const struct defaultserver def[] =
 	{0,			"irc.azzurra.org"},
 	{0,			"crypto.azzurra.org"},
 
+	{"Buzzpot", 0},
+	{0,			"irc.chatspike.net"},
+
 	{"ChatJunkies",	0, "#xchat"},
 	{0,			"irc.chatjunkies.org"},
 	{0,			"nl.chatjunkies.org"},
@@ -111,13 +129,18 @@ static const struct defaultserver def[] =
 	{0,			"US.ChatNet.Org"},
 	{0,			"EU.ChatNet.Org"},
 
+	{"ChatSociety", 0},
+	{0,			"us.chatsociety.net"},
+	{0,			"eu.chatsociety.net"},
+
 	{"CoolChat",	0},
 	{0,			"irc.coolchat.net"},
 	{0,			"unix.coolchat.net"},
 	{0,			"toronto.coolchat.net"},
 
-	{"CyberArmy",	0},
-	{0,			"irc.cyberarmy.com"},
+	{"Criten", 0},
+	{0,			"irc.criten.net"},
+	{0,			"irc.eu.criten.net"},
 
 	{"DALnet",	0},
 	{0,			"irc.dal.net"},
@@ -129,24 +152,22 @@ static const struct defaultserver def[] =
 	{0,			"nc.d-t-net.de"},
 	{0,			"wakka.d-t-net.de"},
 
-	{"DwarfStarNet",	0},/*undersized*/
-	{0,			"IRC.dwarfstar.net"},
-	{0,			"US.dwarfstar.net"},
-	{0,			"EU.dwarfstar.net"},
-	{0,			"AU.dwarfstar.net"},
+	{"DeepIRC", 0},
+	{0,			"irc.deepirc.net"},
 
 	{"EFnet",	0},
 	{0,			"irc.Prison.NET"},
 	{0,			"irc.Qeast.net"},
 	{0,			"irc.efnet.pl"},
-	{0,			"irc.flamed.net"},
 	{0,			"efnet.demon.co.uk"},
 	{0,			"irc.lagged.org"},
 	{0,			"irc.lightning.net"},
 	{0,			"irc.mindspring.com"},
-	{0,			"irc.rt.ru"},
 	{0,			"irc.easynews.com"},
 	{0,			"irc.servercentral.net"},
+
+	{"EnterTheGame",	0},
+	{0,			"IRC.EnterTheGame.Com"},
 
 	{"EUIrc",	0},
 	{0,			"irc.euirc.net"},
@@ -159,9 +180,11 @@ static const struct defaultserver def[] =
 	{0,			"irc.inn.at.euirc.net"},
 	{0,			"irc.bas.ch.euirc.net"},
 
-	{"Evolnet",	0},/*undersized*/
-	{0,			"irc.evolnet.org"},
-	{0,			"blender.evolnet.org"},
+	{"EuropNet", 0},
+	{0,			"irc.europnet.org"},
+
+	{"EU-IRC",	0},
+	{0,			"irc.eu-irc.net"},
 
 	{"FDFNet",	0},
 	{0,			"irc.fdfnet.net"},
@@ -175,9 +198,6 @@ static const struct defaultserver def[] =
 
 	{"FreeNode",	0},
 	{0,				"irc.freenode.net"},
-	{0,				"irc.eu.freenode.net"},
-	{0,				"irc.au.freenode.net"},
-	{0,				"irc.us.freenode.net"},
 
 	{"Freeworld",	0},
 	{0,			"kabel.freeworld.nu"},
@@ -195,10 +215,6 @@ static const struct defaultserver def[] =
 	{0,				"west.us.gamesnet.net"},
 	{0,				"irc.ca.gamesnet.net"},
 	{0,				"irc.eu.gamesnet.net"},
-
-	{"Gamma Force",	0},/*undersized*/
-	{0,			"irc.gammaforce.org"},
-	{0,			"sphinx.or.us.gammaforce.org"},
 
 	{"German-Elite",	0},
 	{0,			"dominion.german-elite.net"},
@@ -222,8 +238,9 @@ static const struct defaultserver def[] =
 	{0,			"Sunshine.Ca.US.Infinity-IRC.Org"},
 	{0,			"IRC.Infinity-IRC.Org"},
 
-	{"IRCDZone",		0},
-	{0,			"irc.ircdzone.net"},
+	{"insiderZ.DE",	0},
+	{0,			"irc.insiderz.de/6667"},
+	{0,			"irc.insiderz.de/6666"},
 
 	{"IrcLink",	0},
 	{0,			"irc.irclink.net"},
@@ -233,40 +250,24 @@ static const struct defaultserver def[] =
 	{0,			"tonsberg.no.eu.irclink.net"},
 
 	{"IRCNet",		0},
-	{0,				"irc.stealth.net/5550"},
+	{0,				"irc.ircnet.com"},
+	{0,				"irc.stealth.net/6668"},
 	{0,				"ircnet.demon.co.uk"},
 	{0,				"ircnet.hinet.hr"},
 	{0,				"irc.datacomm.ch"},
 	{0,				"ircnet.kaptech.fr"},
-	{0,				"irc.flashnet.it"},
-	{0,				"irc.cwitaly.it"},
 	{0,				"ircnet.easynet.co.uk"},
 	{0,				"random.ircd.de"},
 	{0,				"ircnet.netvision.net.il"},
 	{0,				"irc.seed.net.tw"},
 	{0,				"irc.cs.hut.fi"},
 
-	{"IRCSoulZ",	0},
-	{0,			"irc.ircsoulz.net"},
-
 	{"Irctoo.net",	0},
 	{0,			"irc.canadian.net"},
 	{0,			"irc.irctoo.net"},
 
-	{"KewlNet",	0},
-	{0,			"random.irc.kewl.org"},
-	{0,			"la.defense.fr.eu.kewl.org"},
-	{0,			"nanterre.fr.eu.kewl.org"},
-
-	{"KrushNet",	0},
-	{0,			"Jeffersonville.IN.US.KrushNet.Org"},
-	{0,			"Auckland.NZ.KrushNet.Org"},
-	{0,			"Hastings.NZ.KrushNet.Org"},
-	{0,			"Seattle-R.WA.US.KrushNet.Org"},
-	{0,			"Minneapolis.MN.US.KrushNet.Org"},
-	{0,			"Cullowhee.NC.US.KrushNet.Org"},
-	{0,			"Asheville-R.NC.US.KrushNet.Org"},
-	{0,			"San-Antonio.TX.US.KrushNet.Org"},
+	{"Krstarica", 0},
+	{0,			"irc.krstarica.com"},
 
 	{"Librenet",	0},
 	{0,			"irc.librenet.net"},
@@ -282,6 +283,12 @@ static const struct defaultserver def[] =
 
 	{"MagicStar",	0},
 	{0,			"irc.magicstar.net"},
+
+	{"Majistic",	0},
+	{0,			"irc.majistic.net"},
+
+	{"MIXXnet",		0},
+	{0,			"irc.mixxnet.net"},
 
 	{"NeverNET",	0},
 	{0,			"irc.nevernet.net"},
@@ -304,14 +311,13 @@ static const struct defaultserver def[] =
 	{0,			"us.pa.nixhelp.org"},
 
 	{"NullusNet",	0},
-	{0,			"irc.spot.org"},/*refused*/
 	{0,			"irc.nullus.net"},
+
+	{"Oceanius", 0},
+	{0,			"irc.oceanius.com"},
 
 	{"OFTC",	0},
 	{0,			"irc.oftc.net"},
-
-	{"OnlyIRC",		0},
-	{0,			"irc.onlyirc.net"},
 
 	{"OtherNet",	0},
 	{0,			"irc.othernet.org"},
@@ -319,12 +325,6 @@ static const struct defaultserver def[] =
 	{"OzNet",	0},
 	{0,			"sydney.oz.org"},
 	{0,			"melbourne.oz.org"},
-
-	{"Progameplayer",	0},
-	{0,			"irc.progameplayer.com"},
-	{0,			"melancholia.oh.us.progameplayer.com"},
-	{0,			"deimos.oh.us.progameplayer.com"},
-	{0,			"paradigm.oh.us.progameplayer.com"},
 
 	{"PTlink",	0},
 	{0,			"irc.PTlink.net"},
@@ -361,9 +361,6 @@ static const struct defaultserver def[] =
 	{0,			"iscte.PTnet.org"},
 	{0,			"ubi.PTnet.org"},
 
-	{"QChat.net",	0},
-	{0,			"irc.qchat.net"},
-
 	{"QuakeNet",	0},
 	{0,			"irc.quakenet.org"},
 	{0,			"irc.se.quakenet.org"},
@@ -375,16 +372,18 @@ static const struct defaultserver def[] =
 	{0,			"irc.de.quakenet.org"},
 	{0,			"irc.it.quakenet.org"},
 
-	{"RealmNET",	0},
-	{0,			"irc.realmnet.com"},
-	{0,			"irc.eu.realmnet.com"},
-	{0,			"irc.us.realmnet.com"},
-
 	{"RebelChat",	0},
 	{0,			"irc.rebelchat.org"},
 
-	{"RedeBrasilIRC",	0},
-	{0,			"irc.redebrasilirc.org"},
+	{"Recycled-IRC",  0},
+	{0,			"irc.recycled-irc.org"},
+	{0,			"vermin.recycled-irc.org"},
+	{0,			"waste.recycled-irc.org"},
+	{0,			"lumber.recycled-irc.org"},
+	{0,			"trash.recycled-irc.org"},
+	{0,			"unwashed.recycled-irc.org"},
+	{0,			"garbage.recycled-irc.org"},
+	{0,			"dustbin.recycled-irc.org"},
 
 	{"RizeNET", 0},
 	{0,			"irc.rizenet.org"},
@@ -392,6 +391,13 @@ static const struct defaultserver def[] =
 	{0,			"evelance.rizenet.org"},
 	{0,			"lisa.rizenet.org"},
 	{0,			"scott.rizenet.org"},
+
+	{"RusNet", 0, 0, "KOI8-R"},
+	{0,			"irc.tomsk.net"},
+	{0,			"irc.rinet.ru"},
+	{0,			"irc.run.net"},
+	{0,			"irc.ru"},
+	{0,			"irc.lucky.net"},
 
 	{"SceneNet",	0},
 	{0,			"irc.scene.org"},
@@ -404,23 +410,27 @@ static const struct defaultserver def[] =
 	{0,			"moo.slashnet.org"},
 	{0,			"radon.slashnet.org"},
 
+	{"Sohbet.Net", 0},
+	{0,			"irc.sohbet.net"},
+
+	{"SorceryNet",	0},
+	{0,			"irc.sorcery.net/9000"},
+	{0,			"irc.us.sorcery.net/9000"},
+	{0,			"irc.eu.sorcery.net/9000"},
+
 	{"Spidernet",	0},
 	{0,			"us.spidernet.org"},
 	{0,			"eu.spidernet.org"},
 	{0,			"irc.spidernet.org"},
 
-	{"StarChat",	0},
+	{"StarChat", 0},
 	{0,			"irc.starchat.net"},
-	{0,			"galatea.starchat.net"},
-	{0,			"stargate.starchat.net"},
-	{0,			"powerzone.starchat.net"},
-	{0,			"utopia.starchat.net"},
-	{0,			"cairns.starchat.net"},
-
-	{"SubCultNet",	0},
-	{0,			"irc.subcult.ch"},
-	{0,			"irc.phuncrew.ch"},
-	{0,			"irc.mgz.ch"},
+	{0,			"gainesville.starchat.net"},
+	{0,			"freebsd.starchat.net"},
+	{0,			"sunset.starchat.net"},
+	{0,			"revenge.starchat.net"},
+	{0,			"tahoma.starchat.net"},
+	{0,			"neo.starchat.net"},
 
 	{"TNI3",			0},
 	{0,			"irc.tni3.com"},
@@ -432,8 +442,17 @@ static const struct defaultserver def[] =
 	{0,			"us.undernet.org"},
 	{0,			"eu.undernet.org"},
 
-	{"Unsecurity",	0},
-	{0,			"irc.unsecurity.org"},
+	{"UniBG",		0},
+	{0,			"irc.lirex.com"},
+	{0,			"irc.naturella.com"},
+	{0,			"irc.spnet.net"},
+	{0,			"irc.techno-link.com"},
+	{0,			"irc.telecoms.bg"},
+	{0,			"irc.tu-varna.edu"},
+
+	{"Worldnet",		0},
+	{0,			"irc.worldnet.net"},
+	{0,			"irc.fr.worldnet.net"},
 
 	{"Xentonix.net",	0},
 	{0,			"irc.ffm.de.eu.xentonix.net"},
@@ -462,11 +481,10 @@ servlist_connect (session *sess, ircnet *net)
 	ircserver *ircserv;
 	GSList *list;
 	char *port;
-	char *space;
 	server *serv;
 
 	if (!sess)
-		sess = new_ircwindow (NULL, NULL, SESS_SERVER);
+		sess = new_ircwindow (NULL, NULL, SESS_SERVER, 0);
 
 	serv = sess->server;
 
@@ -479,22 +497,14 @@ servlist_connect (session *sess, ircnet *net)
 	/* incase a protocol switch is added to the servlist gui */
 	server_fill_her_up (sess->server);
 
+	sess->willjoinchannel[0] = 0;
+	serv->password[0] = 0;
+
 	if (net->autojoin)
 		safe_strcpy (sess->willjoinchannel, net->autojoin,
 						 sizeof (sess->willjoinchannel));
 	if (net->pass)
 		safe_strcpy (serv->password, net->pass, sizeof (serv->password));
-
-	if (serv->username)
-	{
-		free (serv->username);
-		serv->username = NULL;
-	}
-	if (serv->realname)
-	{
-		free (serv->realname);
-		serv->realname = NULL;
-	}
 
 	if (net->flags & FLAG_USE_GLOBAL)
 	{
@@ -503,10 +513,6 @@ servlist_connect (session *sess, ircnet *net)
 	{
 		if (net->nick)
 			strcpy (serv->nick, net->nick);
-		if (net->user)
-			serv->username = strdup (net->user);
-		if (net->real)
-			serv->realname = strdup (net->real);
 	}
 
 	serv->dont_use_proxy = (net->flags & FLAG_USE_PROXY) ? FALSE : TRUE;
@@ -517,42 +523,30 @@ servlist_connect (session *sess, ircnet *net)
 		(net->flags & FLAG_ALLOW_INVALID) ? TRUE : FALSE;
 #endif
 
-	if (net->flags & FLAG_CYCLE)
-		/* needed later to do cycling */
-		serv->network = net;
-	else
-		serv->network = NULL;
-
-	serv->networkname = strdup (net->name);
+	serv->network = net;
 
 	port = strrchr (ircserv->hostname, '/');
 	if (port)
 	{
 		*port = 0;
-		serv->connect (serv, ircserv->hostname, atoi (port + 1), FALSE);
+
+		/* support "+port" to indicate SSL (like mIRC does) */
+		if (port[1] == '+')
+		{
+#ifdef USE_OPENSSL
+			serv->use_ssl = TRUE;
+#endif
+			serv->connect (serv, ircserv->hostname, atoi (port + 2), FALSE);
+		} else
+		{
+			serv->connect (serv, ircserv->hostname, atoi (port + 1), FALSE);
+		}
+
 		*port = '/';
 	} else
-		serv->connect (serv, ircserv->hostname, 6667, FALSE);
+		serv->connect (serv, ircserv->hostname, -1, FALSE);
 
-	if (net->command)
-	{
-		if (serv->eom_cmd)
-			free (serv->eom_cmd);
-		serv->eom_cmd = strdup (net->command[0] == '/' ? net->command+1 : net->command);
-	}
-
-	if (serv->encoding)
-	{
-		free (serv->encoding);
-		serv->encoding = NULL;
-	}
-	if (net->encoding)
-	{
-		serv->encoding = strdup (net->encoding);
-		space = strchr (serv->encoding, ' ');
-		if (space)
-			space[0] = 0;
-	}
+	server_set_encoding (serv, net->encoding);
 }
 
 int
@@ -624,7 +618,7 @@ static gint
 servlist_cycle_cb (server *serv)
 {
 	PrintTextf (serv->server_session,
-		"Cycling to next server in %s...\n", ((ircnet *)serv->network)->name);
+		_("Cycling to next server in %s...\n"), ((ircnet *)serv->network)->name);
 	servlist_connect (serv->server_session, serv->network);
 
 	return 0;
@@ -642,9 +636,13 @@ servlist_cycle (server *serv)
 		max = g_slist_length (net->servlist);
 		if (max > 0)
 		{
-			net->selected++;
-			if (net->selected >= max)
-				net->selected = 0;
+			/* try the next server, if that option is on */
+			if (net->flags & FLAG_CYCLE)
+			{
+				net->selected++;
+				if (net->selected >= max)
+					net->selected = 0;
+			}
 
 			del = prefs.recon_delay * 1000;
 			if (del < 1000)
@@ -763,6 +761,8 @@ servlist_net_remove (ircnet *net)
 		free (net->autojoin);
 	if (net->command)
 		free (net->command);
+	if (net->nickserv)
+		free (net->nickserv);
 	if (net->comment)
 		free (net->comment);
 	if (net->encoding)
@@ -782,7 +782,7 @@ servlist_net_remove (ircnet *net)
 }
 
 ircnet *
-servlist_net_add (char *name, char *comment)
+servlist_net_add (char *name, char *comment, int prepend)
 {
 	ircnet *net;
 
@@ -792,7 +792,10 @@ servlist_net_add (char *name, char *comment)
 /*	net->comment = strdup (comment);*/
 	net->flags = FLAG_CYCLE | FLAG_USE_GLOBAL | FLAG_USE_PROXY;
 
-	network_list = g_slist_append (network_list, net);
+	if (prepend)
+		network_list = g_slist_prepend (network_list, net);
+	else
+		network_list = g_slist_append (network_list, net);
 
 	return net;
 }
@@ -800,16 +803,29 @@ servlist_net_add (char *name, char *comment)
 static void
 servlist_load_defaults (void)
 {
-	int i = 0;
+	int i = 0, j = 0;
 	ircnet *net = NULL;
 
 	while (1)
 	{
 		if (def[i].network)
 		{
-			net = servlist_net_add (def[i].network, def[i].host);
+			net = servlist_net_add (def[i].network, def[i].host, FALSE);
+#ifdef WIN32
+			/* Windows gets UTF-8 for new users. Unix gets "System Default",
+				which is often UTF-8 anyway! */
+			net->encoding = strdup ("UTF-8");
+#endif
 			if (def[i].channel)
 				net->autojoin = strdup (def[i].channel);
+			if (def[i].charset)
+			{
+				free (net->encoding);
+				net->encoding = strdup (def[i].charset);
+			}
+			if (!strcmp (def[i].network, "ChatJunkies"))
+				prefs.slist_select = j;
+			j++;
 		} else
 		{
 			servlist_server_add (net, def[i].host);
@@ -824,24 +840,25 @@ static int
 servlist_load (void)
 {
 	FILE *fp;
-	char buf[256];
+	char buf[258];
 	int len;
+	char *tmp;
 	ircnet *net = NULL;
 
-	snprintf (buf, sizeof (buf), "%s/servlist_.conf", get_xdir ());
+	snprintf (buf, sizeof (buf), "%s/servlist_.conf", get_xdir_fs ());
 	fp = fopen (buf, "r");
 	if (!fp)
 		return FALSE;
 
-	while (fgets (buf, sizeof (buf) - 1, fp))
+	while (fgets (buf, sizeof (buf) - 2, fp))
 	{
 		len = strlen (buf);
+		buf[len] = 0;
 		buf[len-1] = 0;	/* remove the trailing \n */
-		switch (buf[0])
+		if (net)
 		{
-			case 'N':
-				net = servlist_net_add (buf + 2, /* comment */ "");
-				break;
+			switch (buf[0])
+			{
 			case 'I':
 				net->nick = strdup (buf + 2);
 				break;
@@ -858,7 +875,17 @@ servlist_load (void)
 				net->autojoin = strdup (buf + 2);
 				break;
 			case 'C':
-				net->command = strdup (buf + 2);
+				if (net->command)
+				{
+					/* concat extra commands with a \n separator */
+					tmp = net->command;
+					net->command = malloc (strlen (tmp) + strlen (buf + 2) + 2);
+					strcpy (net->command, tmp);
+					strcat (net->command, "\n");
+					strcat (net->command, buf + 2);
+					free (tmp);
+				} else
+					net->command = strdup (buf + 2);
 				break;
 			case 'F':
 				net->flags = atoi (buf + 2);
@@ -872,7 +899,13 @@ servlist_load (void)
 			case 'S':	/* new server/hostname for this network */
 				servlist_server_add (net, buf + 2);
 				break;
+			case 'B':
+				net->nickserv = strdup (buf + 2);
+				break;
+			}
 		}
+		if (buf[0] == 'N')
+			net = servlist_net_add (buf + 2, /* comment */ NULL, FALSE);
 	}
 	fclose (fp);
 
@@ -912,7 +945,14 @@ servlist_check_encoding (char *charset)
 	return FALSE;
 }
 
-void
+static int
+servlist_write_ccmd (char *str, void *fp)
+{
+	return fprintf (fp, "C=%s\n", (str[0] == '/') ? str + 1 : str);
+}
+
+
+int
 servlist_save (void)
 {
 	FILE *fp;
@@ -923,12 +963,12 @@ servlist_save (void)
 	GSList *hlist;
 	int first = FALSE;
 
-	snprintf (buf, sizeof (buf), "%s/servlist_.conf", get_xdir ());
+	snprintf (buf, sizeof (buf), "%s/servlist_.conf", get_xdir_fs ());
 	if (access (buf, F_OK) != 0)
 		first = TRUE;
 	fp = fopen (buf, "w");
 	if (!fp)
-		return;
+		return FALSE;
 
 #ifndef WIN32
 	if (first)
@@ -952,6 +992,8 @@ servlist_save (void)
 			fprintf (fp, "P=%s\n", net->pass);
 		if (net->autojoin)
 			fprintf (fp, "J=%s\n", net->autojoin);
+		if (net->nickserv)
+			fprintf (fp, "B=%s\n", net->nickserv);
 		if (net->encoding && strcasecmp (net->encoding, "System") &&
 			 strcasecmp (net->encoding, "System default"))
 		{
@@ -963,8 +1005,10 @@ servlist_save (void)
 				fe_message (buf, FALSE);
 			}
 		}
+
 		if (net->command)
-			fprintf (fp, "C=%s\n", net->command[0] == '/' ? net->command+1 : net->command);
+			token_foreach (net->command, '\n', servlist_write_ccmd, fp);
+
 		fprintf (fp, "F=%d\nD=%d\n", net->flags, net->selected);
 
 		hlist = net->servlist;
@@ -974,10 +1018,16 @@ servlist_save (void)
 			fprintf (fp, "S=%s\n", serv->hostname);
 			hlist = hlist->next;
 		}
-		fprintf (fp, "\n");
+
+		if (fprintf (fp, "\n") < 1)
+		{
+			fclose (fp);
+			return FALSE;
+		}
 
 		list = list->next;
 	}
 
 	fclose (fp);
+	return TRUE;
 }
