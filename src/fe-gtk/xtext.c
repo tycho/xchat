@@ -27,17 +27,12 @@
 #define SMOOTH_SCROLL				/* line-by-line or pixel scroll? */
 #define SCROLL_HACK					/* use XCopyArea scroll, or full redraw? */
 #undef COLOR_HILIGHT				/* Color instead of underline? */
-#define USE_GDK_PIXBUF
+#define GDK_MULTIHEAD_SAFE
+#define USE_DB							/* double buffer */
 
 #define MARGIN 2						/* dont touch. */
 #define REFRESH_TIMEOUT 20
 #define WORDWRAP_LIMIT 24
-
-#ifdef XCHAT
-#include "../../config.h"			/* can define USE_XLIB here */
-#else
-#define USE_XLIB
-#endif
 
 #include <string.h>
 #include <ctype.h>
@@ -47,6 +42,15 @@
 #include <gtk/gtkmain.h>
 #include <gtk/gtksignal.h>
 #include <gtk/gtkselection.h>
+#include <gtk/gtkclipboard.h>
+#include <gtk/gtkversion.h>
+#include <gtk/gtkwindow.h>
+
+#ifdef XCHAT
+#include "../../config.h"			/* can define USE_XLIB here */
+#else
+#define USE_XLIB
+#endif
 
 #ifdef USE_XLIB
 #include <gdk/gdkx.h>
@@ -54,11 +58,11 @@
 #include <X11/Xatom.h>
 #endif
 
-#include "xtext.h"
-
-#ifdef USE_GDK_PIXBUF
-#include <gdk-pixbuf/gdk-pixbuf.h>
+#ifdef USE_MMX
+#include "mmx_cmod.h"
 #endif
+
+#include "xtext.h"
 
 #define charlen(str) g_utf8_skip[*(guchar *)(str)]
 
@@ -74,7 +78,7 @@
 
 #ifdef SCROLL_HACK
 /* force scrolling off */
-#define dontscroll(buf) (buf)->last_pixel_pos = 2147483647
+#define dontscroll(buf) (buf)->last_pixel_pos = 0x7fffffff
 #else
 #define dontscroll(buf)
 #endif
@@ -94,6 +98,8 @@ struct textentry
 	gint16 indent;
 	gint16 left_len;
 	gint16 lines_taken;
+#define RECORD_WRAPS 4
+	guint16 wrap_offset[RECORD_WRAPS];
 	unsigned int mb:1;	/* is multibyte? */
 };
 
@@ -116,7 +122,7 @@ static guint xtext_signals[LAST_SIGNAL];
 
 #ifdef XCHAT
 char *nocasestrstr (const char *text, const char *tofind);	/* util.c */
-int get_stamp_str (time_t, char *, int);
+int xtext_get_stamp_str (time_t, char **);
 #endif
 static void gtk_xtext_render_page (GtkXText * xtext);
 static void gtk_xtext_calc_lines (xtext_buffer *buf, int);
@@ -128,7 +134,7 @@ static char *gtk_xtext_selection_get_text (GtkXText *xtext, int *len_ret);
 static textentry *gtk_xtext_nth (GtkXText *xtext, int line, int *subline);
 static void gtk_xtext_adjustment_changed (GtkAdjustment * adj,
 														GtkXText * xtext);
-static void gtk_xtext_render_ents (GtkXText * xtext, textentry *, textentry *);
+static int gtk_xtext_render_ents (GtkXText * xtext, textentry *, textentry *);
 static void gtk_xtext_recalc_widths (xtext_buffer *buf, int);
 static void gtk_xtext_fix_indent (xtext_buffer *buf);
 static int gtk_xtext_find_subline (GtkXText *xtext, textentry *ent, int line);
@@ -136,7 +142,6 @@ static char *gtk_xtext_conv_color (unsigned char *text, int len, int *newlen);
 static unsigned char *
 gtk_xtext_strip_color (unsigned char *text, int len, unsigned char *outbuf,
 							  int *newlen, int *mb_ret);
-static GtkType gtk_xtext_get_type (void);
 
 /* some utility functions first */
 
@@ -185,8 +190,9 @@ win32_draw_bg (GtkXText *xtext, int x, int y, int width, int height)
 
 	if (xtext->shaded)
 	{
-		gdk_draw_drawable (xtext->draw_buf, xtext->bgc, xtext->pixmap,
-								 x, y, x, y, width, height);
+		/* xtext->pixmap is really a GdkImage, created in win32_tint() */
+		gdk_draw_image (xtext->draw_buf, xtext->bgc, (GdkImage*)xtext->pixmap,
+							 x, y, x, y, width, height);
 	} else
 	{
 		hwnd = GDK_WINDOW_HWND (xtext->draw_buf);
@@ -224,16 +230,20 @@ xtext_draw_bg (GtkXText *xtext, int x, int y, int width, int height)
 
 #ifdef USE_XFT
 
-#define backend_font_close(f) XftFontClose(GDK_DISPLAY(),f)
+#define backend_font_close(d,f) XftFontClose(d,f)
 
 static void
 backend_init (GtkXText *xtext)
 {
 	if (xtext->xftdraw == NULL)
-		xtext->xftdraw = XftDrawCreate (GDK_DISPLAY (),
+	{
+		xtext->xftdraw = XftDrawCreate (
+			GDK_WINDOW_XDISPLAY (xtext->draw_buf),
 			GDK_WINDOW_XWINDOW (xtext->draw_buf),
 			GDK_VISUAL_XVISUAL (gdk_drawable_get_visual (xtext->draw_buf)),
 			GDK_COLORMAP_XCOLORMAP (gdk_drawable_get_colormap (xtext->draw_buf)));
+		XftDrawSetSubwindowMode (xtext->xftdraw, IncludeInferiors);
+	}
 }
 
 static void
@@ -251,7 +261,7 @@ backend_font_open (GtkXText *xtext, char *name)
 {
 	XftFont *font = NULL;
 	PangoFontDescription *fontd;
-	Display *xdisplay = GDK_DISPLAY ();
+	Display *xdisplay = GDK_WINDOW_XDISPLAY (xtext->draw_buf);
 	int weight, slant, screen = DefaultScreen (xdisplay);
 
 	if (*name == '-')
@@ -315,24 +325,24 @@ backend_get_char_width (GtkXText *xtext, unsigned char *str, int *mbl_ret)
 	if (*str < 128)
 	{
 		*mbl_ret = 1;
-		return xtext->fontwidth[(int)*str];
+		return xtext->fontwidth[*str];
 	}
 
 	*mbl_ret = charlen (str);
-	XftTextExtentsUtf8 (GDK_DISPLAY (), xtext->font, str, *mbl_ret, &ext);
+	XftTextExtentsUtf8 (GDK_WINDOW_XDISPLAY (xtext->draw_buf), xtext->font, str, *mbl_ret, &ext);
 
 	return ext.xOff;
 }
 
 static int
-backend_get_text_width (GtkXText *xtext, char *str, int len, int is_mb)
+backend_get_text_width (GtkXText *xtext, guchar *str, int len, int is_mb)
 {
 	XGlyphInfo ext;
 
 	if (!is_mb)
 		return gtk_xtext_text_width_8bit (xtext, str, len);
 
-	XftTextExtentsUtf8 (GDK_DISPLAY (), xtext->font, str, len, &ext);
+	XftTextExtentsUtf8 (GDK_WINDOW_XDISPLAY (xtext->draw_buf), xtext->font, str, len, &ext);
 	return ext.xOff;
 }
 
@@ -341,11 +351,11 @@ backend_draw_text (GtkXText *xtext, int dofill, GdkGC *gc, int x, int y,
 						 char *str, int len, int str_width, int is_mb)
 {
 	/*Display *xdisplay = GDK_WINDOW_XDISPLAY (xtext->draw_buf);*/
-	void (*draw_func) (XftDraw *, XftColor *, XftFont *, int, int, XftChar8 *, int) = XftDrawString8;
+	void (*draw_func) (XftDraw *, XftColor *, XftFont *, int, int, XftChar8 *, int) = (void *)XftDrawString8;
 
 	/* if all ascii, use String8 to avoid the conversion penalty */
 	if (is_mb)
-		draw_func = XftDrawStringUtf8;
+		draw_func = (void *)XftDrawStringUtf8;
 
 	if (dofill)
 	{
@@ -358,17 +368,28 @@ backend_draw_text (GtkXText *xtext, int dofill, GdkGC *gc, int x, int y,
 	}
 
 	draw_func (xtext->xftdraw, xtext->xft_fg, xtext->font, x, y, str, len);
-	/* if (~black_background) */
-/*	if (xtext->xft_bg->color.red < 0x2000 ||
-		 xtext->xft_bg->color.green < 0x2000 ||
-		 xtext->xft_bg->color.blue < 0x2000)
-		draw_func (xtext->xftdraw, xtext->xft_fg, xtext->font, x, y, str, len);*/
+	if (xtext->overdraw)
+		draw_func (xtext->xftdraw, xtext->xft_fg, xtext->font, x, y, str, len);
 
 	if (xtext->bold)
 		draw_func (xtext->xftdraw, xtext->xft_fg, xtext->font, x + 1, y, str, len);
 }
 
+/*static void
+backend_set_clip (GtkXText *xtext, GdkRectangle *area)
+{
+	gdk_gc_set_clip_rectangle (xtext->fgc, area);
+	gdk_gc_set_clip_rectangle (xtext->bgc, area);
+}
+
 static void
+backend_clear_clip (GtkXText *xtext)
+{
+	gdk_gc_set_clip_rectangle (xtext->fgc, NULL);
+	gdk_gc_set_clip_rectangle (xtext->bgc, NULL);
+}*/
+
+/*static void
 backend_set_clip (GtkXText *xtext, GdkRectangle *area)
 {
 	Region reg;
@@ -393,14 +414,14 @@ backend_clear_clip (GtkXText *xtext)
 	XftDrawSetClip (xtext->xftdraw, NULL);
 	gdk_gc_set_clip_rectangle (xtext->fgc, NULL);
 }
-
+*/
 #else	/* !USE_XFT */
 
 /* ======================================= */
 /* ============ PANGO BACKEND ============ */
 /* ======================================= */
 
-#define backend_font_close(f) pango_font_description_free(f->font)
+#define backend_font_close(d,f) pango_font_description_free(f->font)
 
 static void
 backend_init (GtkXText *xtext)
@@ -408,7 +429,8 @@ backend_init (GtkXText *xtext)
 	if (xtext->layout == NULL)
 	{
 		xtext->layout = gtk_widget_create_pango_layout (GTK_WIDGET (xtext), 0); 
-		pango_layout_set_font_description (xtext->layout, xtext->font->font);
+		if (xtext->font)
+			pango_layout_set_font_description (xtext->layout, xtext->font->font);
 	}
 }
 
@@ -463,7 +485,7 @@ backend_font_open (GtkXText *xtext, char *name)
 }
 
 static int
-backend_get_text_width (GtkXText *xtext, char *str, int len, int is_mb)
+backend_get_text_width (GtkXText *xtext, guchar *str, int len, int is_mb)
 {
 	int width;
 
@@ -487,7 +509,7 @@ backend_get_char_width (GtkXText *xtext, unsigned char *str, int *mbl_ret)
 	if (*str < 128)
 	{
 		*mbl_ret = 1;
-		return xtext->fontwidth[(int)*str];
+		return xtext->fontwidth[*str];
 	}
 
 	*mbl_ret = charlen (str);
@@ -497,16 +519,43 @@ backend_get_char_width (GtkXText *xtext, unsigned char *str, int *mbl_ret)
 	return width;
 }
 
+/* simplified version of gdk_draw_layout_line_with_colors() */
+
+static void 
+xtext_draw_layout_line (GdkDrawable      *drawable,
+								GdkGC            *gc,
+								gint              x, 
+								gint              y,
+								PangoLayoutLine  *line)
+{
+	GSList *tmp_list = line->runs;
+	PangoRectangle logical_rect;
+	gint x_off = 0;
+
+	while (tmp_list)
+	{
+		PangoLayoutRun *run = tmp_list->data;
+
+		pango_glyph_string_extents (run->glyphs, run->item->analysis.font,
+											 NULL, &logical_rect);
+
+		gdk_draw_glyphs (drawable, gc, run->item->analysis.font,
+							  x + x_off / PANGO_SCALE, y, run->glyphs);
+
+		x_off += logical_rect.width;
+		tmp_list = tmp_list->next;
+	}
+}
+
 static void
 backend_draw_text (GtkXText *xtext, int dofill, GdkGC *gc, int x, int y,
 						 char *str, int len, int str_width, int is_mb)
 {
 	GdkGCValues val;
 	GdkColor col;
+	PangoLayoutLine *line;
 
 	pango_layout_set_text (xtext->layout, str, len);
-
-	y -= xtext->font->ascent;
 
 	if (dofill)
 	{
@@ -520,28 +569,35 @@ backend_draw_text (GtkXText *xtext, int dofill, GdkGC *gc, int x, int y,
 			gdk_gc_get_values (gc, &val);
 			col.pixel = val.background.pixel;
 			gdk_gc_set_foreground (gc, &col);
-			gdk_draw_rectangle (xtext->draw_buf, gc, 1, x, y, str_width,
-									  xtext->fontsize);
+			gdk_draw_rectangle (xtext->draw_buf, gc, 1, x, y -
+									  xtext->font->ascent, str_width, xtext->fontsize);
 			col.pixel = val.foreground.pixel;
 			gdk_gc_set_foreground (gc, &col);
 		}
 	}
 
+	line = pango_layout_get_lines (xtext->layout)->data;
+
 #if 1
-{
-	GSList *list = pango_layout_get_lines (xtext->layout);
-	gdk_draw_layout_line_with_colors (xtext->draw_buf, gc, x, y +
-												 xtext->font->ascent, list->data, 0, 0);
-}
-#else
-	gdk_draw_layout (xtext->draw_buf, gc, x, y, xtext->layout);
-#endif
+	xtext_draw_layout_line (xtext->draw_buf, gc, x, y, line);
+	if (xtext->overdraw)
+		xtext_draw_layout_line (xtext->draw_buf, gc, x, y, line);
 
 	if (xtext->bold)
-		gdk_draw_layout (xtext->draw_buf, gc, x + 1, y, xtext->layout);
+		xtext_draw_layout_line (xtext->draw_buf, gc, x + 1, y, line);
+
+#else
+	gdk_draw_layout_line_with_colors (xtext->draw_buf, gc, x, y, line, 0, 0);
+	if (xtext->overdraw)
+		gdk_draw_layout_line_with_colors (xtext->draw_buf, gc, x, y, line, 0, 0);
+
+	if (xtext->bold)
+		gdk_draw_layout_line_with_colors (xtext->draw_buf, gc, x + 1, y, line,
+													 0, 0);
+#endif
 }
 
-static void
+/*static void
 backend_set_clip (GtkXText *xtext, GdkRectangle *area)
 {
 	gdk_gc_set_clip_rectangle (xtext->fgc, area);
@@ -553,7 +609,7 @@ backend_clear_clip (GtkXText *xtext)
 {
 	gdk_gc_set_clip_rectangle (xtext->fgc, NULL);
 	gdk_gc_set_clip_rectangle (xtext->bgc, NULL);
-}
+}*/
 
 #endif /* !USE_PANGO */
 
@@ -598,8 +654,8 @@ gtk_xtext_init (GtkXText * xtext)
 	xtext->add_io_tag = 0;
 	xtext->scroll_tag = 0;
 	xtext->max_lines = 0;
-	xtext->col_back = 19;
-	xtext->col_fore = 18;
+	xtext->col_back = XTEXT_BG;
+	xtext->col_fore = XTEXT_FG;
 	xtext->nc = 0;
 	xtext->pixel_offset = 0;
 	xtext->bold = FALSE;
@@ -612,10 +668,15 @@ gtk_xtext_init (GtkXText * xtext)
 #endif
 	xtext->jump_out_offset = 0;
 	xtext->jump_in_offset = 0;
+	xtext->ts_x = 0;
+	xtext->ts_y = 0;
+	xtext->clip_x = 0;
+	xtext->clip_x2 = 1000000;
+	xtext->clip_y = 0;
+	xtext->clip_y2 = 1000000;
 	xtext->error_function = NULL;
 	xtext->urlcheck_function = NULL;
 	xtext->color_paste = FALSE;
-	xtext->skip_fills = FALSE;
 	xtext->skip_border_fills = FALSE;
 	xtext->skip_stamp = FALSE;
 	xtext->render_hilights_only = FALSE;
@@ -623,14 +684,15 @@ gtk_xtext_init (GtkXText * xtext)
 	xtext->recycle = FALSE;
 	xtext->dont_render = FALSE;
 	xtext->dont_render2 = FALSE;
+	xtext->overdraw = FALSE;
 	xtext->tint_red = xtext->tint_green = xtext->tint_blue = TINT_VALUE;
 
 	xtext->adj = (GtkAdjustment *) gtk_adjustment_new (0, 0, 1, 1, 1, 1);
 	g_object_ref (G_OBJECT (xtext->adj));
 	gtk_object_sink ((GtkObject *) xtext->adj);
 
-	g_signal_connect (G_OBJECT (xtext->adj), "value_changed",
-							G_CALLBACK (gtk_xtext_adjustment_changed), xtext);
+	xtext->vc_signal_tag = g_signal_connect (G_OBJECT (xtext->adj),
+				"value_changed", G_CALLBACK (gtk_xtext_adjustment_changed), xtext);
 	{
 		static const GtkTargetEntry targets[] = {
 			{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
@@ -643,6 +705,9 @@ gtk_xtext_init (GtkXText * xtext)
 		gtk_selection_add_targets (GTK_WIDGET (xtext), GDK_SELECTION_PRIMARY,
 											targets, n_targets);
 	}
+
+	if (getenv ("XCHAT_OVERDRAW"))
+		xtext->overdraw = TRUE;
 }
 
 static void
@@ -770,7 +835,7 @@ gtk_xtext_destroy (GtkObject * object)
 
 	if (xtext->font)
 	{
-		backend_font_close (xtext->font);
+		backend_font_close (GDK_WINDOW_XDISPLAY (xtext->draw_buf), xtext->font);
 		xtext->font = NULL;
 	}
 
@@ -813,10 +878,22 @@ gtk_xtext_destroy (GtkObject * object)
 		xtext->thin_gc = NULL;
 	}
 
+	if (xtext->marker_gc)
+	{
+		g_object_unref (xtext->marker_gc);
+		xtext->marker_gc = NULL;
+	}
+
 	if (xtext->hand_cursor)
 	{
 		gdk_cursor_unref (xtext->hand_cursor);
 		xtext->hand_cursor = NULL;
+	}
+
+	if (xtext->resize_cursor)
+	{
+		gdk_cursor_unref (xtext->resize_cursor);
+		xtext->resize_cursor = NULL;
 	}
 
 	if (xtext->orig_buffer)
@@ -833,6 +910,9 @@ static void
 gtk_xtext_unrealize (GtkWidget * widget)
 {
 	backend_deinit (GTK_XTEXT (widget));
+
+	/* if there are still events in the queue, this'll avoid segfault */
+	gdk_window_set_user_data (widget->window, NULL);
 
 	if (parent_class->unrealize)
 		(* GTK_WIDGET_CLASS (parent_class)->unrealize) (widget);
@@ -889,25 +969,34 @@ gtk_xtext_realize (GtkWidget * widget)
 											GDK_GC_EXPOSURES | GDK_GC_SUBWINDOW);
 	xtext->thin_gc = gdk_gc_new_with_values (widget->window, &val,
 											GDK_GC_EXPOSURES | GDK_GC_SUBWINDOW);
+	xtext->marker_gc = gdk_gc_new_with_values (widget->window, &val,
+											GDK_GC_EXPOSURES | GDK_GC_SUBWINDOW);
 
 	/* for the separator bar (light) */
 	col.red = 0xffff; col.green = 0xffff; col.blue = 0xffff;
-	gdk_colormap_alloc_color (cmap, &col, TRUE, TRUE);
+	gdk_colormap_alloc_color (cmap, &col, FALSE, TRUE);
 	gdk_gc_set_foreground (xtext->light_gc, &col);
 
 	/* for the separator bar (dark) */
 	col.red = 0x1111; col.green = 0x1111; col.blue = 0x1111;
-	gdk_colormap_alloc_color (cmap, &col, TRUE, TRUE);
+	gdk_colormap_alloc_color (cmap, &col, FALSE, TRUE);
 	gdk_gc_set_foreground (xtext->dark_gc, &col);
 
 	/* for the separator bar (thinline) */
 	col.red = 0x8e38; col.green = 0x8e38; col.blue = 0x9f38;
-	gdk_colormap_alloc_color (cmap, &col, TRUE, TRUE);
+	gdk_colormap_alloc_color (cmap, &col, FALSE, TRUE);
 	gdk_gc_set_foreground (xtext->thin_gc, &col);
 
-	xtext_set_fg (xtext, xtext->fgc, 18);
-	xtext_set_bg (xtext, xtext->fgc, 19);
-	xtext_set_fg (xtext, xtext->bgc, 19);
+	/* for the marker bar (marker) */
+	col.pixel = xtext->palette[XTEXT_MARKER];
+	gdk_gc_set_foreground (xtext->marker_gc, &col);
+
+	xtext_set_fg (xtext, xtext->fgc, XTEXT_FG);
+	xtext_set_bg (xtext, xtext->fgc, XTEXT_BG);
+	xtext_set_fg (xtext, xtext->bgc, XTEXT_BG);
+
+	/* draw directly to window */
+	xtext->draw_buf = widget->window;
 
 #if defined(USE_XLIB) || defined(WIN32)
 	if (xtext->transparent)
@@ -919,15 +1008,20 @@ gtk_xtext_realize (GtkWidget * widget)
 	{
 		gdk_gc_set_tile (xtext->bgc, xtext->pixmap);
 		gdk_gc_set_ts_origin (xtext->bgc, 0, 0);
+		xtext->ts_x = xtext->ts_y = 0;
 		gdk_gc_set_fill (xtext->bgc, GDK_TILED);
 	}
 
+#if (GTK_MAJOR_VERSION == 2) && (GTK_MINOR_VERSION == 0)
 	xtext->hand_cursor = gdk_cursor_new (GDK_HAND1);
+	xtext->resize_cursor = gdk_cursor_new (GDK_LEFT_SIDE);
+#else
+	xtext->hand_cursor = gdk_cursor_new_for_display (gdk_drawable_get_display (widget->window), GDK_HAND1);
+	xtext->resize_cursor = gdk_cursor_new_for_display (gdk_drawable_get_display (widget->window), GDK_LEFT_SIDE);
+#endif
 
 	gdk_window_set_back_pixmap (widget->window, NULL, FALSE);
-
-	/* draw directly to window */
-	xtext->draw_buf = widget->window;
+	widget->style = gtk_style_attach (widget->style, widget->window);
 
 	backend_init (xtext);
 }
@@ -1160,14 +1254,45 @@ gtk_xtext_draw_sep (GtkXText * xtext, int y)
 }
 
 static void
+gtk_xtext_draw_marker (GtkXText * xtext, textentry * ent, int y)
+{
+	int x, width, render_y;
+
+	if (!xtext->marker) return;
+
+	if (xtext->buffer->marker_pos == ent)
+	{
+		render_y = y + xtext->font->descent;
+	}
+	else if (xtext->buffer->marker_pos == ent->next && ent->next != NULL)
+	{
+		render_y = y + xtext->font->descent + xtext->fontsize * ent->lines_taken;
+	}
+	else return;
+
+	x = 0;
+	width = GTK_WIDGET (xtext)->allocation.width;
+
+	gdk_draw_line (xtext->draw_buf, xtext->marker_gc, x, render_y, x + width, render_y);
+
+#if GTK_CHECK_VERSION(2,4,0)
+	if (gtk_window_has_toplevel_focus (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (xtext)))))
+#else
+	if (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (xtext)))->has_focus)
+#endif
+	{
+		xtext->buffer->marker_seen = TRUE;
+	}
+}
+
+static void
 gtk_xtext_paint (GtkWidget *widget, GdkRectangle *area)
 {
 	GtkXText *xtext = GTK_XTEXT (widget);
 	textentry *ent_start, *ent_end;
-	int x;
-#if defined(USE_XLIB) || defined(WIN32)
-	int y;
+	int x, y;
 
+#if defined(USE_XLIB) || defined(WIN32)
 	if (xtext->transparent)
 	{
 		gdk_window_get_origin (widget->window, &x, &y);
@@ -1176,12 +1301,14 @@ gtk_xtext_paint (GtkWidget *widget, GdkRectangle *area)
 		{
 			xtext->last_win_x = x;
 			xtext->last_win_y = y;
+#if !defined(USE_SHM) && !defined(WIN32)
 			if (xtext->shaded)
 			{
 				xtext->recycle = TRUE;
 				gtk_xtext_load_trans (xtext);
 				xtext->recycle = FALSE;
 			} else
+#endif
 			{
 				gtk_xtext_free_trans (xtext);
 				gtk_xtext_load_trans (xtext);
@@ -1210,20 +1337,38 @@ gtk_xtext_paint (GtkWidget *widget, GdkRectangle *area)
 	if (!ent_end)
 		ent_end = xtext->buffer->text_last;
 
-	xtext_draw_bg (xtext, area->x, area->y, area->width, area->height);
+	/* can't set a clip here, because fgc/bgc are used to draw the DB too */
+/*	backend_set_clip (xtext, area);*/
+	xtext->clip_x = area->x;
+	xtext->clip_x2 = area->x + area->width;
+	xtext->clip_y = area->y;
+	xtext->clip_y2 = area->y + area->height;
 
-	/* can't over-write the same text with xft, or the AA will change */
-	backend_set_clip (xtext, area);
+	/* y is the last pixel y location it rendered text at */
+	y = gtk_xtext_render_ents (xtext, ent_start, ent_end);
 
-	xtext->skip_fills = TRUE;
-	xtext->skip_border_fills = TRUE;
+	if (y && y < widget->allocation.height && !ent_end->next)
+	{
+		GdkRectangle rect;
 
-	gtk_xtext_render_ents (xtext, ent_start, ent_end);
+		rect.x = 0;
+		rect.y = y;
+		rect.width = widget->allocation.width;
+		rect.height = widget->allocation.height - y;
 
-	xtext->skip_fills = FALSE;
-	xtext->skip_border_fills = FALSE;
+		/* fill any space below the last line that also intersects with
+			the exposure rectangle */
+		if (gdk_rectangle_intersect (area, &rect, &rect))
+		{
+			xtext_draw_bg (xtext, rect.x, rect.y, rect.width, rect.height);
+		}
+	}
 
-	backend_clear_clip (xtext);
+	/*backend_clear_clip (xtext);*/
+	xtext->clip_x = 0;
+	xtext->clip_x2 = 1000000;
+	xtext->clip_y = 0;
+	xtext->clip_y2 = 1000000;
 
 xit:
 	x = xtext->buffer->indent - ((xtext->space_width + 1) / 2);
@@ -1403,10 +1548,16 @@ lamejump:
 		gtk_xtext_render_ents (xtext, xtext->buffer->last_ent_start, xtext->buffer->last_ent_end);
 		/* now render the new mark, but skip overlaps */
 		if (start_ent == xtext->buffer->last_ent_start)
-			gtk_xtext_render_ents (xtext, start_ent->next, end_ent);
-		else if (end_ent == xtext->buffer->last_ent_end)
-			gtk_xtext_render_ents (xtext, start_ent, end_ent->prev);
-		else
+		{
+			/* if the new mark is a sub-set of the old, do nothing */
+			if (start_ent != end_ent)
+				gtk_xtext_render_ents (xtext, start_ent->next, end_ent);
+		} else if (end_ent == xtext->buffer->last_ent_end)
+		{
+			/* if the new mark is a sub-set of the old, do nothing */
+			if (start_ent != end_ent)
+				gtk_xtext_render_ents (xtext, start_ent, end_ent->prev);
+		} else
 			gtk_xtext_render_ents (xtext, start_ent, end_ent);
 	}
 
@@ -1598,7 +1749,7 @@ gtk_xtext_get_word (GtkXText * xtext, int x, int y, textentry ** ret_ent,
 	unsigned char *str;
 	unsigned char *word;
 	int len;
-	int out_of_bounds;
+	int out_of_bounds = 0;
 
 	ent = gtk_xtext_find_char (xtext, x, y, &offset, &out_of_bounds);
 	if (!ent)
@@ -1627,6 +1778,12 @@ gtk_xtext_get_word (GtkXText * xtext, int x, int y, textentry ** ret_ent,
 	{
 		str++;
 		len++;
+	}
+
+	if (len > 0 && word[len-1]=='.')
+	{
+		len--;
+		str--;
 	}
 
 	if (ret_ent)
@@ -1671,6 +1828,17 @@ gtk_xtext_leave_notify (GtkWidget * widget, GdkEventCrossing * event)
 		gdk_window_set_cursor (widget->window, 0);
 		xtext->hilight_ent = NULL;
 	}
+
+	if (xtext->cursor_resize)
+	{
+		gtk_xtext_unrender_hilight (xtext);
+		xtext->hilight_start = -1;
+		xtext->hilight_end = -1;
+		xtext->cursor_resize = FALSE;
+		gdk_window_set_cursor (widget->window, 0);
+		xtext->hilight_ent = NULL;
+	}
+
 	return FALSE;
 }
 
@@ -1680,7 +1848,7 @@ static gboolean
 gtk_xtext_motion_notify (GtkWidget * widget, GdkEventMotion * event)
 {
 	GtkXText *xtext = GTK_XTEXT (widget);
-	int tmp, x, y, offset, len;
+	int tmp, x, y, offset, len, line_x;
 	unsigned char *word;
 	textentry *word_ent;
 
@@ -1722,13 +1890,28 @@ gtk_xtext_motion_notify (GtkWidget * widget, GdkEventMotion * event)
 	}
 #ifdef MOTION_MONITOR
 
+	if (xtext->separator && xtext->buffer->indent)
+	{
+		line_x = xtext->buffer->indent - ((xtext->space_width + 1) / 2);
+		if (line_x == x || line_x == x + 1 || line_x == x - 1)
+		{
+			if (!xtext->cursor_resize)
+			{
+				gdk_window_set_cursor (GTK_WIDGET (xtext)->window,
+										  		xtext->resize_cursor);
+				xtext->cursor_resize = TRUE;
+			}
+			return FALSE;
+		}
+	}
+
 	if (xtext->urlcheck_function == NULL)
 		return FALSE;
 
 	word = gtk_xtext_get_word (xtext, x, y, &word_ent, &offset, &len);
 	if (word)
 	{
-		if (xtext->urlcheck_function (GTK_WIDGET (xtext), word) > 0)
+		if (xtext->urlcheck_function (GTK_WIDGET (xtext), word, len) > 0)
 		{
 			if (!xtext->cursor_hand ||
 				 xtext->hilight_ent != word_ent ||
@@ -1774,26 +1957,60 @@ gtk_xtext_motion_notify (GtkWidget * widget, GdkEventMotion * event)
 static void
 gtk_xtext_set_clip_owner (GtkWidget * xtext, GdkEventButton * event)
 {
-#ifdef WIN32
 	char *str;
 	int len;
-
-	str = gtk_xtext_selection_get_text (GTK_XTEXT (xtext), &len);
-	if (str)
-	{
-		gtk_clipboard_set_text (gtk_clipboard_get (GDK_SELECTION_CLIPBOARD),
-										str, len);
-		free (str);
-	}
-
-#endif
-	gtk_selection_owner_set (xtext, GDK_SELECTION_PRIMARY, event->time);
 
 	if (GTK_XTEXT (xtext)->selection_buffer &&
 		GTK_XTEXT (xtext)->selection_buffer != GTK_XTEXT (xtext)->buffer)
 		gtk_xtext_selection_clear (GTK_XTEXT (xtext)->selection_buffer);
 
 	GTK_XTEXT (xtext)->selection_buffer = GTK_XTEXT (xtext)->buffer;
+
+	str = gtk_xtext_selection_get_text (GTK_XTEXT (xtext), &len);
+	if (str)
+	{
+#if (GTK_MAJOR_VERSION == 2) && (GTK_MINOR_VERSION == 0)
+		gtk_clipboard_set_text (gtk_clipboard_get (GDK_SELECTION_CLIPBOARD),
+										str, len);
+#else
+		gtk_clipboard_set_text (gtk_widget_get_clipboard (xtext, GDK_SELECTION_CLIPBOARD),
+										str, len);
+#endif
+		free (str);
+	}
+
+	gtk_selection_owner_set (xtext, GDK_SELECTION_PRIMARY, event->time);
+}
+
+static void
+gtk_xtext_unselect (GtkXText *xtext)
+{
+	xtext_buffer *buf = xtext->buffer;
+
+	xtext->skip_border_fills = TRUE;
+	xtext->skip_stamp = TRUE;
+
+	xtext->jump_in_offset = buf->last_ent_start->mark_start;
+	/* just a single ent was marked? */
+	if (buf->last_ent_start == buf->last_ent_end)
+	{
+		xtext->jump_out_offset = buf->last_ent_start->mark_end;
+		buf->last_ent_end = NULL;
+	}
+
+	gtk_xtext_selection_clear (xtext->buffer);
+
+	/* FIXME: use jump_out on multi-line selects too! */
+	gtk_xtext_render_ents (xtext, buf->last_ent_start, buf->last_ent_end);
+
+	xtext->jump_in_offset = 0;
+	xtext->jump_out_offset = 0;
+
+	xtext->skip_border_fills = FALSE;
+	xtext->skip_stamp = FALSE;
+
+	xtext->buffer->last_ent_start = NULL;
+	xtext->buffer->last_ent_end = NULL;
 }
 
 static gboolean
@@ -1837,21 +2054,11 @@ gtk_xtext_button_release (GtkWidget * widget, GdkEventButton * event)
 			gtk_xtext_set_clip_owner (GTK_WIDGET (xtext), event);
 
 		if (xtext->select_start_x == event->x &&
-			 xtext->select_start_y == event->y)
+			 xtext->select_start_y == event->y &&
+			 xtext->buffer->last_ent_start)
 		{
-			if (gtk_xtext_selection_clear (xtext->buffer))
-			{
-				xtext->skip_border_fills = TRUE;
-				xtext->skip_stamp = TRUE;
-				gtk_xtext_render_ents (xtext, xtext->buffer->last_ent_start,
-											  xtext->buffer->last_ent_end);
-				xtext->skip_border_fills = FALSE;
-				xtext->skip_stamp = FALSE;
-
-				xtext->buffer->last_ent_start = NULL;
-				xtext->buffer->last_ent_end = NULL;
-				return FALSE;
-			}
+			gtk_xtext_unselect (xtext);
+			return FALSE;
 		}
 		word = gtk_xtext_get_word (xtext, event->x, event->y, 0, 0, 0);
 		g_signal_emit (G_OBJECT (xtext), xtext_signals[WORD_CLICK], 0,
@@ -1871,7 +2078,7 @@ gtk_xtext_button_press (GtkWidget * widget, GdkEventButton * event)
 
 	gdk_window_get_pointer (widget->window, &x, &y, 0);
 
-	if (event->button == 3)		  /* right click */
+	if (event->button == 3 || event->button == 2) /* right/middle click */
 	{
 		word = gtk_xtext_get_word (xtext, x, y, 0, 0, 0);
 		if (word)
@@ -1881,12 +2088,6 @@ gtk_xtext_button_press (GtkWidget * widget, GdkEventButton * event)
 		} else
 			g_signal_emit (G_OBJECT (xtext), xtext_signals[WORD_CLICK], 0,
 								"", event);
-		return FALSE;
-	}
-
-	if (event->button == 2)
-	{
-		g_signal_emit (G_OBJECT (xtext), xtext_signals[WORD_CLICK], 0, "", event);
 		return FALSE;
 	}
 
@@ -1952,18 +2153,8 @@ static gboolean
 gtk_xtext_selection_kill (GtkXText *xtext, GdkEventSelection *event)
 {
 #ifndef WIN32
-	if (gtk_xtext_selection_clear (xtext->buffer))
-	{
-		xtext->skip_border_fills = TRUE;
-		xtext->skip_stamp = TRUE;
-		gtk_xtext_render_ents (xtext, xtext->buffer->last_ent_start,
-									  xtext->buffer->last_ent_end);
-		xtext->skip_border_fills = FALSE;
-		xtext->skip_stamp = FALSE;
-
-		xtext->buffer->last_ent_start = NULL;
-		xtext->buffer->last_ent_end = NULL;
-	}
+	if (xtext->buffer->last_ent_start)
+		gtk_xtext_unselect (xtext);
 #endif
 	return TRUE;
 }
@@ -2030,10 +2221,15 @@ gtk_xtext_selection_get_text (GtkXText *xtext, int *len_ret)
 	*pos = 0;
 
 	if (xtext->color_paste)
-		stripped = gtk_xtext_conv_color (txt, strlen (txt), &len);
-	else
+	{
+		/*stripped = gtk_xtext_conv_color (txt, strlen (txt), &len);*/
+		stripped = txt;
+		len = strlen (txt);
+	} else
+	{
 		stripped = gtk_xtext_strip_color (txt, strlen (txt), NULL, &len, 0);
-	free (txt);
+		free (txt);
+	}
 
 	*len_ret = len;
 	return stripped;
@@ -2050,6 +2246,7 @@ gtk_xtext_selection_get (GtkWidget * widget,
 	char *stripped;
 	guchar *new_text;
 	int len;
+	gsize glen;
 
 	stripped = gtk_xtext_selection_get_text (xtext, &len);
 	if (!stripped)
@@ -2068,17 +2265,23 @@ gtk_xtext_selection_get (GtkWidget * widget,
 			gint format;
 			gint new_length;
 
-			gdk_string_to_compound_text (stripped, &encoding, &format, &new_text,
-												  &new_length);
+#if (GTK_MAJOR_VERSION == 2) && (GTK_MINOR_VERSION == 0)
+			gdk_string_to_compound_text (
+#else
+			gdk_string_to_compound_text_for_display (
+												gdk_drawable_get_display (widget->window),
+#endif
+												stripped, &encoding, &format, &new_text,
+												&new_length);
 			gtk_selection_data_set (selection_data_ptr, encoding, format,
 											new_text, new_length);
 			gdk_free_compound_text (new_text);
 		}
 		break;
 	default:
-		new_text = g_locale_from_utf8 (stripped, len, NULL, &len, NULL);
+		new_text = g_locale_from_utf8 (stripped, len, NULL, &glen, NULL);
 		gtk_selection_data_set (selection_data_ptr, GDK_SELECTION_TYPE_STRING,
-										8, new_text, len);
+										8, new_text, glen);
 		g_free (new_text);
 	}
 
@@ -2089,7 +2292,7 @@ static gboolean
 gtk_xtext_scroll (GtkWidget *widget, GdkEventScroll *event)
 {
 	GtkXText *xtext = GTK_XTEXT (widget);
-	int new_value;
+	gfloat new_value;
 
 	if (event->direction == GDK_SCROLL_UP)		/* mouse wheel pageUp */
 	{
@@ -2151,7 +2354,7 @@ gtk_xtext_class_init (GtkXTextClass * class)
 	xtext_class->word_click = NULL;
 }
 
-static GtkType
+GtkType
 gtk_xtext_get_type (void)
 {
 	static GtkType xtext_type = 0;
@@ -2188,7 +2391,6 @@ gtk_xtext_strip_color (unsigned char *text, int len, unsigned char *outbuf,
 	int i = 0;
 	int col = FALSE;
 	unsigned char *new_str;
-	int mbl;
 	int mb = FALSE;
 
 	if (outbuf == NULL)
@@ -2223,27 +2425,8 @@ gtk_xtext_strip_color (unsigned char *text, int len, unsigned char *outbuf,
 			case ATTR_UNDERLINE:
 				break;
 			default:
-				mbl = charlen (text);
-				if (mbl == 1)
-				{
-					new_str[i] = *text;
-					i++;
-					text++;
-					len--;
-				} else
-				{
-					mb = TRUE;
-
-					len -= mbl;
-					/* safe-guard against invalid utf8 */
-					if (len < 0)
-						/* avoid memcpy beyond buffer */
-						mbl += len;
-					memcpy (&new_str[i], text, mbl);
-					i += mbl;
-					text += mbl;
-				}
-				continue;
+				new_str[i] = *text;
+				i++;
 			}
 		}
 		text++;
@@ -2371,6 +2554,8 @@ gtk_xtext_render_flush (GtkXText * xtext, int x, int y, unsigned char *str,
 								int len, GdkGC *gc, int is_mb)
 {
 	int str_width, dofill;
+	GdkDrawable *pix = NULL;
+	int dest_x, dest_y;
 
 	if (xtext->dont_render || len < 1)
 		return 0;
@@ -2378,6 +2563,12 @@ gtk_xtext_render_flush (GtkXText * xtext, int x, int y, unsigned char *str,
 	str_width = backend_get_text_width (xtext, str, len, is_mb);
 
 	if (xtext->dont_render2)
+		return str_width;
+
+	/* roll-your-own clipping (avoiding XftDrawString is always good!) */
+	if (x > xtext->clip_x2 || x + str_width < xtext->clip_x)
+		return str_width;
+	if (y - xtext->font->ascent > xtext->clip_y2 || (y - xtext->font->ascent) + xtext->fontsize < xtext->clip_y)
 		return str_width;
 
 	if (xtext->render_hilights_only)
@@ -2390,22 +2581,76 @@ gtk_xtext_render_flush (GtkXText * xtext, int x, int y, unsigned char *str,
 #endif
 	}
 
+#ifdef USE_DB
+#ifdef WIN32
+	if (!xtext->transparent)
+#endif
+	{
+		pix = gdk_pixmap_new (xtext->draw_buf, str_width, xtext->fontsize, xtext->depth);
+		if (pix)
+		{
+#ifdef USE_XFT
+			XftDrawChange (xtext->xftdraw, GDK_WINDOW_XWINDOW (pix));
+#endif
+			dest_x = x;
+			dest_y = y - xtext->font->ascent;
+
+			gdk_gc_set_ts_origin (xtext->bgc, xtext->ts_x - x, xtext->ts_y - dest_y);
+
+			x = 0;
+			y = xtext->font->ascent;
+			xtext->draw_buf = pix;
+		}
+	}
+#endif
+
 	dofill = TRUE;
 
 	/* backcolor is always handled by XDrawImageString */
-	if (!xtext->backcolor)
+	if (!xtext->backcolor && xtext->pixmap)
 	{
-		dofill = !xtext->skip_fills;
-		if (dofill && xtext->pixmap)
-		{
 	/* draw the background pixmap behind the text - CAUSES FLICKER HERE!! */
-			xtext_draw_bg (xtext, x, y - xtext->font->ascent, str_width,
-								xtext->fontsize);
-			dofill = FALSE;	/* already drawn the background */
-		}
+		xtext_draw_bg (xtext, x, y - xtext->font->ascent, str_width,
+							xtext->fontsize);
+		dofill = FALSE;	/* already drawn the background */
 	}
 
 	backend_draw_text (xtext, dofill, gc, x, y, str, len, str_width, is_mb);
+
+#ifdef USE_DB
+	if (pix)
+	{
+		GdkRectangle clip;
+		GdkRectangle dest;
+
+		gdk_gc_set_ts_origin (xtext->bgc, xtext->ts_x, xtext->ts_y);
+		xtext->draw_buf = GTK_WIDGET (xtext)->window;
+#ifdef USE_XFT
+		XftDrawChange (xtext->xftdraw, GDK_WINDOW_XWINDOW (xtext->draw_buf));
+#endif
+#if 0
+		gdk_draw_drawable (xtext->draw_buf, xtext->bgc, pix, 0, 0, dest_x,
+								 dest_y, str_width, xtext->fontsize);
+#else
+		clip.x = xtext->clip_x;
+		clip.y = xtext->clip_y;
+		clip.width = xtext->clip_x2 - xtext->clip_x;
+		clip.height = xtext->clip_y2 - xtext->clip_y;
+
+		dest.x = dest_x;
+		dest.y = dest_y;
+		dest.width = str_width;
+		dest.height = xtext->fontsize;
+
+		if (gdk_rectangle_intersect (&clip, &dest, &dest))
+			/* dump the DB to window, but only within the clip_x/x2/y/y2 */
+			gdk_draw_drawable (xtext->draw_buf, xtext->bgc, pix,
+									 dest.x - dest_x, dest.y - dest_y,
+									 dest.x, dest.y, dest.width, dest.height);
+#endif
+		g_object_unref (pix);
+	}
+#endif
 
 	if (xtext->underline)
 	{
@@ -2421,8 +2666,15 @@ dounder:
 		col.pixel = xtext->xft_fg->pixel;
 		gdk_gc_set_foreground (gc, &col);
 #endif
-
-		gdk_draw_line (xtext->draw_buf, gc, x, y + 1, x + str_width - 1, y + 1);
+		if (pix)
+			y = dest_y + xtext->font->ascent + 1;
+		else
+		{
+			y++;
+			dest_x = x;
+		}
+		/* draw directly to window, it's out of the range of our DB */
+		gdk_draw_line (xtext->draw_buf, gc, dest_x, y, dest_x + str_width - 1, y);
 	}
 
 	return str_width;
@@ -2439,13 +2691,13 @@ gtk_xtext_reset (GtkXText * xtext, int mark, int attribs)
 	if (!mark)
 	{
 		xtext->backcolor = FALSE;
-		if (xtext->col_fore != 18)
-			xtext_set_fg (xtext, xtext->fgc, 18);
-		if (xtext->col_back != 19)
-			xtext_set_bg (xtext, xtext->fgc, 19);
+		if (xtext->col_fore != XTEXT_FG)
+			xtext_set_fg (xtext, xtext->fgc, XTEXT_FG);
+		if (xtext->col_back != XTEXT_BG)
+			xtext_set_bg (xtext, xtext->fgc, XTEXT_BG);
 	}
-	xtext->col_fore = 18;
-	xtext->col_back = 19;
+	xtext->col_fore = XTEXT_FG;
+	xtext->col_back = XTEXT_BG;
 	xtext->parsing_color = FALSE;
 	xtext->parsing_backcolor = FALSE;
 	xtext->nc = 0;
@@ -2454,8 +2706,9 @@ gtk_xtext_reset (GtkXText * xtext, int mark, int attribs)
 /* render a single line, which WONT wrap, and parse mIRC colors */
 
 static int
-gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *str,
-							 int len, int win_width, int indent, int line)
+gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent,
+							 unsigned char *str, int len, int win_width, int indent,
+							 int line, int left_only)
 {
 	GdkGC *gc;
 	int i = 0, x = indent, j = 0;
@@ -2477,8 +2730,8 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 	if (ent->mark_start != -1 &&
 		 ent->mark_start <= i + offset && ent->mark_end > i + offset)
 	{
-		xtext_set_bg (xtext, gc, 16);
-		xtext_set_fg (xtext, gc, 17);
+		xtext_set_bg (xtext, gc, XTEXT_MARK_BG);
+		xtext_set_fg (xtext, gc, XTEXT_MARK_FG);
 		xtext->backcolor = TRUE;
 		mark = TRUE;
 	}
@@ -2498,10 +2751,10 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 	}
 #endif
 
-	if (!xtext->skip_border_fills)
+	if (!xtext->skip_border_fills && !xtext->dont_render)
 	{
 		/* draw background to the left of the text */
-		if (str == ent->str && indent && xtext->buffer->time_stamp)
+		if (str == ent->str && indent > MARGIN && xtext->buffer->time_stamp)
 		{
 			/* don't overwrite the timestamp */
 			if (indent > xtext->stamp_width)
@@ -2512,8 +2765,11 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 		} else
 		{
 			/* fill the indent area with background gc */
-			xtext_draw_bg (xtext, 0, y - xtext->font->ascent, indent,
-								xtext->fontsize);
+			if (indent >= xtext->clip_x)
+			{
+				xtext_draw_bg (xtext, 0, y - xtext->font->ascent,
+									MIN (indent, xtext->clip_x2), xtext->fontsize);
+			}
 		}
 	}
 
@@ -2555,9 +2811,9 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 					xtext->nc = 0;
 					col_num = atoi (xtext->num);
 					if (col_num == 99)	/* mIRC lameness */
-						col_num = 18;
+						col_num = XTEXT_FG;
 					else
-						col_num = col_num % 16;
+						col_num = col_num % XTEXT_MIRC_COLS;
 					xtext->col_fore = col_num;
 					if (!mark)
 						xtext_set_fg (xtext, gc, col_num);
@@ -2581,10 +2837,10 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 					if (xtext->parsing_backcolor)
 					{
 						if (col_num == 99)	/* mIRC lameness */
-							col_num = 19;
+							col_num = XTEXT_BG;
 						else
-							col_num = col_num % 16;
-						if (col_num == 19)
+							col_num = col_num % XTEXT_MIRC_COLS;
+						if (col_num == XTEXT_BG)
 							xtext->backcolor = FALSE;
 						else
 							xtext->backcolor = TRUE;
@@ -2594,9 +2850,9 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 					} else
 					{
 						if (col_num == 99)	/* mIRC lameness */
-							col_num = 18;
+							col_num = XTEXT_FG;
 						else
-							col_num = col_num % 16;
+							col_num = col_num % XTEXT_MIRC_COLS;
 						if (!mark)
 							xtext_set_fg (xtext, gc, col_num);
 						xtext->col_fore = col_num;
@@ -2629,7 +2885,7 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 					xtext_set_fg (xtext, gc, xtext->col_fore);
 					xtext_set_bg (xtext, gc, xtext->col_back);
 				}
-				if (xtext->col_back != 19)
+				if (xtext->col_back != XTEXT_BG)
 					xtext->backcolor = TRUE;
 				else
 					xtext->backcolor = FALSE;
@@ -2671,6 +2927,27 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 		if (i > len)
 			i = len;
 
+		/* Separate the left part, the space and the right part
+		   into separate runs, and reset bidi state inbetween.
+		   Perform this only on the first line of the message.
+                */
+		if (offset == 0)
+		{
+			/* we've reached the end of the left part? */
+			if ((pstr-str)+j == ent->left_len)
+			{
+				x += gtk_xtext_render_flush (xtext, x, y, pstr, j, gc, ent->mb);
+				pstr += j;
+				j = 0;
+			}
+			else if ((pstr-str)+j == ent->left_len+1)
+			{
+				x += gtk_xtext_render_flush (xtext, x, y, pstr, j, gc, ent->mb);
+				pstr += j;
+				j = 0;
+			}
+		}
+
 		/* have we been told to stop rendering at this point? */
 		if (xtext->jump_out_offset > 0 && xtext->jump_out_offset <= (i + offset))
 		{
@@ -2697,12 +2974,12 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 #ifdef COLOR_HILIGHT
 			if (mark)
 			{
-				xtext_set_bg (xtext, gc, 16);
+				xtext_set_bg (xtext, gc, XTEXT_MARK_BG);
 				xtext->backcolor = TRUE;
 			} else
 			{
 				xtext_set_bg (xtext, gc, xtext->col_back);
-				if (xtext->col_back != 19)
+				if (xtext->col_back != XTEXT_BG)
 					xtext->backcolor = TRUE;
 				else
 					xtext->backcolor = FALSE;
@@ -2725,8 +3002,8 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 			x += gtk_xtext_render_flush (xtext, x, y, pstr, j, gc, ent->mb);
 			pstr += j;
 			j = 0;
-			xtext_set_bg (xtext, gc, 16);
-			xtext_set_fg (xtext, gc, 17);
+			xtext_set_bg (xtext, gc, XTEXT_MARK_BG);
+			xtext_set_fg (xtext, gc, XTEXT_MARK_FG);
 			xtext->backcolor = TRUE;
 			mark = TRUE;
 		}
@@ -2738,7 +3015,7 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 			j = 0;
 			xtext_set_bg (xtext, gc, xtext->col_back);
 			xtext_set_fg (xtext, gc, xtext->col_fore);
-			if (xtext->col_back != 19)
+			if (xtext->col_back != XTEXT_BG)
 				xtext->backcolor = TRUE;
 			else
 				xtext->backcolor = FALSE;
@@ -2754,18 +3031,28 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 	{
 		xtext_set_bg (xtext, gc, xtext->col_back);
 		xtext_set_fg (xtext, gc, xtext->col_fore);
-		if (xtext->col_back != 19)
+		if (xtext->col_back != XTEXT_BG)
 			xtext->backcolor = TRUE;
 		else
 			xtext->backcolor = FALSE;
 	}
 
-	/* draw separator now so it doesn't appear to flicker */
-	gtk_xtext_draw_sep (xtext, y - xtext->font->ascent);
 	/* draw background to the right of the text */
-	if (!xtext->skip_border_fills)
-		xtext_draw_bg (xtext, x, y - xtext->font->ascent,
-							(win_width + MARGIN) - x, xtext->fontsize);
+	if (!left_only && !xtext->dont_render)
+	{
+		/* draw separator now so it doesn't appear to flicker */
+		gtk_xtext_draw_sep (xtext, y - xtext->font->ascent);
+		if (!xtext->skip_border_fills && xtext->clip_x2 >= x)
+		{
+			int xx = MAX (x, xtext->clip_x);
+
+			xtext_draw_bg (xtext,
+								xx,	/* x */
+								y - xtext->font->ascent, /* y */
+				MIN (xtext->clip_x2 - xx, (win_width + MARGIN) - xx), /* width */
+								xtext->fontsize);		/* height */
+		}
+	}
 
 	xtext->dont_render2 = FALSE;
 
@@ -2779,7 +3066,7 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent, unsigned char *s
 static Window desktop_window = None;
 
 static Window
-get_desktop_window (Window the_window)
+get_desktop_window (Display *xdisplay, Window the_window)
 {
 	Atom prop, type;
 	int format;
@@ -2788,24 +3075,24 @@ get_desktop_window (Window the_window)
 	unsigned int nchildren;
 	Window w, root, *children, parent;
 
-	prop = XInternAtom (GDK_DISPLAY (), "_XROOTPMAP_ID", True);
+	prop = XInternAtom (xdisplay, "_XROOTPMAP_ID", True);
 	if (prop == None)
 	{
-		prop = XInternAtom (GDK_DISPLAY (), "_XROOTCOLOR_PIXEL", True);
+		prop = XInternAtom (xdisplay, "_XROOTCOLOR_PIXEL", True);
 		if (prop == None)
 			return None;
 	}
 
 	for (w = the_window; w; w = parent)
 	{
-		if ((XQueryTree (GDK_DISPLAY (), w, &root, &parent, &children,
+		if ((XQueryTree (xdisplay, w, &root, &parent, &children,
 				&nchildren)) == False)
 			return None;
 
 		if (nchildren)
 			XFree (children);
 
-		XGetWindowProperty (GDK_DISPLAY (), w, prop, 0L, 1L, False,
+		XGetWindowProperty (xdisplay, w, prop, 0L, 1L, False,
 								  AnyPropertyType, &type, &format, &length, &after,
 								  &data);
 		if (data)
@@ -2821,7 +3108,7 @@ get_desktop_window (Window the_window)
 /* find the root window (backdrop) Pixmap */
 
 static Pixmap
-get_pixmap_prop (Window the_window)
+get_pixmap_prop (Display *xdisplay, Window the_window)
 {
 	Atom type;
 	int format;
@@ -2831,16 +3118,16 @@ get_pixmap_prop (Window the_window)
 	static Atom prop = None;
 
 	if (desktop_window == None)
-		desktop_window = get_desktop_window (the_window);
+		desktop_window = get_desktop_window (xdisplay, the_window);
 	if (desktop_window == None)
-		desktop_window = GDK_ROOT_WINDOW ();
+		desktop_window = DefaultRootWindow (xdisplay);
 
 	if (prop == None)
-		prop = XInternAtom (GDK_DISPLAY (), "_XROOTPMAP_ID", True);
+		prop = XInternAtom (xdisplay, "_XROOTPMAP_ID", True);
 	if (prop == None)
 		return None;
 
-	XGetWindowProperty (GDK_DISPLAY (), desktop_window, prop, 0L, 1L, False,
+	XGetWindowProperty (xdisplay, desktop_window, prop, 0L, 1L, False,
 							  AnyPropertyType, &type, &format, &length, &after,
 							  &data);
 	if (data)
@@ -2854,12 +3141,241 @@ get_pixmap_prop (Window the_window)
 	return pix;
 }
 
-#ifdef USE_MMX
+/* slow generic routine, for the depths/bpp we don't know about */
 
-#include "mmx_cmod.h"
+static void
+shade_ximage_generic (GdkVisual *visual, XImage *ximg, int bpl, int w, int h, int rm, int gm, int bm, int bg)
+{
+	int x, y;
+	int bgr = (256 - rm) * (bg & visual->red_mask);
+	int bgg = (256 - gm) * (bg & visual->green_mask);
+	int bgb = (256 - bm) * (bg & visual->blue_mask);
+
+	for (x = 0; x < w; x++)
+	{
+		for (y = 0; y < h; y++)
+		{
+			unsigned long pixel = XGetPixel (ximg, x, y);
+			int r, g, b;
+
+			r = rm * (pixel & visual->red_mask) + bgr;
+			g = gm * (pixel & visual->green_mask) + bgg;
+			b = bm * (pixel & visual->blue_mask) + bgb;
+
+			XPutPixel (ximg, x, y,
+							((r >> 8) & visual->red_mask) |
+							((g >> 8) & visual->green_mask) |
+							((b >> 8) & visual->blue_mask));
+		}
+	}
+}
+
+#endif
+
+/* Fast shading routine. Based on code by Willem Monsuwe <willem@stack.nl> */
+
+#define SHADE_IMAGE(bytes, type, rmask, gmask, bmask) \
+	unsigned char *ptr; \
+	int x, y; \
+	int bgr = (256 - rm) * (bg & rmask); \
+	int bgg = (256 - gm) * (bg & gmask); \
+	int bgb = (256 - bm) * (bg & bmask); \
+	ptr = (unsigned char *) data + (w * bytes); \
+	for (y = h; --y >= 0;) \
+	{ \
+		for (x = -w; x < 0; x++) \
+		{ \
+			int r, g, b; \
+			b = ((type *) ptr)[x]; \
+			r = rm * (b & rmask) + bgr; \
+			g = gm * (b & gmask) + bgg; \
+			b = bm * (b & bmask) + bgb; \
+			((type *) ptr)[x] = ((r >> 8) & rmask) \
+										| ((g >> 8) & gmask) \
+										| ((b >> 8) & bmask); \
+		} \
+		ptr += bpl; \
+    }
+
+/* RGB 15 */
+static void
+shade_ximage_15 (void *data, int bpl, int w, int h, int rm, int gm, int bm, int bg)
+{
+	SHADE_IMAGE (2, guint16, 0x7c00, 0x3e0, 0x1f);
+}
+
+/* RGB 16 */
+static void
+shade_ximage_16 (void *data, int bpl, int w, int h, int rm, int gm, int bm, int bg)
+{
+	SHADE_IMAGE (2, guint16, 0xf800, 0x7e0, 0x1f);
+}
+
+/* RGB 24 */
+static void
+shade_ximage_24 (void *data, int bpl, int w, int h, int rm, int gm, int bm, int bg)
+{
+	/* 24 has to be a special case, there's no guint24, or 24bit MOV :) */
+	unsigned char *ptr;
+	int x, y;
+	int bgr = (256 - rm) * ((bg & 0xff0000) >> 16);
+	int bgg = (256 - gm) * ((bg & 0xff00) >> 8);
+	int bgb = (256 - bm) * (bg & 0xff);
+
+	ptr = (unsigned char *) data + (w * 3);
+	for (y = h; --y >= 0;)
+	{
+		for (x = -(w * 3); x < 0; x += 3)
+		{
+			int r, g, b;
+
+#if (G_BYTE_ORDER == G_BIG_ENDIAN)
+			r = (ptr[x + 0] * rm + bgr) >> 8;
+			g = (ptr[x + 1] * gm + bgg) >> 8;
+			b = (ptr[x + 2] * bm + bgb) >> 8;
+			ptr[x + 0] = r;
+			ptr[x + 1] = g;
+			ptr[x + 2] = b;
+#else
+			r = (ptr[x + 2] * rm + bgr) >> 8;
+			g = (ptr[x + 1] * gm + bgg) >> 8;
+			b = (ptr[x + 0] * bm + bgb) >> 8;
+			ptr[x + 2] = r;
+			ptr[x + 1] = g;
+			ptr[x + 0] = b;
+#endif
+		}
+		ptr += bpl;
+	}
+}
+
+/* RGB 32 */
+static void
+shade_ximage_32 (void *data, int bpl, int w, int h, int rm, int gm, int bm, int bg)
+{
+	SHADE_IMAGE (4, guint32, 0xff0000, 0xff00, 0xff);
+}
+
+static void
+shade_image (GdkVisual *visual, void *data, int bpl, int bpp, int w, int h,
+				 int rm, int gm, int bm, int bg, int depth)
+{
+	int bg_r, bg_g, bg_b;
+
+	bg_r = bg & visual->red_mask;
+	bg_g = bg & visual->green_mask;
+	bg_b = bg & visual->blue_mask;
+
+#ifdef USE_MMX
+	/* the MMX routines are about 50% faster at 16-bit. */
+	/* only use MMX routines with a pure black background */
+	if (bg_r == 0 && bg_g == 0 && bg_b == 0 && have_mmx ())	/* do a runtime check too! */
+	{
+		switch (depth)
+		{
+		case 15:
+			shade_ximage_15_mmx (data, bpl, w, h, rm, gm, bm);
+			break;
+		case 16:
+			shade_ximage_16_mmx (data, bpl, w, h, rm, gm, bm);
+			break;
+		case 24:
+			if (bpp != 32)
+				goto generic;
+		case 32:
+			shade_ximage_32_mmx (data, bpl, w, h, rm, gm, bm);
+			break;
+		default:
+			goto generic;
+		}
+	} else
+	{
+generic:
+#endif
+		switch (depth)
+		{
+		case 15:
+			shade_ximage_15 (data, bpl, w, h, rm, gm, bm, bg);
+			break;
+		case 16:
+			shade_ximage_16 (data, bpl, w, h, rm, gm, bm, bg);
+			break;
+		case 24:
+			if (bpp != 32)
+			{
+				shade_ximage_24 (data, bpl, w, h, rm, gm, bm, bg);
+				break;
+			}
+		case 32:
+			shade_ximage_32 (data, bpl, w, h, rm, gm, bm, bg);
+		}
+#ifdef USE_MMX
+	}
+#endif
+}
+
+#ifdef USE_XLIB
+
+#ifdef USE_SHM
+
+static XImage *
+get_shm_image (Display *xdisplay, XShmSegmentInfo *shminfo, int x, int y,
+					int w, int h, int depth, Pixmap pix)
+{
+	XImage *ximg;
+
+	shminfo->shmid = -1;
+	shminfo->shmaddr = (char*) -1;
+	ximg = XShmCreateImage (xdisplay, 0, depth, ZPixmap, 0, shminfo, w, h);
+	if (!ximg)
+		return NULL;
+
+	shminfo->shmid = shmget (IPC_PRIVATE, ximg->bytes_per_line * ximg->height,
+									 IPC_CREAT|0600);
+	if (shminfo->shmid == -1)
+	{
+		XDestroyImage (ximg);
+		return NULL;
+	}
+
+	shminfo->readOnly = False;
+	ximg->data = shminfo->shmaddr = (char *)shmat (shminfo->shmid, 0, 0);
+	if (shminfo->shmaddr == ((char *)-1))
+	{
+		shmctl (shminfo->shmid, IPC_RMID, 0);
+		XDestroyImage (ximg);
+		return NULL;
+	}
+
+	XShmAttach (xdisplay, shminfo);
+	XSync (xdisplay, False);
+	shmctl (shminfo->shmid, IPC_RMID, 0);
+	XShmGetImage (xdisplay, pix, ximg, x, y, AllPlanes);
+
+	return ximg;
+}
+
+static XImage *
+get_image (GtkXText *xtext, Display *xdisplay, XShmSegmentInfo *shminfo,
+			  int x, int y, int w, int h, int depth, Pixmap pix)
+{
+	XImage *ximg;
+
+	xtext->shm = 1;
+	ximg = get_shm_image (xdisplay, shminfo, x, y, w, h, depth, pix);
+	if (!ximg)
+	{
+		xtext->shm = 0;
+		ximg = XGetImage (xdisplay, pix, x, y, w, h, -1, ZPixmap);
+	}
+
+	return ximg;
+}
+
+#endif
 
 static GdkPixmap *
-shade_pixmap_mmx (GtkXText * xtext, Pixmap p, int x, int y, int w, int h)
+shade_pixmap (GtkXText * xtext, Pixmap p, int x, int y, int w, int h)
 {
 	unsigned int dummy, width, height, depth;
 	GdkPixmap *shaded_pix;
@@ -2868,229 +3384,227 @@ shade_pixmap_mmx (GtkXText * xtext, Pixmap p, int x, int y, int w, int h)
 	XImage *ximg;
 	XGCValues gcv;
 	GC tgc;
+	Display *xdisplay = GDK_WINDOW_XDISPLAY (xtext->draw_buf);
 
-	XGetGeometry (GDK_DISPLAY (), p, &root, &dummy, &dummy, &width, &height,
+	XGetGeometry (xdisplay, p, &root, &dummy, &dummy, &width, &height,
 					  &dummy, &depth);
 
 	if (width < x + w || height < y + h || x < 0 || y < 0)
 	{
 		gcv.subwindow_mode = IncludeInferiors;
 		gcv.graphics_exposures = False;
-		tgc = XCreateGC (GDK_DISPLAY (), p, GCGraphicsExposures|GCSubwindowMode,
+		tgc = XCreateGC (xdisplay, p, GCGraphicsExposures|GCSubwindowMode,
 							  &gcv);
-		tmp = XCreatePixmap (GDK_DISPLAY (), p, w, h, depth);
-		XSetTile (GDK_DISPLAY (), tgc, p);
-		XSetFillStyle (GDK_DISPLAY (), tgc, FillTiled);
-		XSetTSOrigin (GDK_DISPLAY (), tgc, -x, -y);
-		XFillRectangle (GDK_DISPLAY (), tmp, tgc, 0, 0, w, h);
-		XFreeGC (GDK_DISPLAY (), tgc);
+		tmp = XCreatePixmap (xdisplay, p, w, h, depth);
+		XSetTile (xdisplay, tgc, p);
+		XSetFillStyle (xdisplay, tgc, FillTiled);
+		XSetTSOrigin (xdisplay, tgc, -x, -y);
+		XFillRectangle (xdisplay, tmp, tgc, 0, 0, w, h);
+		XFreeGC (xdisplay, tgc);
 
-		ximg = XGetImage (GDK_DISPLAY (), tmp, 0, 0, w, h, -1, ZPixmap);
-		XFreePixmap (GDK_DISPLAY (), tmp);
+#ifdef USE_SHM
+		ximg = get_image (xtext, xdisplay, &xtext->shminfo, 0, 0, w, h, depth, tmp);
+#else
+		ximg = XGetImage (xdisplay, tmp, 0, 0, w, h, -1, ZPixmap);
+#endif
+		XFreePixmap (xdisplay, tmp);
 	} else
 	{
-		ximg = XGetImage (GDK_DISPLAY (), p, x, y, w, h, -1, ZPixmap);
+#ifdef USE_SHM
+		ximg = get_image (xtext, xdisplay, &xtext->shminfo, x, y, w, h, depth, p);
+#else
+		ximg = XGetImage (xdisplay, p, x, y, w, h, -1, ZPixmap);
+#endif
 	}
 
-	switch (depth)
+	if (!ximg)
+		return NULL;
+
+	if (depth <= 14)
 	{
-	/* 1 and 8 not supported */
-	case 15:
-		shade_ximage_15_mmx (ximg->data, ximg->bytes_per_line, w, h,
-						xtext->tint_red, xtext->tint_green, xtext->tint_blue);
-		break;
-	case 16:
-		shade_ximage_16_mmx (ximg->data, ximg->bytes_per_line, w, h,
-						xtext->tint_red, xtext->tint_green, xtext->tint_blue);
-		break;
-	case 24:
-		if (ximg->bits_per_pixel != 32)
-			break;
-	case 32:
-		shade_ximage_32_mmx (ximg->data, ximg->bytes_per_line, w, h,
-						xtext->tint_red, xtext->tint_green, xtext->tint_blue);
-		break;
+		shade_ximage_generic (gdk_drawable_get_visual (GTK_WIDGET (xtext)->window),
+									 ximg, ximg->bytes_per_line, w, h, xtext->tint_red,
+									 xtext->tint_green, xtext->tint_blue,
+									 xtext->palette[XTEXT_BG]);
+	} else
+	{
+		shade_image (gdk_drawable_get_visual (GTK_WIDGET (xtext)->window),
+						 ximg->data, ximg->bytes_per_line, ximg->bits_per_pixel,
+						 w, h, xtext->tint_red, xtext->tint_green, xtext->tint_blue,
+						 xtext->palette[XTEXT_BG], depth);
 	}
 
 	if (xtext->recycle)
 		shaded_pix = xtext->pixmap;
 	else
-		shaded_pix = gdk_pixmap_new (GTK_WIDGET (xtext)->window, w, h, depth);
+	{
+#ifdef USE_SHM
+		if (xtext->shm)
+		{
+#if (GTK_MAJOR_VERSION == 2) && (GTK_MINOR_VERSION == 0)
+			shaded_pix = gdk_pixmap_foreign_new (
+				XShmCreatePixmap (xdisplay, p, ximg->data, &xtext->shminfo, w, h, depth));
+#else
+			shaded_pix = gdk_pixmap_foreign_new_for_display (
+				gdk_drawable_get_display (xtext->draw_buf),
+				XShmCreatePixmap (xdisplay, p, ximg->data, &xtext->shminfo, w, h, depth));
+#endif
+		} else
+#endif
+		{
+			shaded_pix = gdk_pixmap_new (GTK_WIDGET (xtext)->window, w, h, depth);
+		}
+	}
 
-	XPutImage (GDK_DISPLAY (), GDK_WINDOW_XWINDOW (shaded_pix),
-				  GDK_GC_XGC (xtext->fgc), ximg, 0, 0, 0, 0, w, h);
-
+#ifdef USE_SHM
+	if (!xtext->shm)
+#endif
+		XPutImage (xdisplay, GDK_WINDOW_XWINDOW (shaded_pix),
+					  GDK_GC_XGC (xtext->fgc), ximg, 0, 0, 0, 0, w, h);
 	XDestroyImage (ximg);
 
 	return shaded_pix;
 }
 
-#endif	/* !USE_MMX */
-
-#ifdef USE_GDK_PIXBUF
-
-static GdkPixmap *
-shade_pixmap_gdk (GtkXText * xtext, Pixmap p, int x, int y, int w, int h)
-{
-	GdkPixmap *pp, *tmp, *shaded_pixmap;
-	GdkPixbuf *pixbuf;
-	GdkColormap *cmap;
-	GdkGC *tgc;
-	unsigned char *buf;
-	unsigned char *pbuf;
-	int width, height, depth;
-	int rowstride;
-	int pbwidth;
-	int pbheight;
-	int i, j;
-	int offset;
-	int r, g, b, a;
-
-	pp = gdk_pixmap_foreign_new (p);
-	cmap = gtk_widget_get_colormap (GTK_WIDGET (xtext));
-	gdk_drawable_get_size (pp, &width, &height);
-	depth = gdk_drawable_get_depth (pp);
-
-	if (width < x + w || height < y + h || x < 0 || y < 0)
-	{
-		tgc = gdk_gc_new (pp);
-		tmp = gdk_pixmap_new (pp, w, h, depth);
-		gdk_gc_set_tile (tgc, pp);
-		gdk_gc_set_fill (tgc, GDK_TILED);
-		gdk_gc_set_ts_origin (tgc, -x, -y);
-		gdk_draw_rectangle (tmp, tgc, TRUE, 0, 0, w, h);
-		g_object_unref (tgc);
-
-		pixbuf = gdk_pixbuf_get_from_drawable (NULL, tmp, cmap,
-															0, 0, 0, 0, w, h);
-		g_object_unref (tmp);
-	} else
-	{
-		pixbuf = gdk_pixbuf_get_from_drawable (NULL, pp, cmap,
-															x, y, 0, 0, w, h);
-	}
-	g_object_unref (pp);
-
-	if (!pixbuf)
-		return NULL;
-
-	buf = gdk_pixbuf_get_pixels (pixbuf);
-	rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-	pbwidth = gdk_pixbuf_get_width (pixbuf);
-	pbheight = gdk_pixbuf_get_height (pixbuf);
-
-	a = 128;	/* alpha */
-	r = xtext->tint_red;
-	g = xtext->tint_green;
-	b = xtext->tint_blue;
-
-	if (gdk_pixbuf_get_has_alpha (pixbuf))
-		offset = 4;
-	else
-		offset = 3;
-
-	for (i=0;i<pbheight;i++)
-	{
-		pbuf = buf;
-		for (j=0;j<pbwidth;j++)
-		{
-			pbuf[0] = ((pbuf[0] * r) >> 8);
-			pbuf[1] = ((pbuf[1] * g) >> 8);
-			pbuf[2] = ((pbuf[2] * b) >> 8);
-			pbuf+=offset;
-		}
-		buf+=rowstride;
-	}
-
-	/* reuse the same pixmap to save a few cycles */
-	if (xtext->recycle)
-	{
-		shaded_pixmap = xtext->pixmap;
-		gdk_pixbuf_render_to_drawable (pixbuf, shaded_pixmap, xtext->fgc, 0, 0,
-												 0, 0, w, h, GDK_RGB_DITHER_NORMAL, 0, 0);
-	} else
-	{
-		gdk_pixbuf_render_pixmap_and_mask (pixbuf, &shaded_pixmap, NULL, 0);
-	}
-	g_object_unref (pixbuf);
-
-	return shaded_pixmap;
-}
-
-#endif /* !USE_GDK_PIXBUF */
-
-#if defined(USE_GDK_PIXBUF) || defined(USE_MMX)
-
-static GdkPixmap *
-shade_pixmap (GtkXText * xtext, Pixmap p, int x, int y, int w, int h)
-{
-#ifdef USE_MMX
-
-	if (have_mmx () && xtext->depth != 8)
-		return shade_pixmap_mmx (xtext, p, x, y, w, h);
-
-#ifdef USE_GDK_PIXBUF
-	return shade_pixmap_gdk (xtext, p, x, y, w, h);
-#else
-	return NULL;
-#endif
-
-#else
-
-	return shade_pixmap_gdk (xtext, p, x, y, w, h);
-
-#endif /* !USE_MMX */
-}
-
-#endif /* !USE_TINT */
 #endif /* !USE_XLIB */
 
 /* free transparency xtext->pixmap */
+#if defined(USE_XLIB) || defined(WIN32)
 
 static void
 gtk_xtext_free_trans (GtkXText * xtext)
 {
 	if (xtext->pixmap)
 	{
+#ifdef USE_SHM
+		if (xtext->shm)
+		{
+			XFreePixmap (GDK_WINDOW_XDISPLAY (xtext->pixmap),
+							 GDK_WINDOW_XWINDOW (xtext->pixmap));
+			XShmDetach (GDK_WINDOW_XDISPLAY (xtext->draw_buf), &xtext->shminfo);
+			shmdt (xtext->shminfo.shmaddr);
+		}
+#endif
 		g_object_unref (xtext->pixmap);
 		xtext->pixmap = NULL;
+		xtext->shm = 0;
 	}
 }
+
+#endif
 
 #ifdef WIN32
 
 static GdkPixmap *
 win32_tint (GtkXText *xtext, GdkImage *img, int width, int height)
 {
+	guchar *pixelp;
 	int x, y;
 	GdkPixmap *pix;
-	GdkVisual *visual = img->visual;
-	gulong pixel;
+	GdkVisual *visual = gdk_drawable_get_visual (GTK_WIDGET (xtext)->window);
+	guint32 pixel;
 	int r, g, b;
 
-	for (y = 0; y < height; y++)
+	if (img->depth <= 14)
 	{
-		for (x = 0; x < width; x++)
+		/* slow generic routine */
+		for (y = 0; y < height; y++)
 		{
-			pixel = gdk_image_get_pixel (img, x, y);
+			for (x = 0; x < width; x++)
+			{
+				if (img->depth == 1)
+				{
+					pixel = (((guchar *) img->mem)[y * img->bpl + (x >> 3)] & (1 << (7 - (x & 0x7)))) != 0;
+					goto here;
+				}
 
-			r = (pixel & visual->red_mask) >> visual->red_shift;
-			g = (pixel & visual->green_mask) >> visual->green_shift;
-			b = (pixel & visual->blue_mask) >> visual->blue_shift;
+				if (img->depth == 4)
+				{
+					pixelp = (guchar *) img->mem + y * img->bpl + (x >> 1);
+					if (x&1)
+					{
+						pixel = (*pixelp) & 0x0F;
+						goto here;
+					}
 
-			gdk_image_put_pixel (img, x, y,
-						((r * xtext->tint_red) >> 8) << visual->red_shift |
-						((g * xtext->tint_green) >> 8) << visual->green_shift |
-						((b * xtext->tint_blue) >> 8) << visual->blue_shift);
+					pixel = (*pixelp) >> 4;
+					goto here;
+				}
+
+				pixelp = (guchar *) img->mem + y * img->bpl + x * img->bpp;
+
+				switch (img->bpp)
+				{
+				case 1:
+					pixel = *pixelp; break;
+
+				/* Windows is always LSB, no need to check img->byte_order. */
+				case 2:
+					pixel = pixelp[0] | (pixelp[1] << 8); break;
+
+				case 3:
+					pixel = pixelp[0] | (pixelp[1] << 8) | (pixelp[2] << 16); break;
+
+				case 4:
+					pixel = pixelp[0] | (pixelp[1] << 8) | (pixelp[2] << 16); break;
+				}
+
+here:
+				r = (pixel & visual->red_mask) >> visual->red_shift;
+				g = (pixel & visual->green_mask) >> visual->green_shift;
+				b = (pixel & visual->blue_mask) >> visual->blue_shift;
+
+				/* actual tinting is only these 3 lines */
+				pixel = ((r * xtext->tint_red) >> 8) << visual->red_shift |
+							((g * xtext->tint_green) >> 8) << visual->green_shift |
+							((b * xtext->tint_blue) >> 8) << visual->blue_shift;
+
+				if (img->depth == 1)
+					if (pixel & 1)
+						((guchar *) img->mem)[y * img->bpl + (x >> 3)] |= (1 << (7 - (x & 0x7)));
+					else
+						((guchar *) img->mem)[y * img->bpl + (x >> 3)] &= ~(1 << (7 - (x & 0x7)));
+				else if (img->depth == 4)
+				{
+					pixelp = (guchar *) img->mem + y * img->bpl + (x >> 1);
+
+					if (x&1)
+					{
+						*pixelp &= 0xF0;
+						*pixelp |= (pixel & 0x0F);
+					} else
+					{
+						*pixelp &= 0x0F;
+						*pixelp |= (pixel << 4);
+					}
+				} else
+				{
+					pixelp = (guchar *) img->mem + y * img->bpl + x * img->bpp;
+
+					/* Windows is always LSB, no need to check img->byte_order. */
+					switch (img->bpp)
+					{
+					case 4:
+						pixelp[3] = 0;
+					case 3:
+						pixelp[2] = ((pixel >> 16) & 0xFF);
+					case 2:
+						pixelp[1] = ((pixel >> 8) & 0xFF);
+					case 1:
+						pixelp[0] = (pixel & 0xFF);
+					}
+				}
+			}
 		}
+	} else
+	{
+		shade_image (visual, img->mem, img->bpl, img->bpp, width, height,
+						 xtext->tint_red, xtext->tint_green, xtext->tint_blue,
+						 xtext->palette[XTEXT_BG], visual->depth);
 	}
 
-	if (xtext->recycle)
-		pix = xtext->pixmap;
-	else
-		pix = gdk_pixmap_new (GTK_WIDGET (xtext)->window, width, height,
-									 xtext->depth);
-	gdk_draw_image (pix, xtext->bgc, img, 0, 0, 0, 0, width, height);
+	/* no need to dump it to a Pixmap, it's one and the same on win32 */
+	pix = (GdkPixmap *)img;
 
 	return pix;
 }
@@ -3098,6 +3612,7 @@ win32_tint (GtkXText *xtext, GdkImage *img, int width, int height)
 #endif /* !WIN32 */
 
 /* grab pixmap from root window and set xtext->pixmap */
+#if defined(USE_XLIB) || defined(WIN32)
 
 static void
 gtk_xtext_load_trans (GtkXText * xtext)
@@ -3118,10 +3633,8 @@ gtk_xtext_load_trans (GtkXText * xtext)
 	ReleaseDC (hwnd, hdc);
 
 	gdk_window_get_size (GTK_WIDGET (xtext)->window, &width, &height);
-	width += 105;
-	img = gdk_image_get (GTK_WIDGET (xtext)->window, 0, 0, width, height);
-	xtext->pixmap = win32_tint (xtext, img, width, height);
-	gdk_image_destroy (img);
+	img = gdk_image_get (GTK_WIDGET (xtext)->window, 0, 0, width+128, height);
+	xtext->pixmap = win32_tint (xtext, img, img->width, img->height);
 
 #else
 
@@ -3129,20 +3642,17 @@ gtk_xtext_load_trans (GtkXText * xtext)
 	GtkWidget *widget = GTK_WIDGET (xtext);
 	int x, y;
 
-	rootpix = get_pixmap_prop (GDK_WINDOW_XWINDOW (widget->window));
+	rootpix = get_pixmap_prop (GDK_WINDOW_XDISPLAY (widget->window), GDK_WINDOW_XWINDOW (widget->window));
 	if (rootpix == None)
 	{
 		if (xtext->error_function)
-			xtext->error_function ("Unable to get root window pixmap!\n\n"
-										  "You may need to use Esetroot or Gnome\n"
-										  "control-center to set your background.\n");
+			xtext->error_function (0);
 		xtext->transparent = FALSE;
 		return;
 	}
 
 	gdk_window_get_origin (widget->window, &x, &y);
 
-#if defined(USE_GDK_PIXBUF) || defined(USE_MMX)
 	if (xtext->shaded)
 	{
 		int width, height;
@@ -3155,19 +3665,25 @@ gtk_xtext_load_trans (GtkXText * xtext)
 		}
 		gdk_gc_set_tile (xtext->bgc, xtext->pixmap);
 		gdk_gc_set_ts_origin (xtext->bgc, 0, 0);
+		xtext->ts_x = xtext->ts_y = 0;
 	} else
 	{
 noshade:
-#endif
+#if (GTK_MAJOR_VERSION == 2) && (GTK_MINOR_VERSION == 0)
 		xtext->pixmap = gdk_pixmap_foreign_new (rootpix);
+#else
+		xtext->pixmap = gdk_pixmap_foreign_new_for_display (gdk_drawable_get_display (GTK_WIDGET (xtext)->window), rootpix);
+#endif
 		gdk_gc_set_tile (xtext->bgc, xtext->pixmap);
 		gdk_gc_set_ts_origin (xtext->bgc, -x, -y);
-#if defined(USE_GDK_PIXBUF) || defined(USE_MMX)
+		xtext->ts_x = -x;
+		xtext->ts_y = -y;
 	}
-#endif
 	gdk_gc_set_fill (xtext->bgc, GDK_TILED);
 #endif /* !WIN32 */
 }
+
+#endif /* ! XLIB || WIN32 */
 
 /* walk through str until this line doesn't fit anymore */
 
@@ -3281,15 +3797,25 @@ gtk_xtext_find_subline (GtkXText *xtext, textentry *ent, int line)
 	unsigned char *str;
 	int indent, str_pos, line_pos, len;
 
-	gdk_drawable_get_size (GTK_WIDGET (xtext)->window, &win_width, 0);
-	win_width -= MARGIN;
-
 	if (ent->lines_taken < 2 || line < 1)
 		return 0;
 
-	indent = ent->indent;
+	/* we record the first 4 lines' wraps, so take a shortcut */
+	if (line <= RECORD_WRAPS)
+		return ent->wrap_offset[line - 1];
+
+	gdk_drawable_get_size (GTK_WIDGET (xtext)->window, &win_width, 0);
+	win_width -= MARGIN;
+
+/*	indent = ent->indent;
 	str = ent->str;
-	line_pos = str_pos = 0;
+	line_pos = str_pos = 0;*/
+
+	/* start from the last recorded wrap, and move forward */
+	indent = xtext->buffer->indent;
+	str_pos = ent->wrap_offset[RECORD_WRAPS-1];
+	str = str_pos + ent->str;
+	line_pos = RECORD_WRAPS;
 
 	do
 	{
@@ -3313,43 +3839,65 @@ gtk_xtext_render_line (GtkXText * xtext, textentry * ent, int line,
 							  int lines_max, int subline, int win_width)
 {
 	unsigned char *str;
-	int indent, taken, len, y;
+	int indent, taken, entline, len, y, start_subline;
 
-	taken = 0;
+	entline = taken = 0;
 	str = ent->str;
 	indent = ent->indent;
+	start_subline = subline;
 
 #ifdef XCHAT
 	/* draw the timestamp */
-	if (xtext->buffer->time_stamp && !xtext->skip_stamp)
+	if (xtext->auto_indent && xtext->buffer->time_stamp && !xtext->skip_stamp)
 	{
-		char time_str[64];
-		int stamp_size = get_stamp_str (ent->stamp, time_str, sizeof (time_str));
+		char *time_str;
+		int stamp_size = xtext_get_stamp_str (ent->stamp, &time_str);
+		int tmp = ent->mb;
 		y = (xtext->fontsize * line) + xtext->font->ascent - xtext->pixel_offset;
+		ent->mb = TRUE;
 		gtk_xtext_render_str (xtext, y, ent, time_str, stamp_size,
-									 win_width, 2, line);
+									 win_width, 2, line, TRUE);
+		ent->mb = tmp;
+		g_free (time_str);
 	}
 #endif
 
 	/* draw each line one by one */
 	do
 	{
-		len = find_next_wrap (xtext, ent, str, win_width, indent);
+		/* if it's one of the first 4 wraps, we don't need to calculate it, it's
+			recorded in ->wrap_offset. This saves us a loop. */
+		if (entline < RECORD_WRAPS)
+		{
+			if (ent->lines_taken < 2)
+				len = ent->str_len;
+			else
+			{
+				if (entline > 0)
+					len = ent->wrap_offset[entline] - ent->wrap_offset[entline-1];
+				else
+					len = ent->wrap_offset[0];
+			}
+		} else
+			len = find_next_wrap (xtext, ent, str, win_width, indent);
+
+		entline++;
 
 		y = (xtext->fontsize * line) + xtext->font->ascent - xtext->pixel_offset;
 		if (!subline)
 		{
 			if (!gtk_xtext_render_str (xtext, y, ent, str, len, win_width,
-												indent, line))
+												indent, line, FALSE))
 			{
 				/* small optimization */
+				gtk_xtext_draw_marker (xtext, ent, y - xtext->fontsize * (taken + start_subline + 1));
 				return ent->lines_taken - subline;
 			}
 		} else
 		{
 			xtext->dont_render = TRUE;
 			gtk_xtext_render_str (xtext, y, ent, str, len, win_width,
-										 indent, line);
+										 indent, line, FALSE);
 			xtext->dont_render = FALSE;
 			subline--;
 			line--;
@@ -3367,6 +3915,8 @@ gtk_xtext_render_line (GtkXText * xtext, textentry * ent, int line,
 	}
 	while (str < ent->str + ent->str_len);
 
+	gtk_xtext_draw_marker (xtext, ent, y - xtext->fontsize * (taken + start_subline));
+
 	return taken;
 }
 
@@ -3374,8 +3924,9 @@ void
 gtk_xtext_set_palette (GtkXText * xtext, GdkColor palette[])
 {
 	int i;
+	GdkColor col;
 
-	for (i = 19; i >= 0; i--)
+	for (i = (XTEXT_COLS-1); i >= 0; i--)
 	{
 #ifdef USE_XFT
 		xtext->color[i].color.red = palette[i].red;
@@ -3389,12 +3940,15 @@ gtk_xtext_set_palette (GtkXText * xtext, GdkColor palette[])
 
 	if (GTK_WIDGET_REALIZED (xtext))
 	{
-		xtext_set_fg (xtext, xtext->fgc, 18);
-		xtext_set_bg (xtext, xtext->fgc, 19);
-		xtext_set_fg (xtext, xtext->bgc, 19);
+		xtext_set_fg (xtext, xtext->fgc, XTEXT_FG);
+		xtext_set_bg (xtext, xtext->fgc, XTEXT_BG);
+		xtext_set_fg (xtext, xtext->bgc, XTEXT_BG);
+
+		col.pixel = xtext->palette[XTEXT_MARKER];
+		gdk_gc_set_foreground (xtext->marker_gc, &col);
 	}
-	xtext->col_fore = 18;
-	xtext->col_back = 19;
+	xtext->col_fore = XTEXT_FG;
+	xtext->col_back = XTEXT_BG;
 }
 
 static void
@@ -3452,7 +4006,10 @@ gtk_xtext_set_font (GtkXText *xtext, char *name)
 	unsigned char c;
 
 	if (xtext->font)
-		backend_font_close (xtext->font);
+		backend_font_close (GDK_WINDOW_XDISPLAY (xtext->draw_buf), xtext->font);
+
+	/* realize now, so that font_open has a XDisplay */
+	gtk_widget_realize (GTK_WIDGET (xtext));
 
 	backend_font_open (xtext, name);
 	if (xtext->font == NULL)
@@ -3469,10 +4026,11 @@ gtk_xtext_set_font (GtkXText *xtext, char *name)
 
 #ifdef XCHAT
 	{
-		char time_str[64];
-		int stamp_size = get_stamp_str (time(0), time_str, sizeof (time_str));
+		char *time_str;
+		int stamp_size = xtext_get_stamp_str (time(0), &time_str);
 		xtext->stamp_width =
 			gtk_xtext_text_width (xtext, time_str, stamp_size, NULL) + MARGIN;
+		g_free (time_str);
 	}
 #endif
 
@@ -3489,10 +4047,6 @@ gtk_xtext_set_background (GtkXText * xtext, GdkPixmap * pixmap, int trans,
 								  int shaded)
 {
 	GdkGCValues val;
-
-#if !defined(USE_GDK_PIXBUF) && !defined(USE_MMX) && !defined(WIN32)
-	shaded = FALSE;
-#endif
 
 #if !defined(USE_XLIB) && !defined(WIN32)
 	shaded = FALSE;
@@ -3532,6 +4086,7 @@ gtk_xtext_set_background (GtkXText * xtext, GdkPixmap * pixmap, int trans,
 		{
 			gdk_gc_set_tile (xtext->bgc, pixmap);
 			gdk_gc_set_ts_origin (xtext->bgc, 0, 0);
+			xtext->ts_x = xtext->ts_y = 0;
 			gdk_gc_set_fill (xtext->bgc, GDK_TILED);
 		}
 	} else if (GTK_WIDGET_REALIZED (xtext))
@@ -3541,7 +4096,7 @@ gtk_xtext_set_background (GtkXText * xtext, GdkPixmap * pixmap, int trans,
 		val.graphics_exposures = 0;
 		xtext->bgc = gdk_gc_new_with_values (GTK_WIDGET (xtext)->window,
 								&val, GDK_GC_EXPOSURES | GDK_GC_SUBWINDOW);
-		xtext_set_fg (xtext, xtext->bgc, 19);
+		xtext_set_fg (xtext, xtext->bgc, XTEXT_BG);
 	}
 }
 
@@ -3585,6 +4140,8 @@ gtk_xtext_lines_taken (xtext_buffer *buf, textentry * ent)
 	do
 	{
 		len = find_next_wrap (buf->xtext, ent, str, win_width, indent);
+		if (taken < RECORD_WRAPS)
+			ent->wrap_offset[taken] = (str + len) - ent->str;
 		indent = buf->indent;
 		taken++;
 		str += len;
@@ -3686,7 +4243,7 @@ gtk_xtext_nth (GtkXText *xtext, int line, int *subline)
 
 /* render enta (or an inclusive range enta->entb) */
 
-static void
+static int
 gtk_xtext_render_ents (GtkXText * xtext, textentry * enta, textentry * entb)
 {
 	textentry *ent, *orig_ent, *tmp_ent;
@@ -3704,7 +4261,7 @@ gtk_xtext_render_ents (GtkXText * xtext, textentry * enta, textentry * entb)
 	width -= MARGIN;
 
 	if (width < 32 || height < xtext->fontsize || width < xtext->buffer->indent + 30)
-		return;
+		return 0;
 
 	lines_max = ((height + xtext->pixel_offset) / xtext->fontsize) + 1;
 	line = 0;
@@ -3744,6 +4301,7 @@ gtk_xtext_render_ents (GtkXText * xtext, textentry * enta, textentry * entb)
 			line += gtk_xtext_render_line (xtext, ent, line, lines_max,
 													 subline, width);
 			subline = 0;
+			xtext->jump_in_offset = 0;	/* jump_in_offset only for the 1st */
 		} else
 		{
 			if (ent == orig_ent)
@@ -3762,6 +4320,9 @@ gtk_xtext_render_ents (GtkXText * xtext, textentry * enta, textentry * entb)
 
 		ent = ent->next;
 	}
+
+	/* space below last line */
+	return (xtext->fontsize * line) - xtext->pixel_offset;
 }
 
 /* render a whole page/window, starting from 'startline' */
@@ -3789,7 +4350,7 @@ gtk_xtext_render_page (GtkXText * xtext)
 		return;
 
 #ifdef SMOOTH_SCROLL
-	xtext->pixel_offset = ((float)((float)xtext->adj->value - (float)startline) * xtext->fontsize);
+	xtext->pixel_offset = (xtext->adj->value - startline) * xtext->fontsize;
 #else
 	xtext->pixel_offset = 0;
 #endif
@@ -3820,8 +4381,20 @@ gtk_xtext_render_page (GtkXText * xtext)
 	overlap = xtext->buffer->last_pixel_pos - pos;
 	xtext->buffer->last_pixel_pos = pos;
 
-									/* dont scroll PageUp/Down, it looks ugly */
+#ifdef USE_DB
+#ifdef WIN32
+	if (!xtext->transparent && !xtext->pixmap && abs (overlap) < height)
+#else
+	if (!xtext->pixmap && abs (overlap) < height)
+#endif
+#else
+	/* dont scroll PageUp/Down without a DB, it looks ugly */
+#ifdef WIN32
+	if (!xtext->transparent && !xtext->pixmap && abs (overlap) < height - (3*xtext->fontsize))
+#else
 	if (!xtext->pixmap && abs (overlap) < height - (3*xtext->fontsize))
+#endif
+#endif
 	{
 		/* so the obscured regions are exposed */
 		gdk_gc_set_exposures (xtext->fgc, TRUE);
@@ -3832,7 +4405,7 @@ gtk_xtext_render_page (GtkXText * xtext)
 			gdk_draw_drawable (xtext->draw_buf, xtext->fgc, xtext->draw_buf,
 									 0, -overlap, 0, 0, width, height + overlap);
 			remainder = ((height - xtext->font->descent) % xtext->fontsize) +
-							xtext->fontsize;
+							xtext->font->descent;
 			area.y = (height + overlap) - remainder;
 			area.height = remainder - overlap;
 		} else
@@ -3933,6 +4506,8 @@ gtk_xtext_remove_top (xtext_buffer *buffer)
 		buffer->last_ent_end = NULL;
 	}
 
+	if (buffer->marker_pos == ent) buffer->marker_pos = NULL;
+
 	free (ent);
 }
 
@@ -3944,6 +4519,7 @@ gtk_xtext_clear (xtext_buffer *buf)
 	buf->scrollbar_down = TRUE;
 	buf->last_ent_start = NULL;
 	buf->last_ent_end = NULL;
+	buf->marker_pos = NULL;
 	dontscroll (buf);
 
 	while (buf->text_first)
@@ -4038,19 +4614,54 @@ gtk_xtext_render_page_timeout (GtkXText * xtext)
 	/* less than a complete page? */
 	if (xtext->buffer->num_lines <= adj->page_size)
 	{
-		xtext->buffer->old_value = -1;
+		xtext->buffer->old_value = 0;
 		adj->value = 0;
 		gtk_xtext_render_page (xtext);
 	} else if (xtext->buffer->scrollbar_down)
 	{
+		g_signal_handler_block (xtext->adj, xtext->vc_signal_tag);
 		gtk_xtext_adjustment_set (xtext->buffer, FALSE);
 		gtk_adjustment_set_value (adj, adj->upper - adj->page_size);
+		g_signal_handler_unblock (xtext->adj, xtext->vc_signal_tag);
+		xtext->buffer->old_value = adj->value;
+		gtk_xtext_render_page (xtext);
 	} else
 	{
 		gtk_xtext_adjustment_set (xtext->buffer, TRUE);
+		if (xtext->indent_changed)
+		{
+			xtext->indent_changed = FALSE;
+			gtk_xtext_render_page (xtext);
+		}
 	}
 
 	return 0;
+}
+
+void
+gtk_xtext_check_marker_visibility(GtkXText * xtext)
+{
+	textentry *ent;
+	int lines_max;
+	int line = 0;
+	int width;
+	int height;
+	
+	gdk_drawable_get_size (GTK_WIDGET (xtext)->window, &width, &height);
+	
+	lines_max = ((height + xtext->pixel_offset) / xtext->fontsize) + 1;
+	ent = xtext->buffer->pagetop_ent;
+	
+	while (ent && line < lines_max)
+	{
+		if (xtext->buffer->marker_pos == ent)
+		{
+			xtext->buffer->marker_seen = TRUE;
+			return;
+		}
+		line += ent->lines_taken;
+		ent = ent->next;
+	}
 }
 
 /* append a textentry to our linked list */
@@ -4067,7 +4678,7 @@ gtk_xtext_append_entry (xtext_buffer *buf, textentry * ent)
 	{
 		if (ent->str[i] == '\t')
 			ent->str[i] = ' ';
-		i += charlen (ent->str + i);
+		i++;
 	}
 
 	ent->stamp = time (0);
@@ -4093,6 +4704,20 @@ gtk_xtext_append_entry (xtext_buffer *buf, textentry * ent)
 	ent->lines_taken = gtk_xtext_lines_taken (buf, ent);
 	buf->num_lines += ent->lines_taken;
 
+	if (buf->reset_marker_pos || 
+		((buf->marker_pos == NULL || buf->marker_seen) && (buf->xtext->buffer != buf || 
+#if GTK_CHECK_VERSION(2,4,0)
+		!gtk_window_has_toplevel_focus (GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (buf->xtext)))))))
+#else
+		!(GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (buf->xtext))))->has_focus)))
+#endif
+	{
+		buf->marker_pos = ent;
+		dontscroll (buf); /* force scrolling off */
+		buf->marker_seen = FALSE;
+		buf->reset_marker_pos = FALSE;
+	}
+
 	if (buf->xtext->max_lines > 2 && buf->xtext->max_lines < buf->num_lines)
 	{
 		gtk_xtext_remove_top (buf);
@@ -4108,6 +4733,12 @@ gtk_xtext_append_entry (xtext_buffer *buf, textentry * ent)
 
 		if (!buf->xtext->add_io_tag)
 		{
+			/* remove scrolling events */
+			if (buf->xtext->io_tag)
+			{
+				g_source_remove (buf->xtext->io_tag);
+				buf->xtext->io_tag = 0;
+			}
 			buf->xtext->add_io_tag = g_timeout_add (REFRESH_TIMEOUT * 2,
 															(GSourceFunc)
 															gtk_xtext_render_page_timeout,
@@ -4181,6 +4812,7 @@ gtk_xtext_append_indent (xtext_buffer *buf,
 		gtk_xtext_recalc_widths (buf, FALSE);
 
 		ent->indent = (buf->indent - left_width) - buf->xtext->space_width;
+		buf->xtext->indent_changed = TRUE;
 	}
 
 	gtk_xtext_append_entry (buf, ent);
@@ -4213,9 +4845,9 @@ gtk_xtext_append (xtext_buffer *buf, unsigned char *text, int len)
 }
 
 gboolean
-gtk_xtext_is_empty (GtkXText * xtext)
+gtk_xtext_is_empty (xtext_buffer *buf)
 {
-	return xtext->buffer->text_first != NULL;
+	return buf->text_first == NULL;
 }
 
 void
@@ -4231,7 +4863,7 @@ gtk_xtext_foreach (xtext_buffer *buf, GtkXTextForeach func, void *data)
 }
 
 void
-gtk_xtext_set_error_function (GtkXText *xtext, 	GtkWidget *(*error_function) (char *))
+gtk_xtext_set_error_function (GtkXText *xtext, void (*error_function) (int))
 {
 	xtext->error_function = error_function;
 }
@@ -4252,6 +4884,12 @@ void
 gtk_xtext_set_max_lines (GtkXText *xtext, int max_lines)
 {
 	xtext->max_lines = max_lines;
+}
+
+void
+gtk_xtext_set_show_marker (GtkXText *xtext, gboolean show_marker)
+{
+	xtext->marker = show_marker;
 }
 
 void
@@ -4281,7 +4919,7 @@ gtk_xtext_set_tint (GtkXText *xtext, int tint_red, int tint_green, int tint_blue
 }
 
 void
-gtk_xtext_set_urlcheck_function (GtkXText *xtext, int (*urlcheck_function) (GtkWidget *, char *))
+gtk_xtext_set_urlcheck_function (GtkXText *xtext, int (*urlcheck_function) (GtkWidget *, char *, int))
 {
 	xtext->urlcheck_function = urlcheck_function;
 }
@@ -4290,6 +4928,15 @@ void
 gtk_xtext_set_wordwrap (GtkXText *xtext, gboolean wordwrap)
 {
 	xtext->wordwrap = wordwrap;
+}
+
+void
+gtk_xtext_reset_marker_pos (GtkXText *xtext)
+{
+	xtext->buffer->marker_pos = NULL;
+	dontscroll (xtext->buffer); /* force scrolling off */
+	gtk_xtext_render_page (xtext);
+	xtext->buffer->reset_marker_pos = TRUE;
 }
 
 void
@@ -4303,6 +4950,18 @@ gtk_xtext_buffer_show (GtkXText *xtext, xtext_buffer *buf, int render)
 		return;
 
 /*printf("text_buffer_show: xtext=%p buffer=%p\n", xtext, buf);*/
+
+	if (xtext->add_io_tag)
+	{
+		g_source_remove (xtext->add_io_tag);
+		xtext->add_io_tag = 0;
+	}
+
+	if (xtext->io_tag)
+	{
+		g_source_remove (xtext->io_tag);
+		xtext->io_tag = 0;
+	}
 
 	if (!GTK_WIDGET_REALIZED (GTK_WIDGET (xtext)))
 		gtk_widget_realize (GTK_WIDGET (xtext));

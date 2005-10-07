@@ -1,0 +1,5268 @@
+# X-Chat Finnish translation.
+# Copyright © 2001, 2002, 2003, 2004, 2005 Gnome Finnish Translation Team.
+# This file is distributed under the same license as the X-Chat package.
+# Mika Laari <laari@iki.fi>, 2005
+# Lauri Nurmi <lanurmi@iki.fi>, 2003-2004.
+# Jarkko Ranta <jjranta@cc.joensuu.fi>, 2001-2002.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: xchat 2.4.5\n"
+"Report-Msgid-Bugs-To: www.xchat.org\n"
+"POT-Creation-Date: 2005-07-23 19:49+1000\n"
+"PO-Revision-Date: 2005-09-30 11:08+0200\n"
+"Last-Translator: Mika Laari <laari@iki.fi>\n"
+"Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/common/cfgfiles.c:350
+msgid "Cannot create ~/.xchat2"
+msgstr "Hakemiston ~/.xchat2 luominen epäonnistui"
+
+#: src/common/cfgfiles.c:676
+msgid "I'm busy"
+msgstr "Olen kiireinen"
+
+#: src/common/cfgfiles.c:677
+msgid "Leaving"
+msgstr "Lähdössä"
+
+#: src/common/cfgfiles.c:723
+msgid ""
+"* Running IRC as root is stupid! You should\n"
+"  create a User Account and use that to login.\n"
+msgstr ""
+"* IRCin ajaminen pääkäyttäjänä on typerää!\n"
+"  Luo tavallinen käyttäjätunnus ja kirjaudu sillä.\n"
+
+#: src/common/dcc.c:67
+msgid "Waiting"
+msgstr "Odottaa"
+
+#: src/common/dcc.c:68
+msgid "Active"
+msgstr "Aktiivinen"
+
+#: src/common/dcc.c:69
+msgid "Failed"
+msgstr "Epäonnistui"
+
+#: src/common/dcc.c:70
+msgid "Done"
+msgstr "Valmis"
+
+#: src/common/dcc.c:71
+msgid "Connect"
+msgstr "Yhdistetty"
+
+#: src/common/dcc.c:72
+msgid "Aborted"
+msgstr "Keskeytetty"
+
+#: src/common/dcc.c:1340
+#, c-format
+msgid "Cannot access %s\n"
+msgstr "Tiedostoa %s ei voi käyttää\n"
+
+#: src/common/dcc.c:1990
+msgid "No active DCCs\n"
+msgstr "Ei aktiivisia DCC-yhteyksiä\n"
+
+#: src/common/ignore.c:120 src/common/ignore.c:124 src/common/ignore.c:128
+#: src/common/ignore.c:132 src/common/ignore.c:136 src/common/ignore.c:140
+#: src/common/ignore.c:144
+msgid "YES  "
+msgstr "JAA  "
+
+#: src/common/ignore.c:122 src/common/ignore.c:126 src/common/ignore.c:130
+#: src/common/ignore.c:134 src/common/ignore.c:138 src/common/ignore.c:142
+#: src/common/ignore.c:146
+msgid "NO   "
+msgstr "EI   "
+
+#: src/common/ignore.c:373
+#, c-format
+msgid "You are being CTCP flooded from %s, ignoring %s\n"
+msgstr "CTCP-tulva käyttäjältä %s, ei huomioida osoitetta %s\n"
+
+#: src/common/ignore.c:398
+#, c-format
+msgid "You are being MSG flooded from %s, setting gui_auto_open_dialog OFF.\n"
+msgstr "Viestitulva käyttäjältä %s, poistetaan automaattinen keskustelunavaus käytöstä.\n"
+
+#: src/common/notify.c:400
+#, c-format
+msgid "  %-20s online\n"
+msgstr "  %-14s tavoitettavissa\n"
+
+#: src/common/notify.c:402
+#, c-format
+msgid "  %-20s offline\n"
+msgstr "  %-14s tavoittamattomissa\n"
+
+#: src/common/outbound.c:71
+msgid "No channel joined. Try /join #<channel>\n"
+msgstr "Millekään kanavalle ei ole liitytty. Kokeile /join #<kanava>\n"
+
+#: src/common/outbound.c:77
+msgid "Not connected. Try /server <host> [<port>]\n"
+msgstr "Mihinkään palvelimeen ei ole yhteyttä. Kokeile /server <isäntä> [<portti>]\n"
+
+#: src/common/outbound.c:1660
+msgid "I need /bin/sh to run!\n"
+msgstr "Ajamiseen vaaditaan /bin/sh!\n"
+
+#: src/common/outbound.c:1976
+msgid "Commands Available:"
+msgstr "Käytettävissä olevat komennot:"
+
+#: src/common/outbound.c:1990
+msgid "User defined commands:"
+msgstr "Käyttäjän määrittelemät komennot:"
+
+#: src/common/outbound.c:2006
+msgid "Plugin defined commands:"
+msgstr "Liitännäisten komennot:"
+
+#: src/common/outbound.c:2017
+msgid "Type /HELP <command> for more information, or /HELP -l"
+msgstr "Lisätietoja saat kirjoittamalla /HELP <komento> tai /HELP -l."
+
+#: src/common/outbound.c:2092
+#, c-format
+msgid "Unknown arg '%s' ignored."
+msgstr "Tuntematonta argumenttia \"%s\" ei huomioida."
+
+#: src/common/outbound.c:2881
+msgid "No such plugin found.\n"
+msgstr "Liitännäistä ei löydy.\n"
+
+#: src/common/outbound.c:2886 src/fe-gtk/plugingui.c:185
+msgid "That plugin is refusing to unload.\n"
+msgstr "Liitännäinen ei suostu poistumaan käytöstä.\n"
+
+#: src/common/outbound.c:3043
+msgid "ADDBUTTON <name> <action>, adds a button under the user-list"
+msgstr "ADDBUTTON <nimi> <toiminto>, lisää painikkeen käyttäjäluettelon alapuolelle"
+
+#: src/common/outbound.c:3045
+msgid "ALLCHAN <cmd>, sends a command to all channels you're in"
+msgstr "ALLCHAN <komento>, lähettää komennon kaikille kanaville, joilla ollaan"
+
+#: src/common/outbound.c:3047
+msgid "ALLCHANL <cmd>, sends a command to all channels you're in"
+msgstr "ALLCHANL <komento>, lähettää komennon kaikille kanaville, joilla olet."
+
+#: src/common/outbound.c:3049
+msgid "ALLSERV <cmd>, sends a command to all servers you're in"
+msgstr "ALLSERV <komento>, lähettää komennon kaikille palvelimille, joilla ollaan"
+
+#: src/common/outbound.c:3050
+msgid "AWAY [<reason>], sets you away"
+msgstr "AWAY [<syy>], asettaa poissaolevaksi"
+
+#: src/common/outbound.c:3052
+msgid "BAN <mask> [<bantype>], bans everyone matching the mask from the current channel. If they are already on the channel this doesn't kick them (needs chanop)"
+msgstr "BAN <peite> [<bannityyppi>], bannaa jokaisen peitteeseen täsmäävän käyttäjän nykyiseltä kanavalta. Jos käyttäjät ovat jo kanavalla, tämä komento ei potkaise heitä (vaatii opit)"
+
+#: src/common/outbound.c:3054
+msgid "CLEAR, Clears the current text window"
+msgstr "CLEAR, tyhjentää nykyisen teksti-ikkunan"
+
+#: src/common/outbound.c:3055
+msgid "CLOSE, Closes the current window/tab"
+msgstr "CLOSE, sulkee nykyisen ikkunan/välilehden"
+
+#: src/common/outbound.c:3058
+msgid "COUNTRY [-s] <code|wildcard>, finds a country code, eg: au = australia"
+msgstr "COUNTRY [-s] <koodi|jokeri>, etsii maakoodin, esim. au = Australia."
+
+#: src/common/outbound.c:3060
+msgid "CTCP <nick> <message>, send the CTCP message to nick, common messages are VERSION and USERINFO"
+msgstr "CTCP <käyttäjä> <viesti>, lähettää CTCP-viestin käyttäjälle, yleiset viestit ovat VERSION ja USERINFO"
+
+#: src/common/outbound.c:3062
+msgid "CYCLE, parts current channel and immediately rejoins"
+msgstr "CYCLE, poistuu nykyiseltä kanavalta ja liittyy välittömästi uudelleen"
+
+#: src/common/outbound.c:3064
+msgid ""
+"\n"
+"DCC GET <nick>                      - accept an offered file\n"
+"DCC SEND [-maxcps=#] <nick> [file]  - send a file to someone\n"
+"DCC PSEND [-maxcps=#] <nick> [file] - send a file using passive mode\n"
+"DCC LIST                            - show DCC list\n"
+"DCC CHAT <nick>                     - offer DCC CHAT to someone\n"
+"DCC PCHAT <nick>                    - offer DCC CHAT using passive mode\n"
+"DCC CLOSE <type> <nick> <file>         example:\n"
+"         /dcc close send johnsmith file.tar.gz"
+msgstr ""
+"\n"
+"DCC GET <kutsumanimi>                    - hyväksy tarjottu tiedosto\n"
+"DCC SEND [-maxcps=#] <knimi> [tiedosto]  - lähetä tiedosto jollekulle\n"
+"DCC PSEND [-maxcps=#] <knimi> [tiedosto] - lähetä tiedosto passiivitilaisena\n"
+"DCC LIST                                 - näytä DCC-luettelo\n"
+"DCC CHAT <kutsumanimi>                   - ehdota DCC-keskustelua jollekulle\n"
+"DCC PCHAT <kutsumanimi>                  - ehdota DCC-keskustelua passiivitilaisena\n"
+"DCC CLOSE <tyyppi> <knimi> <tiedosto>    - keskeytä DCC-siirto, esimerkiksi:\n"
+"         /dcc close send jarkkoranta tiedosto.tar.gz"
+
+#: src/common/outbound.c:3076
+msgid "DEHOP <nick>, removes chanhalf-op status from the nick on the current channel (needs chanop)"
+msgstr "DEHOP <käyttäjä>, poistaa puoliopit käyttäjältä nykyisellä kanavalla (vaatii opit)"
+
+#: src/common/outbound.c:3078
+msgid "DELBUTTON <name>, deletes a button from under the user-list"
+msgstr "DELBUTTON <nimi>, poistaa painikkeen käyttäjäluettelon alta"
+
+#: src/common/outbound.c:3080
+msgid "DEOP <nick>, removes chanop status from the nick on the current channel (needs chanop)"
+msgstr "DEOP <käyttäjä>, poistaa opit käyttäjältä nykyisellä kanavalla (vaatii opit)"
+
+#: src/common/outbound.c:3082
+msgid "DEVOICE <nick>, removes voice status from the nick on the current channel (needs chanop)"
+msgstr "DEVOICE <käyttäjä>, poistaa puheoikeuden käyttäjältä nykyisellä kanavalla (vaatii opit)"
+
+#: src/common/outbound.c:3083
+msgid "DISCON, Disconnects from server"
+msgstr "DISCON, Katkaisee yhteyden palvelimelle"
+
+#: src/common/outbound.c:3084
+msgid "DNS <nick|host|ip>, Finds a users IP number"
+msgstr "DNS <käyttäjä|isäntä|ip>, etsii käyttäjän IP-osoitteen"
+
+#: src/common/outbound.c:3085
+msgid "ECHO <text>, Prints text locally"
+msgstr "ECHO <teksti>, tulostaa tekstiä paikallisesti"
+
+#: src/common/outbound.c:3088
+msgid "EXEC [-o] <command>, runs the command. If -o flag is used then output is sent to current channel, else is printed to current text box"
+msgstr "EXEC [-o] <komento>, ajaa komennon. Käytettäessä valitsinta -o tuloste lähetetään nykyiselle kanavalle, muutoin nykyiseen ikkunaan"
+
+#: src/common/outbound.c:3090
+msgid "EXECCONT, sends the process SIGCONT"
+msgstr "EXECCONT, lähettää prosessille signaalin SIGCONT"
+
+#: src/common/outbound.c:3093
+msgid "EXECKILL [-9], kills a running exec in the current session. If -9 is given the process is SIGKILL'ed"
+msgstr "EXECKILL [-9], tappaa nykyisestä istunnosta käynnistetyn ohjelman. Käytettäessä valitsinta -9, prosessille lähetetään signaali SIGKILL"
+
+#: src/common/outbound.c:3095
+msgid "EXECSTOP, sends the process SIGSTOP"
+msgstr "EXECSTOP, lähettää prosessille signaalin SIGSTOP"
+
+#: src/common/outbound.c:3096
+msgid "EXECWRITE, sends data to the processes stdin"
+msgstr "EXECWRITE, lähettää dataa prosessin vakiosyötteeseen"
+
+#: src/common/outbound.c:3100
+msgid "FLUSHQ, flushes the current server's send queue"
+msgstr "FLUSHQ, tyhjentää nykyisen palvelimen lähetysjonon"
+
+#: src/common/outbound.c:3102
+msgid "GATE <host> [<port>], proxies through a host, port defaults to 23"
+msgstr "GATE <isäntä> [<portti>], käyttää isäntää välipalvelimena, oletusportti 23"
+
+#: src/common/outbound.c:3108
+msgid "HOP <nick>, gives chanhalf-op status to the nick (needs chanop)"
+msgstr "HOP <käyttäjä>, antaa puoliopit käyttäjälle (vaatii opit)"
+
+#: src/common/outbound.c:3109
+msgid "ID <password>, identifies yourself to nickserv"
+msgstr "ID <salasana>, tunnistautuu NickServ-palvelulle."
+
+#: src/common/outbound.c:3111
+msgid ""
+"IGNORE <mask> <types..> <options..>\n"
+"    mask - host mask to ignore, eg: *!*@*.aol.com\n"
+"    types - types of data to ignore, one or all of:\n"
+"            PRIV, CHAN, NOTI, CTCP, DCC, INVI, ALL\n"
+"    options - NOSAVE, QUIET"
+msgstr ""
+"IGNORE <peite> <tyypit..> <valitsimet..>\n"
+"    peite - peite, jonka mukaan jätetään huomiotta, esim: *!*@*.aol.com\n"
+"    tyypit - viestityypit, jotka jätetään huomiotta, yksi tai useampi:\n"
+"            PRIV, CHAN, NOTI, CTCP, DCC, INVI, ALL\n"
+"    valitsimet - NOSAVE, QUIET"
+
+#: src/common/outbound.c:3118
+msgid "INVITE <nick> [<channel>], invites someone to a channel, by default the current channel (needs chanop)"
+msgstr "INVITE <käyttäjä> [<kanava>], kutsuu käyttäjän kanavalle, oletuksena nykyiselle (vaatii opit)"
+
+#: src/common/outbound.c:3119
+msgid "JOIN <channel>, joins the channel"
+msgstr "JOIN <kanava>, liittyy kanavalle"
+
+#: src/common/outbound.c:3121
+msgid "KICK <nick>, kicks the nick from the current channel (needs chanop)"
+msgstr "KICK <käyttäjä>, potkaisee käyttäjän nykyiseltä kanavalta (vaatii opit)"
+
+#: src/common/outbound.c:3123
+msgid "KICKBAN <nick>, bans then kicks the nick from the current channel (needs chanop)"
+msgstr "KICKBAN <käyttäjä>, bannaa ja potkaisee käyttäjän nykyiseltä kanavalta (vaatii opit)"
+
+#: src/common/outbound.c:3126
+msgid "LAGCHECK, forces a new lag check"
+msgstr "LAGCHECK, pakottaa uuden viivetarkistuksen"
+
+#: src/common/outbound.c:3128
+msgid "LASTLOG <string>, searches for a string in the buffer"
+msgstr "LASTLOG <merkkijono>, etsii merkkijonoa puskurista"
+
+#: src/common/outbound.c:3130
+msgid "LOAD [-e] <file>, loads a plugin or script"
+msgstr "LOAD [-e] <tiedosto>, lataa liitännäisen tai komentotiedoston."
+
+#: src/common/outbound.c:3133
+msgid "MDEHOP, Mass deop's all chanhalf-ops in the current channel (needs chanop)"
+msgstr "MDEHOP, poistaa opit kaikilta nykyisen kanavan puoliopeilta (vaatii opit)"
+
+#: src/common/outbound.c:3135
+msgid "MDEOP, Mass deop's all chanops in the current channel (needs chanop)"
+msgstr "MDEOP, poistaa opit kaikilta nykyisen kanavan opeilta (vaatii opit)"
+
+#: src/common/outbound.c:3137
+msgid "ME <action>, sends the action to the current channel (actions are written in the 3rd person, like /me jumps)"
+msgstr "ME <toiminta>, lähettää toiminnan nykyiselle kanavalle (toiminnat kirjoitetaan kolmannessa persoonassa, kuten /me hyppää)"
+
+#: src/common/outbound.c:3140
+msgid "MKICK, Mass kicks everyone except you in the current channel (needs chanop)"
+msgstr "MKICK, potkaisee kaikki muut kanavalta (vaatii opit)"
+
+#: src/common/outbound.c:3143
+msgid "MOP, Mass op's all users in the current channel (needs chanop)"
+msgstr "MOP, antaa kanavaoperaattorin oikeudet kanavan kaikille käyttäjille (vaatii opit)"
+
+#: src/common/outbound.c:3144
+msgid "MSG <nick> <message>, sends a private message"
+msgstr "MSG <käyttäjä> <viesti>, lähettää yksityisviestin"
+
+#: src/common/outbound.c:3147
+msgid "NAMES, Lists the nicks on the current channel"
+msgstr "NAMES, luettelee nykyisellä kanavalla olevat käyttäjät"
+
+#: src/common/outbound.c:3149
+msgid "NCTCP <nick> <message>, Sends a CTCP notice"
+msgstr "NCTCP <käyttäjä> <viesti>, lähettää CTCP-tiedotteen"
+
+#: src/common/outbound.c:3150
+msgid "NEWSERVER <hostname> [<port>]"
+msgstr "NEWSERVER <isäntänimi> [<portti>]"
+
+#: src/common/outbound.c:3151
+msgid "NICK <nickname>, sets your nick"
+msgstr "NICK <kutsumanimi>, asettaa oman kutsumanimesi"
+
+#: src/common/outbound.c:3154
+msgid "NOTICE <nick/channel> <message>, sends a notice. Notices are a type of message that should be auto reacted to"
+msgstr "NOTICE <käyttäjä/kanava> <viesti>, lähettää tiedotteen. Tiedotteet ovat viestejä, joihin tulee reagoida automaattisesti"
+
+#: src/common/outbound.c:3156
+msgid "NOTIFY [<nick>], lists your notify list or adds someone to it"
+msgstr "NOTIFY [<kutsumanimi>], näyttää ilmoitusluettelon tai lisää henkilön sille"
+
+#: src/common/outbound.c:3158
+msgid "OP <nick>, gives chanop status to the nick (needs chanop)"
+msgstr "OP <käyttäjä>, antaa kanavaoperaattorin oikeudet käyttäjälle (vaatii opit)"
+
+#: src/common/outbound.c:3160
+msgid "PART [<channel>] [<reason>], leaves the channel, by default the current one"
+msgstr "PART [<kanava>] [<syy>], poistuu kanavalta, oletuksena nykyiseltä"
+
+#: src/common/outbound.c:3162
+msgid "PING <nick | channel>, CTCP pings nick or channel"
+msgstr "PING <käyttäjä | kanava>, CTCP-pingaa käyttäjää tai kanavaa"
+
+#: src/common/outbound.c:3164
+msgid "QUERY <nick>, opens up a new privmsg window to someone"
+msgstr "QUERY <käyttäjä>, avaa uuden yksityisviesti-ikkunan jonkun kanssa keskustelemista varten"
+
+#: src/common/outbound.c:3166
+msgid "QUIT [<reason>], disconnects from the current server"
+msgstr "QUIT [<syy>], katkaisee yhteyden nykyiseen palvelimeen"
+
+#: src/common/outbound.c:3168
+msgid "QUOTE <text>, sends the text in raw form to the server"
+msgstr "QUOTE <teksti>, lähettää tekstin raa'assa muodossa palvelimelle"
+
+#: src/common/outbound.c:3171
+msgid "RECONNECT [-ssl] [<host>] [<port>] [<password>], Can be called just as /RECONNECT to reconnect to the current server or with /RECONNECT ALL to reconnect to all the open servers"
+msgstr "RECONNECT [-ssl] [<isäntä>] [<portti>] [<salasana>], voidaan kutsua /RECONNECT nykyiseen palvelimeen uudelleen yhdistämiseksi, tai /RECONNECT ALL kaikkiin avoimiin palvelimiin uudelleen yhdistämiseksi"
+
+#: src/common/outbound.c:3174
+msgid "RECONNECT [<host>] [<port>] [<password>], Can be called just as /RECONNECT to reconnect to the current server or with /RECONNECT ALL to reconnect to all the open servers"
+msgstr "RECONNECT [<isäntä>] [<portti>] [<salasana>], voidaan kutsua /RECONNECT nykyiseen palvelimeen uudelleen yhdistämiseksi, tai /RECONNECT ALL kaikkiin avoimiin palvelimiin uudelleen yhdistämiseksi"
+
+#: src/common/outbound.c:3176
+msgid "RECV <text>, send raw data to xchat, as if it was received from the irc server"
+msgstr "RECV <teksti>, lähetä raakaa dataa xchatille, aivan kuin se olisi vastaanotettu irc-palvelimelta"
+
+#: src/common/outbound.c:3179
+msgid "SAY <text>, sends the text to the object in the current window"
+msgstr "SAY <teksti>, lähettää tekstin nykyisen ikkunan kanavalle/henkilölle"
+
+#: src/common/outbound.c:3182
+msgid "SERVCHAN [-ssl] <host> <port> <channel>, connects and joins a channel"
+msgstr "SERVCHAN [-ssl] <isäntä> <portti> <kanava>, yhdistää ja liittyy kanavalle"
+
+#: src/common/outbound.c:3185
+msgid "SERVCHAN <host> <port> <channel>, connects and joins a channel"
+msgstr "SERVCHAN <isäntä> <portti> <kanava>, yhdistää ja liittyy kanavalle"
+
+#: src/common/outbound.c:3189
+msgid "SERVER [-ssl] <host> [<port>] [<password>], connects to a server, the default port is 6667 for normal connections, and 9999 for ssl connections"
+msgstr "SERVER [-ssl] <isäntä> [<portti>] [<salasana>], yhdistää palvelimelle, oletusportti on 6667 tavanomaisille yhteyksille, 9999 ssl-yhteyksille"
+
+#: src/common/outbound.c:3192
+msgid "SERVER <host> [<port>] [<password>], connects to a server, the default port is 6667"
+msgstr "SERVER <isäntä> [<portti>] [<salasana>], yhdistää palvelimelle, oletusportti on 6667"
+
+#: src/common/outbound.c:3194
+msgid "SET [-quiet] <variable> [<value>]"
+msgstr "SET [-quiet] <muuttuja> [<arvo>], asettaa muuttujan arvon."
+
+#: src/common/outbound.c:3195
+msgid "SETCURSOR [-|+]<position>"
+msgstr "SETCURSOR [-|+]<paikka>, asettaa kursorin haluttuun paikkaan."
+
+#: src/common/outbound.c:3199
+msgid "TOPIC [<topic>], sets the topic if one is given, else shows the current topic"
+msgstr "TOPIC [<aihe>], asettaa aiheen, jos se annetaan, muutoin näyttää nykyisen aiheen"
+
+#: src/common/outbound.c:3201
+msgid "UNBAN <mask> [<mask>...], unbans the specified masks."
+msgstr "UNBAN <peite> [<peite>...], poistaa annettujen peitteiden bannin."
+
+#: src/common/outbound.c:3202
+msgid "UNIGNORE <mask> [QUIET]"
+msgstr "UNIGNORE <peite> [QUIET]"
+
+#: src/common/outbound.c:3203
+msgid "UNLOAD <name>, unloads a plugin or script"
+msgstr "UNLOAD <nimi>, poistaa käytöstä liitännäisen tai skriptin"
+
+#: src/common/outbound.c:3204
+msgid "URL <url>, opens a URL in your browser"
+msgstr "URL <url>, avaa URL:n selaimeen"
+
+#: src/common/outbound.c:3207
+msgid "VOICE <nick>, gives voice status to someone (needs chanop)"
+msgstr "VOICE <käyttäjä>, antaa puheoikeuden käyttäjälle (vaatii opit)"
+
+#: src/common/outbound.c:3209
+msgid "WALLCHAN <message>, writes the message to all channels"
+msgstr "WALLCHAN <viesti>, kirjoittaa viestin kaikille kanaville"
+
+#: src/common/outbound.c:3211
+msgid "WALLCHOP <message>, sends the message to all chanops on the current channel"
+msgstr "WALLCHOP <viesti>, lähettää viestin kaikille nykyisen kanavan opeille"
+
+#: src/common/outbound.c:3244
+#, c-format
+msgid "Usage: %s\n"
+msgstr "Käyttö: %s\n"
+
+#: src/common/outbound.c:3249
+msgid ""
+"\n"
+"No help available on that command.\n"
+msgstr ""
+"\n"
+"Komennolle ei ole saatavissa ohjetta.\n"
+
+#: src/common/outbound.c:3255
+msgid "No such command.\n"
+msgstr "Komentoa ei ole.\n"
+
+#: src/common/outbound.c:3579
+msgid "Bad arguments for user command.\n"
+msgstr "Virheelliset argumentit käyttäjäkomennolle.\n"
+
+#: src/common/outbound.c:3743
+msgid "Too many recursive usercommands, aborting."
+msgstr "Liian monta rekursiivista käyttäjäkomentoa, keskeytetään."
+
+#: src/common/outbound.c:3820
+msgid "Unknown Command. Try /help\n"
+msgstr "Tuntematon komento. Kokeile komentoa /help\n"
+
+#: src/common/plugin.c:371 src/common/plugin.c:412
+msgid "No xchat_plugin_init symbol; is this really an xchat plugin?"
+msgstr "Symbolia xchat_plugin_init ei ole; onko tämä todella xchat-liitännäinen?"
+
+#: src/common/server.c:596
+msgid "Are you sure this is a SSL capable server and port?\n"
+msgstr "Onko tämä varmasti SSL:ää tukeva palvelin ja portti?\n"
+
+#: src/common/server.c:947
+#, c-format
+msgid ""
+"Cannot resolve hostname %s\n"
+"Check your IP Settings!\n"
+msgstr ""
+"Isäntänimen %s selvitys ei onnistu\n"
+"Tarkista IP-asetukset!\n"
+
+#: src/common/server.c:952
+msgid "Proxy traversal failed.\n"
+msgstr "Välipalvelimen kauttakulku epäonnistui.\n"
+
+#: src/common/servlist.c:606
+#, c-format
+msgid "Cycling to next server in %s...\n"
+msgstr "Siirrytään seuraavalle %s-verkon palvelimelle...\n"
+
+#: src/common/servlist.c:983
+#, c-format
+msgid "Warning: \"%s\" character set is unknown. No conversion will be applied for network %s."
+msgstr "Varoitus: merkistö \"%s\" on tuntematon. Verkossa %s ei käytetä mitään muunnosta."
+
+#: src/common/textevents.h:6
+msgid "%C22*%O$t$1 added to notify list."
+msgstr "%C22*%O$t$1 lisättiin ilmoitusluetteloon."
+
+#: src/common/textevents.h:9
+msgid "%C22*%O$t$1 Banlist:%C19 $4%C20 $2%C21 $3"
+msgstr "%C22*%O$t$1 Banniluettelo: %C19$4 %C20$2 %C21$3"
+
+#: src/common/textevents.h:12
+msgid "%C22*%O$tCannot join%C26 %B$1 %O(You are banned)."
+msgstr "%C22*%O$tEi voi liittyä kanavalle %C26%B$1%O (sinut on bannattu)."
+
+#: src/common/textevents.h:18
+msgid "%C22*%O$t$1 is now known as $2"
+msgstr "%C22*%O$t%C26$1%O tunnetaan nyt nimellä %C26$2%O."
+
+#: src/common/textevents.h:21
+msgid "%C18*$t$1%O $2"
+msgstr "%C18*$t$1%O $2"
+
+#: src/common/textevents.h:24
+msgid "%C21*%O$t%C21%B$1%O%C21 $2"
+msgstr "%C21*%O$t%C21%B$1%O %C21$2"
+
+#: src/common/textevents.h:27
+msgid "%C22*%O$t$1 sets ban on $2"
+msgstr "%C22*%O$t$1 asettaa bannin $2"
+
+#: src/common/textevents.h:30
+msgid "%C22*%O$tChannel $1 created on $2"
+msgstr "%C22*%O$tKanava $1 luotu $2"
+
+#: src/common/textevents.h:33
+msgid "%C22*%O$t%C26$1%O removes channel half-operator status from%C26 $2"
+msgstr "%C22*%O$t%C26$1%O poistaa puolioperaattorin oikeudet käyttäjältä %C26$2%O."
+
+#: src/common/textevents.h:36
+msgid "%C22*%O$t%C26$1%O removes channel operator status from%C26 $2"
+msgstr "%C22*%O$t%C26$1%O poistaa kanavaoperaattorin oikeudet käyttäjältä %C26$2%O."
+
+#: src/common/textevents.h:39
+msgid "%C22*%O$t%C26$1%O removes voice from%C26 $2"
+msgstr "%C22*%O$t%C26$1%O poistaa puheoikeuden käyttäjältä %C26$2%O."
+
+#: src/common/textevents.h:42
+msgid "%C22*%O$t$1 sets exempt on $2"
+msgstr "%C22*%O$t$1 asettaa erivapauden $2."
+
+#: src/common/textevents.h:45
+msgid "%C22*%O$t%C26$1%O gives channel half-operator status to%C26 $2"
+msgstr "%C22*%O$t%C26$1%O antaa puolioperaattorin oikeudet käyttäjälle %C26$2%O."
+
+#: src/common/textevents.h:48
+msgid "%C22*%O$t$1 sets invite on $2"
+msgstr "%C22*%O$t%C26$1%O asettaa kutsun käyttäjälle %C26$2%O."
+
+#: src/common/textevents.h:51
+msgid "%UChannel          Users   Topic"
+msgstr "%UKanava           Käyttäjät Aihe%O"
+
+#: src/common/textevents.h:54
+msgid "%C18%B%B$4$1%O%C18%O$t$2"
+msgstr "%C18%B%B$4$1%O%C18%O$t$2"
+
+#: src/common/textevents.h:57
+msgid "%C22*%O$t$1 sets mode $2$3 $4"
+msgstr "%C22*%O$t%C26$1%O asettaa tilan $2$3 $4"
+
+#: src/common/textevents.h:60
+msgid "%C22*%O$t%C22Channel $1 modes: $2"
+msgstr "%C22*%O$t%C22Kanavan $1 tilat: $2"
+
+#: src/common/textevents.h:63
+msgid "$4%C21%B$1%O%C21$t$2"
+msgstr "$4%C21%B$1%O%C21$t$2"
+
+#: src/common/textevents.h:66
+msgid "%C28-%C29$1/$2%C28-%O$t$3"
+msgstr "%C28-%C29$1/$2%C28-%O$t$3"
+
+#: src/common/textevents.h:69
+msgid "%C22*%O$t%C26$1%O gives channel operator status to%C26 $2"
+msgstr "%C22*%O$t%C26$1%O antaa kanavaoperaattorin oikeudet käyttäjälle %C26$2%O."
+
+#: src/common/textevents.h:72
+msgid "%C22*%O$t$1 removes exempt on $2"
+msgstr "%C22*%O$t%C26$1%O poistaa erivapauden $2."
+
+#: src/common/textevents.h:75
+msgid "%C22*%O$t$1 removes invite on $2"
+msgstr "%C22*%O$t%C26$1%O poistaa kutsun $2."
+
+#: src/common/textevents.h:78
+msgid "%C22*%O$t$1 removes channel keyword"
+msgstr "%C22*%O$t%C26$1%O poistaa kanavan tunnussanan."
+
+#: src/common/textevents.h:81
+msgid "%C22*%O$t$1 removes user limit"
+msgstr "%C22*%O$t%C26$1%O poistaa käyttäjärajan."
+
+#: src/common/textevents.h:84
+msgid "%C22*%O$t$1 sets channel keyword to $2"
+msgstr "%C22*%O$t%C26$1%O asettaa kanavan tunnussanaksi %C26$2%O."
+
+#: src/common/textevents.h:87
+msgid "%C22*%O$t$1 sets channel limit to $2"
+msgstr "%C22*%O$t%C26$1%O asettaa kanavan käyttäjärajaksi $2."
+
+#: src/common/textevents.h:90
+msgid "%C22*%O$t$1 removes ban on $2"
+msgstr "%C22*%O$t%C26$1%O poistaa bannin $2."
+
+#: src/common/textevents.h:93
+msgid "%C22*%O$t%C26$1%O gives voice to%C26 $2"
+msgstr "%C22*%O$t%C26$1%O antaa puheoikeuden käyttäjälle %C26$2%O."
+
+#: src/common/textevents.h:96
+msgid "%C22*%O$t%C22Connected. Now logging in..."
+msgstr "%C22*%O$t%C22Yhdistetty. Kirjaudutaan sisään..."
+
+#: src/common/textevents.h:99
+msgid "%C22*%O$t%C22Connecting to $1 ($2) port $3%O..."
+msgstr "%C22*%O$t%C22Yhdistetään palvelimelle $1 ($2) porttiin $3%O..."
+
+#: src/common/textevents.h:102
+msgid "%C21*%O$t%C21Connection failed. Error: $1"
+msgstr "%C21*%O$t%C21Yhdistäminen epäonnistui. Virhe: $1"
+
+#: src/common/textevents.h:105
+msgid "%C22*%O$tReceived a CTCP $1 from $2"
+msgstr "%C22*%O$tVastaanotettiin CTCP $1 käyttäjältä $2."
+
+#: src/common/textevents.h:108
+msgid "%C22*%O$tReceived a CTCP $1 from $2 (to $3)"
+msgstr "%C22*%O$tVastaanotettiin CTCP $1 käyttäjältä $2 (kanavalle $3)."
+
+#: src/common/textevents.h:111
+msgid "%C19>%O$1%C19<%O$tCTCP $2"
+msgstr "%C19>%O$1%C19<%O$tCTCP $2"
+
+#: src/common/textevents.h:114
+msgid "%C22*%O$tReceived a CTCP Sound $1 from $2"
+msgstr "%C22*%O$tVastaanotettiin CTCP-ääni $1 käyttäjältä $2."
+
+#: src/common/textevents.h:117
+msgid "%C22*%O$tReceived a CTCP Sound $1 from $2 (to $3)"
+msgstr "%C22*%O$tVastaanotettiin CTCP-ääni $1 käyttäjältä $2 (kanavalle $3)."
+
+#: src/common/textevents.h:120
+msgid "%C22*%O$tDCC CHAT to %C26$1%O aborted."
+msgstr "%C22*%O$tDCC-keskustelu käyttäjän %C26$1%O kanssa keskeytetty."
+
+#: src/common/textevents.h:123
+msgid "%C22*%O$tDCC CHAT connection established to %C26$1 %C30[%O$2%C30]"
+msgstr "%C22*%O$tDCC-keskustelu avattu käyttäjän %C26$1%O kanssa. %C14[%O$2%C14]%O"
+
+#: src/common/textevents.h:126
+msgid "%C22*%O$tDCC CHAT to %C26$1%O lost ($4)."
+msgstr "%C22*%O$tDCC-keskustelu käyttäjän %C26$1%O kanssa katkesi. ($4.)"
+
+#: src/common/textevents.h:129
+msgid "%C22*%O$tReceived a DCC CHAT offer from $1"
+msgstr "%C22*%O$tKäyttäjä %C26$1%O ehdottaa DCC-keskustelua."
+
+#: src/common/textevents.h:132
+msgid "%C22*%O$tOffering DCC CHAT to $1"
+msgstr "%C22*%O$tEhdotetaan DCC-keskustelua käyttäjälle %C26$1%O."
+
+#: src/common/textevents.h:135
+msgid "%C22*%O$tAlready offering CHAT to $1"
+msgstr "%C22*%O$tDCC-keskustelua on jo ehdotettu käyttäjälle %C26$1%O."
+
+#: src/common/textevents.h:138
+msgid "%C22*%O$tDCC $1 connect attempt to%C26 $2%O failed (err=$3)."
+msgstr "%C22*%O$tDCC $1 -yhteyttä ei saatu käyttäjään %C26$2%O (virhe=$3)."
+
+#: src/common/textevents.h:141
+msgid "%C22*%O$tReceived '$1%O' from $2"
+msgstr "%C22*%O$tVastaanotettiin \"$1%O\" käyttäjältä %C26$2%O."
+
+#: src/common/textevents.h:144
+#, c-format
+msgid "%C24,18 Type  To/From    Status  Size    Pos     File         "
+msgstr "%C24,18Tyyppi Vastapää   Tila    Koko    Paikka  Tiedosto     "
+
+#: src/common/textevents.h:147
+msgid "%C22*%O$tReceived a malformed DCC request from %C26$1%O.%010%C22*%O$tContents of packet: $2"
+msgstr "%C22*%O$tKäyttäjä %C26$1%O lähetti epäkelvon DCC-pyynnön.%010%C22*%O$tPaketin sisältö: $2"
+
+#: src/common/textevents.h:150
+msgid "%C22*%O$tOffering%C26 $1%O to%C26 $2"
+msgstr "%C22*%O$tTarjotaan tiedostoa %C26$1%O käyttäjälle %C26$2%O."
+
+#: src/common/textevents.h:153
+msgid "%C22*%O$tNo such DCC offer."
+msgstr "%C22*%O$tTuollaista DCC-lähetystä ei ole tarjottu."
+
+#: src/common/textevents.h:156
+msgid "%C22*%O$tDCC RECV%C26 $2%O to%C26 $1%O aborted."
+msgstr "%C22*%O$tDCC RECV %C26$2%O käyttäjältä %C26$1%O keskeytetty."
+
+#: src/common/textevents.h:159
+msgid "%C22*%O$tDCC RECV%C26 $1%O from%C26 $3%O complete %C30[%C26$4%O cps%C30]%O."
+msgstr "%C22*%O$tDCC RECV %C26$1%O käyttäjältä %C26$3%O valmis %C30[%C26$4%O t/s%C30]%O."
+
+#: src/common/textevents.h:162
+msgid "%C22*%O$tDCC RECV connection established to%C26 $1 %C30[%O$2%C30]"
+msgstr "%C22*%O$tDCC RECV -yhteys muodostettu käyttäjään %C26$1 %C30[%O$2%C30]%O."
+
+#: src/common/textevents.h:165
+msgid "%C22*%O$tDCC RECV%C26 $1%O from%C26 $3%O failed ($4)."
+msgstr "%C22*%O$tDCC RECV %C26$1%O käyttäjältä %C26$3%O epäonnistui. ($4.)"
+
+#: src/common/textevents.h:168
+msgid "%C22*%O$tDCC RECV: Cannot open $1 for writing ($2)."
+msgstr "%C22*%O$tDCC RECV: Tiedostoon %C26$1%O ei voi kirjoittaa ($2)."
+
+#: src/common/textevents.h:171
+msgid "%C22*%O$tThe file%C26 $1%C already exists, saving it as%C26 $2%O instead."
+msgstr "%C22*%O$tTiedosto %C26$1%O on jo olemassa, joten tallenetaan nimellä %C26$2%O."
+
+#: src/common/textevents.h:174
+msgid "%C22*%O$t%C26$1 %Ohas requested to resume%C26 $2 %Cfrom%C26 $3%C."
+msgstr "%C22*%O$t%C26$1%O pyytää jatkamaan tiedoston %C26$2%O siirtoa kohdasta %C26$3%O."
+
+#: src/common/textevents.h:177
+msgid "%C22*%O$tDCC SEND%C26 $2%O to%C26 $1%O aborted."
+msgstr "%C22*%O$tDCC SEND %C26$2%O käyttäjälle %C26$1%O keskeytetty."
+
+#: src/common/textevents.h:180
+msgid "%C22*%O$tDCC SEND%C26 $1%O to%C26 $2%O complete %C30[%C26$3%O cps%C30]%O."
+msgstr "%C22*%O$tDCC SEND %C26$1%O käyttäjälle %C26$2%O valmis %C30[%C26$3%O t/s%C30]%O."
+
+#: src/common/textevents.h:183
+msgid "%C22*%O$tDCC SEND connection established to%C26 $1 %C30[%O$2%C30]"
+msgstr "%C22*%O$tDCC SEND -yhteys muodostettu käyttäjään %C26$1 %C30[%O$2%C30]%O."
+
+#: src/common/textevents.h:186
+msgid "%C22*%O$tDCC SEND%C26 $1%O to%C26 $2%O failed. $3"
+msgstr "%C22*%O$tDCC SEND %C26$1%O käyttäjälle %C26$2%O epäonnistui. $3"
+
+#: src/common/textevents.h:189
+msgid "%C22*%O$t%C26$1 %Ohas offered%C26 $2 %O(%C26$3 %Obytes)"
+msgstr "%C22*%O$t%C26$1%O tarjoaa tiedostoa %C26$2%O (%C26$3%O tavua)."
+
+#: src/common/textevents.h:192
+msgid "%C22*%O$tDCC $1%C26 $2 %Oto%C26 $3 %Cstalled - aborting."
+msgstr "%C22*%O$tDCC $1 %C26$2%O käyttäjälle %C26$3%O pysähtynyt - keskeytetään."
+
+#: src/common/textevents.h:195
+msgid "%C22*%O$tDCC $1%C26 $2 %Oto%C26 $3 %Otimed out - aborting."
+msgstr "%C22*%O$tDCC $1 %C26$2%O käyttäjälle %C26$3%O aikakatkaistu - keskeytetään."
+
+#: src/common/textevents.h:198
+msgid "%C22*%O$t$1 deleted from notify list."
+msgstr "%C22*%O$t$1 poistettu ilmoitusluettelosta."
+
+#: src/common/textevents.h:201
+msgid "%C22*%O$tDisconnected ($1)."
+msgstr "%C22*%O$tYhteys katkaistu ($1)."
+
+#: src/common/textevents.h:204
+msgid "%C22*%O$tFound your IP: [$1]"
+msgstr "%C22*%O$tOma IP löytyi: [$1]"
+
+#: src/common/textevents.h:207
+msgid "$1$t$2"
+msgstr "$1$t$2"
+
+#: src/common/textevents.h:210
+msgid "%O%C26$1%O added to ignore list."
+msgstr "%O%C26$1%O lisätty huomioimattomuusluetteloon."
+
+#: src/common/textevents.h:213
+msgid "Ignore on %C26$1%O changed."
+msgstr "Huomioimattomuutta %C26$1%O muutettu."
+
+#: src/common/textevents.h:216
+#, c-format
+msgid "%C24,18                                                              "
+msgstr "%C24,28                                                              "
+
+#: src/common/textevents.h:219
+#, c-format
+msgid "%C24,18 Hostmask                  PRIV NOTI CHAN CTCP DCC  INVI UNIG "
+msgstr "%C24,18 Isännän peite             PRIV NOTI CHAN CTCP DCC  INVI UNIG "
+
+#: src/common/textevents.h:222
+msgid "%O%C26$1%O removed from ignore list."
+msgstr "%O%C26$1%O poistettu huomioimattomuusluettelosta."
+
+#: src/common/textevents.h:225
+msgid "  Ignore list is empty."
+msgstr "  Huomioimattomuusluettelo on tyhjä."
+
+#: src/common/textevents.h:228
+msgid "%C22*%O$tCannot join%C26 %B$1 %O(Channel is invite only)."
+msgstr "%C22*%O$tKanavalle %C26%B$1%O ei voi liittyä (vain kutsutuille)."
+
+#: src/common/textevents.h:231
+msgid "%C22*%O$tYou have been invited to%C26 $1%O by%C26 $2%C (%C26$3%C)"
+msgstr "%C22*%O$t%C26$2%O kutsuu sinut kanavalle %C26$1%O (%C26$3%O)"
+
+#: src/common/textevents.h:234
+msgid "%C19*%O$t%C19%B$1 %B($3) has joined $2"
+msgstr "%C19*%O$t%C19%B$1%B ($3) liittyi kanavalle $2."
+
+#: src/common/textevents.h:237
+msgid "%C22*%O$tCannot join%C26 %B$1 %O(Requires keyword)."
+msgstr "%C22*%O$tKanavalle %C26%B$1%O ei voi liittyä (vaatii tunnussanan)."
+
+#: src/common/textevents.h:240
+msgid "%C21*%O$t%C21$1 has kicked $2 from $3 ($4%O%C21)"
+msgstr "%C21*%O$t%C21$1 potkaisi käyttäjän $2 kanavalta $3 ($4%O%C21)."
+
+#: src/common/textevents.h:243
+msgid "%C22*%O$tYou have been killed by $1 ($2%O%C22)"
+msgstr "%C22*%O$t$1 ($2%O) tappoi sinut."
+
+#: src/common/textevents.h:246 src/common/textevents.h:270
+msgid "%C19>%O$1%C19<%O$t$2"
+msgstr "%C19>%O$1%C19<%O$t$2"
+
+#: src/common/textevents.h:249
+msgid "%C16*%O$t$1%O"
+msgstr "%C16*%O$t$1%O"
+
+#: src/common/textevents.h:252
+msgid "%C22*%O$t%C22MOTD Skipped."
+msgstr "%C22*%O$t%C22MOTD ohitettu."
+
+#: src/common/textevents.h:255
+msgid "%C22*%O$t$1 already in use. Retrying with $2..."
+msgstr "%C22*%O$t$1 on jo käytössä. Kokeillaan kutsumanimeä $2..."
+
+#: src/common/textevents.h:258
+msgid "%C22*%O$tNickname already in use. Use /NICK to try another."
+msgstr "%C22*%O$tKutsumanimi on jo käytössä. Kokeile jotain muuta komennolla /NICK."
+
+#: src/common/textevents.h:261
+msgid "%C22*%O$tNo such DCC."
+msgstr "%C22*%O$tTuollaista DCC:tä ei ole."
+
+#: src/common/textevents.h:264
+msgid "%C22*%O$tNo process is currently running"
+msgstr "%C22*%O$tProsesseja ei ole käynnissä."
+
+#: src/common/textevents.h:267
+msgid "%C28-%C29$1%C28-%O$t$2"
+msgstr "%C28-%C29$1%C28-%O$t$2"
+
+#: src/common/textevents.h:273
+msgid "$tNotify list is empty."
+msgstr "$tIlmoitusluettelo on tyhjä."
+
+#: src/common/textevents.h:276
+msgid "%C24,18 %B  Notify List                           "
+msgstr "%C24,18 %B  Ilmoitusluettelo                      "
+
+#: src/common/textevents.h:279
+msgid "%C22*%O$t$1 users in notify list."
+msgstr "%C22*%O$tIlmoitusluettelossa on $1 käyttäjä(ä)."
+
+#: src/common/textevents.h:282
+msgid "%C22*%O$tNotify: $1 is offline ($2)."
+msgstr "%C22*%O$tIlmoitus: $1 on tavoittamattomissa ($2)."
+
+#: src/common/textevents.h:285
+msgid "%C22*%O$tNotify: $1 is online ($2)."
+msgstr "%C22*%O$tIlmoitus: $1 on tavoitettavissa ($2)."
+
+# Miksi koodit %O%C23 ovat peräkkäin?
+#: src/common/textevents.h:291
+msgid "%C23*%O$t%C23$1 (%O%C23$2) has left $3"
+msgstr "%C23*%O$t%C23$1 ($2) poistui kanavalta $3."
+
+# %OC23 kaiketi peruuttaa muuttujista tulleet (väri)koodit, mutta miksi %B%B?
+#: src/common/textevents.h:294
+msgid "%C23*%O$t%C23$1 (%O%C23$2) has left $3 (%O%C23%B%B$4%O%C23)"
+msgstr "%C23*%O$t%C23$1%O%C23 ($2) poistui kanavalta $3%O%C23 (%B%B$4%O%C23)"
+
+#: src/common/textevents.h:297
+msgid "%C22*%O$tPing reply from $1: $2 second(s)"
+msgstr "%C22*%O$tPing-vastaus käyttäjältä $1: $2 sekunti(a)."
+
+#: src/common/textevents.h:300
+msgid "%C22*%O$tNo ping reply for $1 seconds, disconnecting."
+msgstr "%C22*%O$tPingiin ei ole vastattu $1 sekuntiin, katkaistaan yhteys."
+
+#: src/common/textevents.h:303
+msgid "%C28*%C29$3$1%C28*$t%O$2"
+msgstr "%C28*%C29$1%C28*$t%O$2"
+
+# Aikaleima?
+#: src/common/textevents.h:306
+msgid "%C18%B%B$3$1%O$t$2"
+msgstr "%C18%B%B$3$1%O$t$2"
+
+#: src/common/textevents.h:309
+msgid "%C22*%O$tA process is already running"
+msgstr "%C22*%O$tProsessi on jo käynnissä."
+
+#: src/common/textevents.h:312
+msgid "%C23*%O$t%C23$1 has quit (%O%C23%B%B$2%O%C23)"
+msgstr "%C23*%O$t%C23$1 lopetti ($2%O%C23)."
+
+#: src/common/textevents.h:315
+msgid "%C22*%O$t$1 sets modes%B %C30[%O$2%B%C30]"
+msgstr "%C22*%O$t$1 asettaa tilat %B%C30[%O$2%B%C30]."
+
+#: src/common/textevents.h:318
+msgid "%C28-%C29$1/Wallops%C28-%O$t$2"
+msgstr "%C28-%C29$1/Wallops%C28-%O$t$2"
+
+#: src/common/textevents.h:321
+msgid "%C22*%O$tLooking up IP number for%C26 $1%O..."
+msgstr "%C22*%O$tEtsitään IP-osoitetta nimelle %C26$1%O..."
+
+#: src/common/textevents.h:324
+msgid "%C22*%O$t%C22Connected."
+msgstr "%C22*%O$tYhdistetty."
+
+#: src/common/textevents.h:327 src/common/textevents.h:333
+#: src/common/textevents.h:336
+msgid "%C22*%O$t$1"
+msgstr "%C22*%O$t$1"
+
+#: src/common/textevents.h:330
+msgid "%C22*%O$t%C22Looking up $1"
+msgstr "%C22*%O$tEtsitään osoitetta %C26$1%C..."
+
+#: src/common/textevents.h:339
+msgid "%C22*%O$tStopped previous connection attempt (pid=$1)"
+msgstr "%C22*%O$tPysäytettiin edellinen yhteysyritys (pid=$1)"
+
+#: src/common/textevents.h:342
+msgid "%C29*%O$t%C29Topic for $1%C %C29is: $2"
+msgstr "%C29*%O$t%C29Kanavan $1%C %C29aihe on: $2"
+
+#: src/common/textevents.h:345
+msgid "%C22*%O$t$1 has changed the topic to: $2"
+msgstr "%C22*%O$t$1 vaihtoi aiheeksi: $2"
+
+#: src/common/textevents.h:348
+msgid "%C29*%O$t%C29Topic for $1%C %C29set by $2%C %C29at $3"
+msgstr "%C29*%O$t%C29Aiheen kanavalle $1%C %C29on asettanut $2%C %C29$3."
+
+#: src/common/textevents.h:351
+msgid "%C22*%O$tUnknown host. Maybe you misspelled it?"
+msgstr "%C22*%O$tTuntematon isäntä. Onkohan se kirjoitettu väärin?"
+
+#: src/common/textevents.h:354
+msgid "%C22*%O$tCannot join%C26 %B$1 %O(User limit reached)."
+msgstr "%C22*%O$tKanavalle %C26%B$1%O ei voi liittyä (Käyttäjäraja saavutettu)."
+
+#: src/common/textevents.h:357
+msgid "%C22*%O$t%C26Users on $1:%C $2"
+msgstr "%C22*%O$t%C26Käyttäjät kanavalla $1:%C $2"
+
+#: src/common/textevents.h:360
+msgid "%C22*%O$t%C28[%O$1%C28] %O$2%C27 $3"
+msgstr "%C22*%O$t%C28[%O$1%C28]%O $2 %C27$3"
+
+#: src/common/textevents.h:363
+msgid "%C22*%O$t%C28[%O$1%C28] %Cis away %C30(%O$2%O%C30)"
+msgstr "%C22*%O$t%C28[%O$1%C28]%C on poissa %C30(%O$2%O%C30)"
+
+#: src/common/textevents.h:366 src/common/textevents.h:372
+#: src/common/textevents.h:387 src/common/textevents.h:390
+msgid "%C22*%O$t%C28[%O$1%C28]%O $2"
+msgstr "%C22*%O$t%C28[%O$1%C28]%O $2"
+
+#: src/common/textevents.h:369
+msgid "%C22*%O$t%C28[%O$1%C28] %OEnd of WHOIS list."
+msgstr "%C22*%O$t%C28[%O$1%C28]%O WHOIS-luettelon loppu."
+
+#: src/common/textevents.h:375
+msgid "%C22*%O$t%C28[%O$1%C28]%O idle%C26 $2"
+msgstr "%C22*%O$t%C28[%O$1%C28]%O jouten %C26$2"
+
+#: src/common/textevents.h:378
+msgid "%C22*%O$t%C28[%O$1%C28]%O idle%C26 $2%O, signon:%C26 $3"
+msgstr "%C22*%O$t%C28[%O$1%C28]%O jouten %C26$2%O, kirjautunut: %C26$3"
+
+#: src/common/textevents.h:381
+msgid "%C22*%O$t%C28[%O$1%C28] %C30(%O$2@$3%C30)%O: $4"
+msgstr "%C22*%O$t%C28[%O$1%C28] %C30(%O$2@$3%C30)%O: $4"
+
+#: src/common/textevents.h:384
+msgid "%C22*%O$t%C28[%O$1%C28] %Oreal user@host%C27 $2%O, real IP%C27 $3"
+msgstr "%C22*%O$t%C28[%O$1%C28]%O todellinen käyttäjä@isäntä %C27$2%O, todellinen IP %C27$3."
+
+#: src/common/textevents.h:393
+msgid "%C19*%O$t%C19Now talking on $2"
+msgstr "%C19*%O$t%C19Puhut nyt kanavalla $2."
+
+#: src/common/textevents.h:396
+msgid "%C23*$tYou have been kicked from $2 by $3 ($4%O%C23)"
+msgstr "%C23*$t$3 potkaisi sinut kanavalta $2 ($4%O%C23)."
+
+#: src/common/textevents.h:399
+#, c-format
+msgid "%C23*$tYou have left channel $3"
+msgstr "%C23*$tPoistuit kanavalta $3."
+
+#: src/common/textevents.h:402
+msgid "%C23*$tYou have left channel $3 (%O%C23%B%B$4%O%C23)"
+msgstr "%C23*$tPoistuit kanavalta $3%O%C23 ($4%O%C23)."
+
+#: src/common/textevents.h:405
+msgid "%C22*%O$tYou've invited%C26 $1%O to%C26 $2%O (%C26$3%O)"
+msgstr "%C22*%O$tKutsut käyttäjää %C26$1%O kanavalle %C26$2%O (%C26$3%O)."
+
+#: src/common/textevents.h:408
+msgid "%C31%B%B$4$1%O%C30$t$2"
+msgstr "%C31%B%B$4$1%O%C30$t$2"
+
+#: src/common/textevents.h:411
+msgid "%C22*%O$tYou are now known as $2"
+msgstr "%C22*%O$tKutsumanimesi on nyt $2."
+
+#: src/common/text.c:61
+#, c-format
+msgid "**** ENDING LOGGING AT %s\n"
+msgstr "**** LOKIKIRJOITUS LOPPUU %s\n"
+
+#: src/common/text.c:179
+#, c-format
+msgid "**** BEGIN LOGGING AT %s\n"
+msgstr "**** LOKIKIRJOITUS ALKAA %s\n"
+
+#: src/common/text.c:198
+#, c-format
+msgid ""
+"* Can't open log file(s) for writing. Check the\n"
+"  permissions on %s/xchatlogs"
+msgstr ""
+"* Lokitiedosto(j)a ei voi avata kirjoitusta varten.\n"
+"  Tarkista oikeudet hakemistossa %s/xchatlogs"
+
+#: src/common/text.c:413
+msgid "Left message"
+msgstr "Vasen viesti"
+
+#: src/common/text.c:414
+msgid "Right message"
+msgstr "Oikea viesti"
+
+#: src/common/text.c:418
+msgid "The nick of the joining person"
+msgstr "Liittyvän henkilön kutsumanimi"
+
+#: src/common/text.c:419
+msgid "The channel being joined"
+msgstr "Kanava, jolle liitytään"
+
+#: src/common/text.c:420 src/common/text.c:465 src/common/text.c:522
+msgid "The host of the person"
+msgstr "Henkilön isäntänimi"
+
+#: src/common/text.c:424 src/common/text.c:429 src/common/text.c:436
+#: src/common/text.c:503 src/common/text.c:629 src/common/text.c:636
+#: src/common/text.c:641 src/common/text.c:646 src/common/text.c:651
+#: src/common/text.c:657 src/common/text.c:662 src/common/text.c:666
+#: src/common/text.c:672 src/common/text.c:678 src/common/text.c:724
+#: src/common/text.c:733 src/common/text.c:738 src/common/text.c:743
+#: src/common/text.c:752 src/common/text.c:763 src/common/text.c:770
+#: src/common/text.c:776 src/common/text.c:781 src/common/text.c:786
+#: src/common/text.c:793 src/common/text.c:799 src/common/text.c:805
+#: src/common/text.c:810 src/common/text.c:815 src/common/text.c:819
+#: src/common/text.c:825 src/common/text.c:833 src/common/text.c:867
+#: src/common/text.c:872
+msgid "Nickname"
+msgstr "Kutsumanimi"
+
+#: src/common/text.c:425
+msgid "The action"
+msgstr "Toiminto"
+
+#: src/common/text.c:430
+msgid "The text"
+msgstr "Teksti"
+
+#: src/common/text.c:431
+msgid "Mode char"
+msgstr "Tilamerkki"
+
+#: src/common/text.c:432 src/common/text.c:505
+msgid "Identified text"
+msgstr "Korostettava teksti"
+
+#: src/common/text.c:437 src/common/text.c:493 src/common/text.c:499
+#: src/common/text.c:504
+msgid "The message"
+msgstr "Viesti"
+
+#: src/common/text.c:441 src/common/text.c:509
+msgid "Old nickname"
+msgstr "Vanha kutsumanimi"
+
+#: src/common/text.c:442 src/common/text.c:510
+msgid "New nickname"
+msgstr "Uusi kutsumanimi"
+
+#: src/common/text.c:446
+msgid "Nick of person who changed the topic"
+msgstr "Aihetta muuttaneen henkilön kutsumanimi"
+
+#: src/common/text.c:447 src/common/text.c:453 src/fe-gtk/chanlist.c:599
+#: src/fe-gtk/chanlist.c:700
+msgid "Topic"
+msgstr "Aihe"
+
+#: src/common/text.c:448 src/common/text.c:452 src/common/text.c:887
+#: src/fe-gtk/chanlist.c:597 src/fe-gtk/chanlist.c:691
+#: src/fe-gtk/ignoregui.c:176
+msgid "Channel"
+msgstr "Kanava"
+
+#: src/common/text.c:457 src/common/text.c:516
+msgid "The nickname of the kicker"
+msgstr "Potkaisijan kutsumanimi"
+
+#: src/common/text.c:458 src/common/text.c:514
+msgid "The person being kicked"
+msgstr "Potkaistava henkilö"
+
+#: src/common/text.c:459 src/common/text.c:466 src/common/text.c:470
+#: src/common/text.c:475 src/common/text.c:515 src/common/text.c:523
+#: src/common/text.c:530
+msgid "The channel"
+msgstr "Kanava"
+
+#: src/common/text.c:460 src/common/text.c:517 src/common/text.c:524
+msgid "The reason"
+msgstr "Syy"
+
+#: src/common/text.c:464 src/common/text.c:521
+msgid "The nick of the person leaving"
+msgstr "Poistuvan henkilön kutsumanimi"
+
+#: src/common/text.c:471 src/common/text.c:477
+msgid "The time"
+msgstr "Aika"
+
+#: src/common/text.c:476
+msgid "The creator"
+msgstr "Luoja"
+
+#: src/common/text.c:481
+msgid "Nick"
+msgstr "Kutsumanimi"
+
+#: src/common/text.c:482 src/common/text.c:739
+msgid "Reason"
+msgstr "Syy"
+
+#: src/common/text.c:483 src/common/text.c:631 src/common/text.c:714
+msgid "Host"
+msgstr "Isäntä"
+
+#: src/common/text.c:487 src/common/text.c:492 src/common/text.c:497
+msgid "Who it's from"
+msgstr "Keneltä se on"
+
+#: src/common/text.c:488
+msgid "The time in x.x format (see below)"
+msgstr "Aika x.x-muodossa (katso alta)"
+
+#: src/common/text.c:498 src/common/text.c:541
+msgid "The Channel it's going to"
+msgstr "Kanava, jolle se on menossa"
+
+#: src/common/text.c:528
+msgid "The sound"
+msgstr "Ääni"
+
+#: src/common/text.c:529 src/common/text.c:535 src/common/text.c:540
+msgid "The nick of the person"
+msgstr "Henkilön kutsumanimi"
+
+#: src/common/text.c:534 src/common/text.c:539
+msgid "The CTCP event"
+msgstr "CTCP-tapahtuma"
+
+#: src/common/text.c:545
+msgid "The nick of the person who set the key"
+msgstr "Tunnussanan asettaneen henkilön kutsumanimi"
+
+#: src/common/text.c:546
+msgid "The key"
+msgstr "Tunnussana"
+
+#: src/common/text.c:550
+msgid "The nick of the person who set the limit"
+msgstr "Rajan asettaneen henkilön kutsumanimi"
+
+#: src/common/text.c:551
+msgid "The limit"
+msgstr "Raja"
+
+#: src/common/text.c:555
+msgid "The nick of the person who did the op'ing"
+msgstr "Opit antaneen henkilön kutsumanimi"
+
+#: src/common/text.c:556
+msgid "The nick of the person who has been op'ed"
+msgstr "Opit saaneen henkilön kutsumanimi"
+
+#: src/common/text.c:560
+msgid "The nick of the person who has been halfop'ed"
+msgstr "Puoliopit saaneen henkilön kutsumanimi"
+
+#: src/common/text.c:561
+msgid "The nick of the person who did the halfop'ing"
+msgstr "Puoliopit antaneen henkilön kutsumanimi"
+
+#: src/common/text.c:565
+msgid "The nick of the person who did the voice'ing"
+msgstr "Puheoikeuden antaneen henkilön kutsumanimi"
+
+#: src/common/text.c:566
+msgid "The nick of the person who has been voice'ed"
+msgstr "Puheoikeuden saaneen henkilön kutsumanimi"
+
+#: src/common/text.c:570
+msgid "The nick of the person who did the banning"
+msgstr "Bannin asettajan kutsumanimi"
+
+#: src/common/text.c:571 src/common/text.c:598
+msgid "The ban mask"
+msgstr "Bannipeite"
+
+#: src/common/text.c:575
+msgid "The nick who removed the key"
+msgstr "Tunnussanan poistajan kutsumanimi"
+
+#: src/common/text.c:579
+msgid "The nick who removed the limit"
+msgstr "Rajan poistajan kutsumanimi"
+
+#: src/common/text.c:583
+msgid "The nick of the person of did the deop'ing"
+msgstr "Opit poistaneen henkilön kutsumanimi"
+
+#: src/common/text.c:584
+msgid "The nick of the person who has been deop'ed"
+msgstr "Opit menettäneen henkilön kutsumanimi"
+
+#: src/common/text.c:587
+msgid "The nick of the person of did the dehalfop'ing"
+msgstr "Puoliopit menettäneen henkilön kutsumanimi"
+
+#: src/common/text.c:588
+msgid "The nick of the person who has been dehalfop'ed"
+msgstr "Puoliopit poistaneen henkilön kutsumanimi"
+
+#: src/common/text.c:592
+msgid "The nick of the person of did the devoice'ing"
+msgstr "Puheoikeuden poistaneen henkilön kutsumanimi"
+
+#: src/common/text.c:593
+msgid "The nick of the person who has been devoice'ed"
+msgstr "Puheoikeuden menettäneen henkilön kutsumanimi"
+
+#: src/common/text.c:597
+msgid "The nick of the person of did the unban'ing"
+msgstr "Bannin poistaneen henkilön kutsumanimi"
+
+#: src/common/text.c:602
+msgid "The nick of the person who did the exempt"
+msgstr "Erivapauden asettaneen henkilön kutsumanimi"
+
+#: src/common/text.c:603 src/common/text.c:608
+msgid "The exempt mask"
+msgstr "Erivapauspeite"
+
+#: src/common/text.c:607
+msgid "The nick of the person removed the exempt"
+msgstr "Erivapauden poistaneen henkilön kutsumanimi"
+
+#: src/common/text.c:612
+msgid "The nick of the person who did the invite"
+msgstr "Kutsun esittäneen henkilön kutsumanimi"
+
+#: src/common/text.c:613 src/common/text.c:618
+msgid "The invite mask"
+msgstr "Kutsupeite"
+
+#: src/common/text.c:617
+msgid "The nick of the person removed the invite"
+msgstr "Kutsun poistaneen henkilön kutsumanimi"
+
+#: src/common/text.c:622
+msgid "The nick of the person setting the mode"
+msgstr "Tilan asettaneen henkilön kutsumanimi"
+
+#: src/common/text.c:623
+msgid "The mode's sign (+/-)"
+msgstr "Tilan etumerkki (+/-)"
+
+#: src/common/text.c:624
+msgid "The mode letter"
+msgstr "Tilakirjain"
+
+#: src/common/text.c:625
+msgid "The channel it's being set on"
+msgstr "Kanava, jolle se asetetaan"
+
+#: src/common/text.c:630
+msgid "Username"
+msgstr "Käyttäjänimi"
+
+#: src/common/text.c:632
+msgid "Full name"
+msgstr "Koko nimi"
+
+#: src/common/text.c:637
+msgid "Channel Membership/\"is an IRC operator\""
+msgstr "Kanavan jäsenyys/\"on IRC-operaattori\""
+
+#: src/common/text.c:642
+msgid "Server Information"
+msgstr "Palvelintiedot"
+
+#: src/common/text.c:647 src/common/text.c:652
+msgid "Idle time"
+msgstr "Joutenoloaika"
+
+#: src/common/text.c:653
+msgid "Signon time"
+msgstr "Kirjautumisaika"
+
+#: src/common/text.c:658
+msgid "Away reason"
+msgstr "Poissaolon syy"
+
+#: src/common/text.c:667 src/common/text.c:673 src/common/text.c:681
+#: src/common/text.c:859
+msgid "Message"
+msgstr "Viesti"
+
+#: src/common/text.c:674
+msgid "Account"
+msgstr "Tunnus"
+
+#: src/common/text.c:679
+msgid "Real user@host"
+msgstr "Todellinen käyttäjä@isäntä"
+
+#: src/common/text.c:680
+msgid "Real IP"
+msgstr "Todellinen IP"
+
+#: src/common/text.c:685 src/common/text.c:694 src/common/text.c:700
+#: src/common/text.c:728 src/common/text.c:882
+msgid "Channel Name"
+msgstr "Kanavanimi"
+
+#: src/common/text.c:689 src/common/text.c:845 src/fe-gtk/textgui.c:338
+msgid "Text"
+msgstr "Teksti"
+
+#: src/common/text.c:690 src/common/text.c:696 src/common/text.c:841
+#: src/common/text.c:883
+msgid "Server Name"
+msgstr "Palvelinnimi"
+
+#: src/common/text.c:695
+msgid "Nick of person who invited you"
+msgstr "Sinut kutsuneen henkilön nimi"
+
+#: src/common/text.c:701 src/fe-gtk/chanlist.c:598
+msgid "Users"
+msgstr "Käyttäjiä"
+
+#: src/common/text.c:705
+msgid "Nickname in use"
+msgstr "Kutsumanimi on käytössä"
+
+#: src/common/text.c:706
+msgid "Nick being tried"
+msgstr "Kokeiltava kutsumanimi"
+
+#: src/common/text.c:710 src/common/text.c:746 src/common/text.c:757
+#: src/common/text.c:764 src/common/text.c:777 src/common/text.c:794
+#: src/common/text.c:894 src/common/util.c:352
+msgid "Error"
+msgstr "Virhe"
+
+#: src/common/text.c:715 src/common/text.c:849
+msgid "IP"
+msgstr "IP"
+
+#: src/common/text.c:716 src/common/text.c:745
+msgid "Port"
+msgstr "Portti"
+
+#: src/common/text.c:720
+msgid "PID"
+msgstr "PID"
+
+#: src/common/text.c:729 src/common/text.c:734
+msgid "Modes string"
+msgstr "Tilamerkkijono"
+
+#: src/common/text.c:744 src/common/text.c:782 src/common/text.c:787
+#: src/common/text.c:828
+msgid "IP address"
+msgstr "IP-osoite"
+
+#: src/common/text.c:750 src/common/text.c:775
+msgid "DCC Type"
+msgstr "DCC-tyyppi"
+
+#: src/common/text.c:751 src/common/text.c:756 src/common/text.c:761
+#: src/common/text.c:768 src/common/text.c:788 src/common/text.c:792
+#: src/common/text.c:798 src/common/text.c:804 src/common/text.c:811
+#: src/common/text.c:820 src/common/text.c:826
+msgid "Filename"
+msgstr "Tiedostonimi"
+
+#: src/common/text.c:762 src/common/text.c:769
+msgid "Destination filename"
+msgstr "Kohdetiedostonimi"
+
+#: src/common/text.c:771 src/common/text.c:800
+msgid "CPS"
+msgstr "t/s"
+
+#: src/common/text.c:806
+msgid "Pathname"
+msgstr "Polku"
+
+#: src/common/text.c:821 src/fe-gtk/dccgui.c:537 src/fe-gtk/dccgui.c:707
+msgid "Position"
+msgstr "Sijainti"
+
+#: src/common/text.c:827 src/fe-gtk/dccgui.c:536 src/fe-gtk/dccgui.c:706
+msgid "Size"
+msgstr "Koko"
+
+#: src/common/text.c:832
+msgid "DCC String"
+msgstr "DCC-merkkijono"
+
+#: src/common/text.c:837
+msgid "Number of notify items"
+msgstr "Ilmoitusmerkintöjen määrä"
+
+#: src/common/text.c:853
+msgid "Old Filename"
+msgstr "Vanha tiedostonimi"
+
+#: src/common/text.c:854
+msgid "New Filename"
+msgstr "Uusi tiedostonimi"
+
+#: src/common/text.c:858
+msgid "Receiver"
+msgstr "Vastaanottaja"
+
+#: src/common/text.c:863
+msgid "Hostmask"
+msgstr "Isännän peite"
+
+#: src/common/text.c:868
+msgid "Hostname"
+msgstr "Isäntänimi"
+
+#: src/common/text.c:873
+msgid "The Packet"
+msgstr "Paketti"
+
+#: src/common/text.c:877
+msgid "Seconds"
+msgstr "Sekuntia"
+
+#: src/common/text.c:881
+msgid "Nick of person who have been invited"
+msgstr "Kutsutun henkilön kutsumanimi"
+
+#: src/common/text.c:888
+msgid "Banmask"
+msgstr "Bannipeite"
+
+#: src/common/text.c:889
+msgid "Who set the ban"
+msgstr "Kuka asetti bannin"
+
+#: src/common/text.c:890
+msgid "Ban time"
+msgstr "Bannausaika"
+
+#: src/common/text.c:930
+#, c-format
+msgid ""
+"Error parsing event %s.\n"
+"Loading default."
+msgstr ""
+"Virhe tapahtuman %s jäsentämisessä.\n"
+"Ladataan oletus"
+
+#: src/common/text.c:1583
+#, c-format
+msgid ""
+"Cannot read sound file:\n"
+"%s"
+msgstr ""
+"Äänitiedostoa ei voi lukea:\n"
+"%s"
+
+#: src/common/util.c:296
+msgid "Remote host closed socket"
+msgstr "Vastapää sulki pistokkeen"
+
+#: src/common/util.c:301
+msgid "Connection refused"
+msgstr "Yhteys torjuttu"
+
+#: src/common/util.c:304
+msgid "No route to host"
+msgstr "Ei reititystä isäntään"
+
+#: src/common/util.c:306
+msgid "Connection timed out"
+msgstr "Yhteys aikakatkaistu"
+
+#: src/common/util.c:308
+msgid "Cannot assign that address"
+msgstr "Osoitetta ei voi asettaa"
+
+#: src/common/util.c:310
+msgid "Connection reset by peer"
+msgstr "Vastapää katkaisi yhteyden"
+
+#: src/common/util.c:821
+msgid "Andorra"
+msgstr "Andorra"
+
+#: src/common/util.c:822
+msgid "United Arab Emirates"
+msgstr "Yhdistyneet Arabiemiraatit"
+
+#: src/common/util.c:823
+msgid "Afghanistan"
+msgstr "Afganistan"
+
+#: src/common/util.c:824
+msgid "Antigua and Barbuda"
+msgstr "Antigua ja Barbuda"
+
+#: src/common/util.c:825
+msgid "Anguilla"
+msgstr "Anguilla"
+
+#: src/common/util.c:826
+msgid "Albania"
+msgstr "Albania"
+
+#: src/common/util.c:827
+msgid "Armenia"
+msgstr "Armenia"
+
+#: src/common/util.c:828
+msgid "Netherlands Antilles"
+msgstr "Alankomaiden Antillit"
+
+#: src/common/util.c:829
+msgid "Angola"
+msgstr "Angola"
+
+#: src/common/util.c:830
+msgid "Antarctica"
+msgstr "Etelämanner"
+
+#: src/common/util.c:831
+msgid "Argentina"
+msgstr "Argentiina"
+
+#: src/common/util.c:832
+msgid "Reverse DNS"
+msgstr "Käänteisnimipalvelu"
+
+#: src/common/util.c:833
+msgid "American Samoa"
+msgstr "Amerikan Samoa"
+
+#: src/common/util.c:834
+msgid "Austria"
+msgstr "Itävalta"
+
+#: src/common/util.c:835
+msgid "Nato Fiel"
+msgstr "NATO"
+
+#: src/common/util.c:836
+msgid "Australia"
+msgstr "Australia"
+
+#: src/common/util.c:837
+msgid "Aruba"
+msgstr "Aruba"
+
+#: src/common/util.c:838
+msgid "Azerbaijan"
+msgstr "Azerbaidzan"
+
+#: src/common/util.c:839
+msgid "Bosnia and Herzegovina"
+msgstr "Bosnia ja Herzegovina"
+
+#: src/common/util.c:840
+msgid "Barbados"
+msgstr "Barbados"
+
+#: src/common/util.c:841
+msgid "Bangladesh"
+msgstr "Bangladesh"
+
+#: src/common/util.c:842
+msgid "Belgium"
+msgstr "Belgia"
+
+#: src/common/util.c:843
+msgid "Burkina Faso"
+msgstr "Burkina Faso"
+
+#: src/common/util.c:844
+msgid "Bulgaria"
+msgstr "Bulgaria"
+
+#: src/common/util.c:845
+msgid "Bahrain"
+msgstr "Bahrain"
+
+#: src/common/util.c:846
+msgid "Burundi"
+msgstr "Burundi"
+
+#: src/common/util.c:847
+msgid "Businesses"
+msgstr "Liike-elämä"
+
+#: src/common/util.c:848
+msgid "Benin"
+msgstr "Benin"
+
+#: src/common/util.c:849
+msgid "Bermuda"
+msgstr "Bermuda"
+
+#: src/common/util.c:850
+msgid "Brunei Darussalam"
+msgstr "Brunei"
+
+#: src/common/util.c:851
+msgid "Bolivia"
+msgstr "Bolivia"
+
+#: src/common/util.c:852
+msgid "Brazil"
+msgstr "Brasilia"
+
+#: src/common/util.c:853
+msgid "Bahamas"
+msgstr "Bahamasaaret"
+
+#: src/common/util.c:854
+msgid "Bhutan"
+msgstr "Bhutan"
+
+#: src/common/util.c:855
+msgid "Bouvet Island"
+msgstr "Bouvet'n saari"
+
+#: src/common/util.c:856
+msgid "Botswana"
+msgstr "Botswana"
+
+#: src/common/util.c:857
+msgid "Belarus"
+msgstr "Valko-Venäjä"
+
+#: src/common/util.c:858
+msgid "Belize"
+msgstr "Belize"
+
+#: src/common/util.c:859
+msgid "Canada"
+msgstr "Kanada"
+
+#: src/common/util.c:860
+msgid "Cocos Islands"
+msgstr "Kookossaaret"
+
+#: src/common/util.c:861
+msgid "Democratic Republic of Congo"
+msgstr "Kongon demokraattinen tasavalta"
+
+#: src/common/util.c:862
+msgid "Central African Republic"
+msgstr "Keski-Afrikan tasavalta"
+
+#: src/common/util.c:863
+msgid "Congo"
+msgstr "Kongo"
+
+#: src/common/util.c:864
+msgid "Switzerland"
+msgstr "Sveitsi"
+
+#: src/common/util.c:865
+msgid "Cote d'Ivoire"
+msgstr "Norsunluurannikko"
+
+#: src/common/util.c:866
+msgid "Cook Islands"
+msgstr "Cooksaaret"
+
+#: src/common/util.c:867
+msgid "Chile"
+msgstr "Chile"
+
+#: src/common/util.c:868
+msgid "Cameroon"
+msgstr "Kamerun"
+
+#: src/common/util.c:869
+msgid "China"
+msgstr "Kiina"
+
+#: src/common/util.c:870
+msgid "Colombia"
+msgstr "Kolumbia"
+
+#: src/common/util.c:871
+msgid "Internic Commercial"
+msgstr "Kaupallinen"
+
+#: src/common/util.c:872
+msgid "Costa Rica"
+msgstr "Costa Rica"
+
+#: src/common/util.c:873
+msgid "Serbia and Montenegro"
+msgstr "Serbia ja Montenegro"
+
+#: src/common/util.c:874
+msgid "Cuba"
+msgstr "Kuuba"
+
+#: src/common/util.c:875
+msgid "Cape Verde"
+msgstr "Kap Verde"
+
+#: src/common/util.c:876
+msgid "Christmas Island"
+msgstr "Joulusaari"
+
+#: src/common/util.c:877
+msgid "Cyprus"
+msgstr "Kypros"
+
+#: src/common/util.c:878
+msgid "Czech Republic"
+msgstr "Tšekinmaa"
+
+#: src/common/util.c:879
+msgid "Germany"
+msgstr "Saksa"
+
+#: src/common/util.c:880
+msgid "Djibouti"
+msgstr "Djibouti"
+
+#: src/common/util.c:881
+msgid "Denmark"
+msgstr "Tanska"
+
+#: src/common/util.c:882
+msgid "Dominica"
+msgstr "Dominica"
+
+#: src/common/util.c:883
+msgid "Dominican Republic"
+msgstr "Dominikaaninen tasavalta"
+
+#: src/common/util.c:884
+msgid "Algeria"
+msgstr "Algeria"
+
+#: src/common/util.c:885
+msgid "Ecuador"
+msgstr "Ecuador"
+
+#: src/common/util.c:886
+msgid "Educational Institution"
+msgstr "Koulutuksellinen laitos (Yhdysvallat)"
+
+#: src/common/util.c:887
+msgid "Estonia"
+msgstr "Viro"
+
+#: src/common/util.c:888
+msgid "Egypt"
+msgstr "Egypti"
+
+#: src/common/util.c:889
+msgid "Western Sahara"
+msgstr "Länsi-Sahara"
+
+#: src/common/util.c:890
+msgid "Eritrea"
+msgstr "Eritrea"
+
+#: src/common/util.c:891
+msgid "Spain"
+msgstr "Espanja"
+
+#: src/common/util.c:892
+msgid "Ethiopia"
+msgstr "Etiopia"
+
+#: src/common/util.c:893
+msgid "Finland"
+msgstr "Suomi"
+
+#: src/common/util.c:894
+msgid "Fiji"
+msgstr "Fidzi"
+
+#: src/common/util.c:895
+msgid "Falkland Islands"
+msgstr "Falklandsaaret"
+
+#: src/common/util.c:896
+msgid "Micronesia"
+msgstr "Mikronesia"
+
+#: src/common/util.c:897
+msgid "Faroe Islands"
+msgstr "Färsaaret"
+
+#: src/common/util.c:898
+msgid "France"
+msgstr "Ranska"
+
+#: src/common/util.c:899
+msgid "France, Metropolitan"
+msgstr "Ranska, Metropolitan"
+
+#: src/common/util.c:900
+msgid "Gabon"
+msgstr "Gabon"
+
+#: src/common/util.c:901
+msgid "Great Britain"
+msgstr "Iso-Britannia"
+
+#: src/common/util.c:902
+msgid "Grenada"
+msgstr "Grenada"
+
+#: src/common/util.c:903
+msgid "Georgia"
+msgstr "Georgia"
+
+#: src/common/util.c:904
+msgid "French Guiana"
+msgstr "Ranskan Guyana"
+
+#: src/common/util.c:905
+msgid "British Channel Isles"
+msgstr "Englannin kanaalin saaret"
+
+#: src/common/util.c:906
+msgid "Ghana"
+msgstr "Ghana"
+
+#: src/common/util.c:907
+msgid "Gibraltar"
+msgstr "Gibraltar"
+
+#: src/common/util.c:908
+msgid "Greenland"
+msgstr "Grönlanti"
+
+#: src/common/util.c:909
+msgid "Gambia"
+msgstr "Gambia"
+
+#: src/common/util.c:910
+msgid "Guinea"
+msgstr "Guinea"
+
+#: src/common/util.c:911
+msgid "Government"
+msgstr "Valtio (Yhdysvallat)"
+
+#: src/common/util.c:912
+msgid "Guadeloupe"
+msgstr "Guadeloupe"
+
+#: src/common/util.c:913
+msgid "Equatorial Guinea"
+msgstr "Päiväntasaajan Guinea"
+
+#: src/common/util.c:914
+msgid "Greece"
+msgstr "Kreikka"
+
+#: src/common/util.c:915
+msgid "S. Georgia and S. Sandwich Isles"
+msgstr "Etelä-Georgia ja Eteläiset Sandwichsaaret"
+
+#: src/common/util.c:916
+msgid "Guatemala"
+msgstr "Guatemala"
+
+#: src/common/util.c:917
+msgid "Guam"
+msgstr "Guam"
+
+#: src/common/util.c:918
+msgid "Guinea-Bissau"
+msgstr "Guinea-Bissau"
+
+#: src/common/util.c:919
+msgid "Guyana"
+msgstr "Guyana"
+
+#: src/common/util.c:920
+msgid "Hong Kong"
+msgstr "Hongkong"
+
+#: src/common/util.c:921
+msgid "Heard and McDonald Islands"
+msgstr "Heard ja McDonaldinsaaret"
+
+#: src/common/util.c:922
+msgid "Honduras"
+msgstr "Honduras"
+
+#: src/common/util.c:923
+msgid "Croatia"
+msgstr "Kroatia"
+
+#: src/common/util.c:924
+msgid "Haiti"
+msgstr "Haiti"
+
+#: src/common/util.c:925
+msgid "Hungary"
+msgstr "Unkari"
+
+#: src/common/util.c:926
+msgid "Indonesia"
+msgstr "Indonesia"
+
+#: src/common/util.c:927
+msgid "Ireland"
+msgstr "Irlanti"
+
+#: src/common/util.c:928
+msgid "Israel"
+msgstr "Israel"
+
+#: src/common/util.c:929
+msgid "India"
+msgstr "Intia"
+
+#: src/common/util.c:930
+msgid "Informational"
+msgstr "Tiedotuksellinen"
+
+#: src/common/util.c:931
+msgid "International"
+msgstr "Kansainvälinen"
+
+#: src/common/util.c:932
+msgid "British Indian Ocean Territory"
+msgstr "Brittiläinen Intian valtameren alue"
+
+#: src/common/util.c:933
+msgid "Iraq"
+msgstr "Irak"
+
+#: src/common/util.c:934
+msgid "Iran"
+msgstr "Iran"
+
+#: src/common/util.c:935
+msgid "Iceland"
+msgstr "Islanti"
+
+#: src/common/util.c:936
+msgid "Italy"
+msgstr "Italia"
+
+#: src/common/util.c:937
+msgid "Jamaica"
+msgstr "Jamaika"
+
+#: src/common/util.c:938
+msgid "Jordan"
+msgstr "Jordania"
+
+#: src/common/util.c:939
+msgid "Japan"
+msgstr "Japani"
+
+#: src/common/util.c:940
+msgid "Kenya"
+msgstr "Kenia"
+
+#: src/common/util.c:941
+msgid "Kyrgyzstan"
+msgstr "Kirgisia"
+
+#: src/common/util.c:942
+msgid "Cambodia"
+msgstr "Kambodža"
+
+#: src/common/util.c:943
+msgid "Kiribati"
+msgstr "Kiribati"
+
+#: src/common/util.c:944
+msgid "Comoros"
+msgstr "Komorit"
+
+#: src/common/util.c:945
+msgid "St. Kitts and Nevis"
+msgstr "Saint Kitts ja Nevis"
+
+#: src/common/util.c:946
+msgid "North Korea"
+msgstr "Pohjois-Korea"
+
+#: src/common/util.c:947
+msgid "South Korea"
+msgstr "Etelä-Korea"
+
+#: src/common/util.c:948
+msgid "Kuwait"
+msgstr "Kuwait"
+
+#: src/common/util.c:949
+msgid "Cayman Islands"
+msgstr "Caymansaaret"
+
+#: src/common/util.c:950
+msgid "Kazakhstan"
+msgstr "Kazakstan"
+
+#: src/common/util.c:951
+msgid "Laos"
+msgstr "Laos"
+
+#: src/common/util.c:952
+msgid "Lebanon"
+msgstr "Libanon"
+
+#: src/common/util.c:953
+msgid "Saint Lucia"
+msgstr "Saint Lucia"
+
+#: src/common/util.c:954
+msgid "Liechtenstein"
+msgstr "Liechtenstein"
+
+#: src/common/util.c:955
+msgid "Sri Lanka"
+msgstr "Sri Lanka"
+
+#: src/common/util.c:956
+msgid "Liberia"
+msgstr "Liberia"
+
+#: src/common/util.c:957
+msgid "Lesotho"
+msgstr "Lesotho"
+
+#: src/common/util.c:958
+msgid "Lithuania"
+msgstr "Liettua"
+
+#: src/common/util.c:959
+msgid "Luxembourg"
+msgstr "Luxemburg"
+
+#: src/common/util.c:960
+msgid "Latvia"
+msgstr "Latvia"
+
+#: src/common/util.c:961
+msgid "Libya"
+msgstr "Libya"
+
+#: src/common/util.c:962
+msgid "Morocco"
+msgstr "Marokko"
+
+#: src/common/util.c:963
+msgid "Monaco"
+msgstr "Monaco"
+
+#: src/common/util.c:964
+msgid "Moldova"
+msgstr "Moldova"
+
+#: src/common/util.c:965
+msgid "United States Medical"
+msgstr "Lääketieteellinen (Yhdysvallat)"
+
+#: src/common/util.c:966
+msgid "Madagascar"
+msgstr "Madagaskar"
+
+#: src/common/util.c:967
+msgid "Marshall Islands"
+msgstr "Marshallsaaret"
+
+#: src/common/util.c:968
+msgid "Military"
+msgstr "Sotilaallinen (Yhdysvallat)"
+
+#: src/common/util.c:969
+msgid "Macedonia"
+msgstr "Makedonia"
+
+#: src/common/util.c:970
+msgid "Mali"
+msgstr "Mali"
+
+#: src/common/util.c:971
+msgid "Myanmar"
+msgstr "Myanmar"
+
+#: src/common/util.c:972
+msgid "Mongolia"
+msgstr "Mongolia"
+
+#: src/common/util.c:973
+msgid "Macau"
+msgstr "Macao"
+
+#: src/common/util.c:974
+msgid "Northern Mariana Islands"
+msgstr "Pohjois-Mariaanit"
+
+#: src/common/util.c:975
+msgid "Martinique"
+msgstr "Martinique"
+
+#: src/common/util.c:976
+msgid "Mauritania"
+msgstr "Mauritania"
+
+#: src/common/util.c:977
+msgid "Montserrat"
+msgstr "Montserrat"
+
+#: src/common/util.c:978
+msgid "Malta"
+msgstr "Malta"
+
+#: src/common/util.c:979
+msgid "Mauritius"
+msgstr "Mauritius"
+
+#: src/common/util.c:980
+msgid "Maldives"
+msgstr "Malediivit"
+
+#: src/common/util.c:981
+msgid "Malawi"
+msgstr "Malawi"
+
+#: src/common/util.c:982
+msgid "Mexico"
+msgstr "Meksiko"
+
+#: src/common/util.c:983
+msgid "Malaysia"
+msgstr "Malesia"
+
+#: src/common/util.c:984
+msgid "Mozambique"
+msgstr "Mosambik"
+
+#: src/common/util.c:985
+msgid "Namibia"
+msgstr "Namibia"
+
+#: src/common/util.c:986
+msgid "New Caledonia"
+msgstr "Uusi-Kaledonia"
+
+#: src/common/util.c:987
+msgid "Niger"
+msgstr "Niger"
+
+#: src/common/util.c:988
+msgid "Internic Network"
+msgstr "Verkko"
+
+#: src/common/util.c:989
+msgid "Norfolk Island"
+msgstr "Norfolkin saari"
+
+#: src/common/util.c:990
+msgid "Nigeria"
+msgstr "Nigeria"
+
+#: src/common/util.c:991
+msgid "Nicaragua"
+msgstr "Nicaragua"
+
+#: src/common/util.c:992
+msgid "Netherlands"
+msgstr "Alankomaat"
+
+#: src/common/util.c:993
+msgid "Norway"
+msgstr "Norja"
+
+#: src/common/util.c:994
+msgid "Nepal"
+msgstr "Nepal"
+
+#: src/common/util.c:995
+msgid "Nauru"
+msgstr "Nauru"
+
+#: src/common/util.c:996
+msgid "Neutral Zone"
+msgstr "Puolueeton vyöhyke"
+
+#: src/common/util.c:997
+msgid "Niue"
+msgstr "Niue"
+
+#: src/common/util.c:998
+msgid "New Zealand"
+msgstr "Uusi-Seelanti"
+
+#: src/common/util.c:999
+msgid "Oman"
+msgstr "Oman"
+
+#: src/common/util.c:1000
+msgid "Internic Non-Profit Organization"
+msgstr "Aatteellinen järjestö"
+
+#: src/common/util.c:1001
+msgid "Panama"
+msgstr "Panama"
+
+#: src/common/util.c:1002
+msgid "Peru"
+msgstr "Peru"
+
+#: src/common/util.c:1003
+msgid "French Polynesia"
+msgstr "Ranskan Polynesia"
+
+#: src/common/util.c:1004
+msgid "Papua New Guinea"
+msgstr "Papua-Uusi-Guinea"
+
+#: src/common/util.c:1005
+msgid "Philippines"
+msgstr "Filippiinit"
+
+#: src/common/util.c:1006
+msgid "Pakistan"
+msgstr "Pakistan"
+
+#: src/common/util.c:1007
+msgid "Poland"
+msgstr "Puola"
+
+#: src/common/util.c:1008
+msgid "St. Pierre and Miquelon"
+msgstr "Saint-Pierre ja Miquelon"
+
+#: src/common/util.c:1009
+msgid "Pitcairn"
+msgstr "Pitcairn"
+
+#: src/common/util.c:1010
+msgid "Puerto Rico"
+msgstr "Puerto Rico"
+
+#: src/common/util.c:1011
+msgid "Palestinian Territory"
+msgstr "Brittiläinen Intian valtameren alue"
+
+#: src/common/util.c:1012
+msgid "Portugal"
+msgstr "Portugali"
+
+#: src/common/util.c:1013
+msgid "Palau"
+msgstr "Palau"
+
+#: src/common/util.c:1014
+msgid "Paraguay"
+msgstr "Paraguay"
+
+#: src/common/util.c:1015
+msgid "Qatar"
+msgstr "Qatar"
+
+#: src/common/util.c:1016
+msgid "Reunion"
+msgstr "Réunion"
+
+#: src/common/util.c:1017
+msgid "Romania"
+msgstr "Romania"
+
+#: src/common/util.c:1018
+msgid "Old School ARPAnet"
+msgstr "Vanha ARPAnet"
+
+#: src/common/util.c:1019
+msgid "Russian Federation"
+msgstr "Venäjän Federaatio"
+
+#: src/common/util.c:1020
+msgid "Rwanda"
+msgstr "Ruanda"
+
+#: src/common/util.c:1021
+msgid "Saudi Arabia"
+msgstr "Saudi-Arabia"
+
+#: src/common/util.c:1022
+msgid "Solomon Islands"
+msgstr "Salomosaaret"
+
+#: src/common/util.c:1023
+msgid "Seychelles"
+msgstr "Seychellit"
+
+#: src/common/util.c:1024
+msgid "Sudan"
+msgstr "Sudan"
+
+#: src/common/util.c:1025
+msgid "Sweden"
+msgstr "Ruotsi"
+
+#: src/common/util.c:1026
+msgid "Singapore"
+msgstr "Singapore"
+
+#: src/common/util.c:1027
+msgid "St. Helena"
+msgstr "Saint Helena"
+
+#: src/common/util.c:1028
+msgid "Slovenia"
+msgstr "Slovenia"
+
+#: src/common/util.c:1029
+msgid "Svalbard and Jan Mayen Islands"
+msgstr "Svalbard- ja Jan Mayen -saaret"
+
+#: src/common/util.c:1030
+msgid "Slovak Republic"
+msgstr "Slovakia"
+
+#: src/common/util.c:1031
+msgid "Sierra Leone"
+msgstr "Sierra Leone"
+
+#: src/common/util.c:1032
+msgid "San Marino"
+msgstr "San Marino"
+
+#: src/common/util.c:1033
+msgid "Senegal"
+msgstr "Senegal"
+
+#: src/common/util.c:1034
+msgid "Somalia"
+msgstr "Somalia"
+
+#: src/common/util.c:1035
+msgid "Suriname"
+msgstr "Surinam"
+
+#: src/common/util.c:1036
+msgid "Sao Tome and Principe"
+msgstr "Sao Tome ja Principe"
+
+#: src/common/util.c:1037
+msgid "Former USSR"
+msgstr "Entinen Neuvostoliitto"
+
+#: src/common/util.c:1038
+msgid "El Salvador"
+msgstr "El Salvador"
+
+#: src/common/util.c:1039
+msgid "Syria"
+msgstr "Syyria"
+
+#: src/common/util.c:1040
+msgid "Swaziland"
+msgstr "Swasimaa"
+
+#: src/common/util.c:1041
+msgid "Turks and Caicos Islands"
+msgstr "Turks- ja Cairossaaret"
+
+#: src/common/util.c:1042
+msgid "Chad"
+msgstr "Tšad"
+
+#: src/common/util.c:1043
+msgid "French Southern Territories"
+msgstr "Ranskan eteläiset maa-alueet"
+
+#: src/common/util.c:1044
+msgid "Togo"
+msgstr "Togo"
+
+#: src/common/util.c:1045
+msgid "Thailand"
+msgstr "Thaimaa"
+
+#: src/common/util.c:1046
+msgid "Tajikistan"
+msgstr "Tadzikistan"
+
+#: src/common/util.c:1047
+msgid "Tokelau"
+msgstr "Tokelau"
+
+#: src/common/util.c:1048
+msgid "Turkmenistan"
+msgstr "Turkmenistan"
+
+#: src/common/util.c:1049
+msgid "Tunisia"
+msgstr "Tunisia"
+
+#: src/common/util.c:1050
+msgid "Tonga"
+msgstr "Tonga"
+
+#: src/common/util.c:1051
+msgid "East Timor"
+msgstr "Itä-Timor"
+
+#: src/common/util.c:1052
+msgid "Turkey"
+msgstr "Turkki"
+
+#: src/common/util.c:1053
+msgid "Trinidad and Tobago"
+msgstr "Trinidad ja Tobago"
+
+#: src/common/util.c:1054
+msgid "Tuvalu"
+msgstr "Tuvalu"
+
+#: src/common/util.c:1055
+msgid "Taiwan"
+msgstr "Taiwan"
+
+#: src/common/util.c:1056
+msgid "Tanzania"
+msgstr "Tansania"
+
+#: src/common/util.c:1057
+msgid "Ukraine"
+msgstr "Ukraina"
+
+#: src/common/util.c:1058
+msgid "Uganda"
+msgstr "Uganda"
+
+#: src/common/util.c:1059
+msgid "United Kingdom"
+msgstr "Iso-Britannia"
+
+#: src/common/util.c:1060
+msgid "US Minor Outlying Islands"
+msgstr "Yhdysvaltojen pienet syrjäiset saaret"
+
+#: src/common/util.c:1061
+msgid "United States of America"
+msgstr "Yhdysvallat"
+
+#: src/common/util.c:1062
+msgid "Uruguay"
+msgstr "Uruguay"
+
+#: src/common/util.c:1063
+msgid "Uzbekistan"
+msgstr "Uzbekistan"
+
+#: src/common/util.c:1064
+msgid "Vatican City State"
+msgstr "Vatikaanivaltio"
+
+#: src/common/util.c:1065
+msgid "St. Vincent and the Grenadines"
+msgstr "Saint Vincent ja Grenadiinit"
+
+#: src/common/util.c:1066
+msgid "Venezuela"
+msgstr "Venezuela"
+
+#: src/common/util.c:1067
+msgid "British Virgin Islands"
+msgstr "Brittiläiset Neitsytsaaret"
+
+#: src/common/util.c:1068
+msgid "US Virgin Islands"
+msgstr "Neitsytsaaret"
+
+#: src/common/util.c:1069
+msgid "Vietnam"
+msgstr "Vietnam"
+
+#: src/common/util.c:1070
+msgid "Vanuatu"
+msgstr "Vanuatu"
+
+#: src/common/util.c:1071
+msgid "Wallis and Futuna Islands"
+msgstr "Wallis ja Futuna"
+
+#: src/common/util.c:1072
+msgid "Samoa"
+msgstr "Samoa"
+
+#: src/common/util.c:1073
+msgid "Yemen"
+msgstr "Jemen"
+
+#: src/common/util.c:1074
+msgid "Mayotte"
+msgstr "Mayotte"
+
+#: src/common/util.c:1075
+msgid "Yugoslavia"
+msgstr "Jugoslavia"
+
+#: src/common/util.c:1076
+msgid "South Africa"
+msgstr "Etelä-Afrikka"
+
+#: src/common/util.c:1077
+msgid "Zambia"
+msgstr "Sambia"
+
+#: src/common/util.c:1078
+msgid "Zimbabwe"
+msgstr "Zimbabwe"
+
+#: src/common/util.c:1088 src/common/util.c:1098 src/fe-gtk/menu.c:499
+#: src/fe-gtk/menu.c:503 src/fe-gtk/menu.c:507 src/fe-gtk/menu.c:511
+#: src/fe-gtk/menu.c:520 src/fe-gtk/menu.c:526
+msgid "Unknown"
+msgstr "Tuntematon"
+
+#: src/common/xchat.c:860
+msgid "Direct client-to-client"
+msgstr "Suora vertaisyhteys"
+
+#: src/common/xchat.c:861
+msgid "Send File"
+msgstr "Lähetä tiedosto"
+
+#: src/common/xchat.c:862
+msgid "Offer Chat"
+msgstr "Ehdota keskustelua"
+
+#: src/common/xchat.c:863
+msgid "Abort Chat"
+msgstr "Keskeytä keskustelu"
+
+#: src/common/xchat.c:864 src/fe-gtk/plugingui.c:73
+msgid "Version"
+msgstr "Versio"
+
+#: src/common/xchat.c:865
+msgid "Userinfo"
+msgstr "Käyttäjätiedot"
+
+#: src/common/xchat.c:866
+msgid "Clientinfo"
+msgstr "Asiakasohjelmatiedot"
+
+#: src/common/xchat.c:867 src/common/xchat.c:901 src/common/xchat.c:952
+msgid "Ping"
+msgstr "Ping"
+
+#: src/common/xchat.c:868
+msgid "Time"
+msgstr "Aika"
+
+#: src/common/xchat.c:869
+msgid "Finger"
+msgstr "Tunnustelu"
+
+#: src/common/xchat.c:870
+msgid "Oper"
+msgstr "Operaattori"
+
+#: src/common/xchat.c:871
+msgid "Kill this user"
+msgstr "Tapa tämä käyttäjä"
+
+#: src/common/xchat.c:872
+msgid "Mode"
+msgstr "Tila"
+
+#: src/common/xchat.c:873
+msgid "Give Ops"
+msgstr "Anna opit"
+
+#: src/common/xchat.c:874
+msgid "Take Ops"
+msgstr "Poista opit"
+
+#: src/common/xchat.c:875
+msgid "Give Half-Ops"
+msgstr "Anna puoliopit"
+
+#: src/common/xchat.c:876
+msgid "Take Half-Ops"
+msgstr "Poista puoliopit"
+
+#: src/common/xchat.c:877
+msgid "Give Voice"
+msgstr "Anna puheoikeus"
+
+#: src/common/xchat.c:878
+msgid "Take Voice"
+msgstr "Poista puheoikeus"
+
+#: src/common/xchat.c:879
+msgid "Ignore"
+msgstr "Jätä huomiotta"
+
+#: src/common/xchat.c:880
+msgid "Ignore User"
+msgstr "Jätä käyttäjä huomiotta"
+
+#: src/common/xchat.c:881
+msgid "UnIgnore User"
+msgstr "Huomioi käyttäjä jälleen"
+
+#: src/common/xchat.c:882
+msgid "Kick/Ban"
+msgstr "Potkaise/Bannaa"
+
+#: src/common/xchat.c:883 src/common/xchat.c:935
+msgid "Kick"
+msgstr "Potkaise"
+
+#: src/common/xchat.c:884 src/common/xchat.c:885 src/common/xchat.c:886
+#: src/common/xchat.c:887 src/common/xchat.c:888 src/common/xchat.c:934
+msgid "Ban"
+msgstr "Bannaa"
+
+#: src/common/xchat.c:889 src/common/xchat.c:890 src/common/xchat.c:891
+#: src/common/xchat.c:892
+msgid "KickBan"
+msgstr "Potkaise ja bannaa"
+
+#: src/common/xchat.c:893 src/fe-gtk/dccgui.c:584 src/fe-gtk/dccgui.c:742
+msgid "Info"
+msgstr "Tiedot"
+
+#: src/common/xchat.c:894
+msgid "Who"
+msgstr "Kuka"
+
+#: src/common/xchat.c:895 src/common/xchat.c:948
+msgid "WhoIs"
+msgstr "KukaOn"
+
+#: src/common/xchat.c:896
+msgid "DNS Lookup"
+msgstr "DNS-haku"
+
+#: src/common/xchat.c:897
+msgid "Trace"
+msgstr "Jäljitä"
+
+#: src/common/xchat.c:898
+msgid "UserHost"
+msgstr "KäyttäjäIsäntä"
+
+#: src/common/xchat.c:899
+msgid "External"
+msgstr "Ulkoiset"
+
+#: src/common/xchat.c:900
+msgid "Traceroute"
+msgstr "Traceroute"
+
+#: src/common/xchat.c:902
+msgid "Telnet"
+msgstr "Telnet"
+
+#: src/common/xchat.c:903
+msgid "Open Dialog Window"
+msgstr "Avaa keskusteluikkuna"
+
+#: src/common/xchat.c:915
+msgid "Disconnect"
+msgstr "Katkaise yhteys"
+
+#: src/common/xchat.c:916
+msgid "Reconnect"
+msgstr "Yhdistä uudelleen"
+
+#: src/common/xchat.c:917
+msgid "Leave Channel"
+msgstr "Poistu kanavalta"
+
+#: src/common/xchat.c:918
+msgid "Join Channel..."
+msgstr "Liity kanavalle..."
+
+#: src/common/xchat.c:919
+msgid "Enter Channel to Join:"
+msgstr "Anna liityttävän kanavan nimi:"
+
+#: src/common/xchat.c:920
+msgid "Server Links"
+msgstr "Palvelinlinkit"
+
+#: src/common/xchat.c:921
+msgid "Ping Server"
+msgstr "Pingaa palvelinta"
+
+#: src/common/xchat.c:922
+msgid "Hide Version"
+msgstr "Piilota versionumero"
+
+#: src/common/xchat.c:932
+msgid "Op"
+msgstr "Oppaa"
+
+#: src/common/xchat.c:933
+msgid "DeOp"
+msgstr "Opit pois"
+
+#: src/common/xchat.c:936
+msgid "bye"
+msgstr "heihei"
+
+#: src/common/xchat.c:937
+#, c-format
+msgid "Enter reason to kick %s:"
+msgstr "Anna syy miksi %s potkaistaan:"
+
+#: src/common/xchat.c:938
+msgid "Sendfile"
+msgstr "Lähetä"
+
+#: src/common/xchat.c:939
+msgid "Dialog"
+msgstr "Keskustele"
+
+#: src/common/xchat.c:949
+msgid "Send"
+msgstr "Lähetä"
+
+#: src/common/xchat.c:950
+msgid "Chat"
+msgstr "Keskustelu"
+
+#: src/common/xchat.c:951 src/fe-gtk/banlist.c:319 src/fe-gtk/ignoregui.c:388
+#: src/fe-gtk/search.c:117 src/fe-gtk/urlgrab.c:201
+msgid "Clear"
+msgstr "Tyhjennä"
+
+#: src/fe-gtk/about.c:102
+msgid "About X-Chat"
+msgstr "Tietoja X-Chatista"
+
+#: src/fe-gtk/about.c:129
+msgid "A multiplatform IRC Client"
+msgstr "Usealla alustalla toimiva IRC-asiakasohjelma"
+
+#: src/fe-gtk/ascii.c:131
+msgid "Character Chart"
+msgstr "Merkistökartta"
+
+#: src/fe-gtk/banlist.c:153 src/fe-gtk/banlist.c:237
+msgid "You must select some bans."
+msgstr "Valitse vähintään yksi banni."
+
+#: src/fe-gtk/banlist.c:253 src/fe-gtk/ignoregui.c:175
+msgid "Mask"
+msgstr "Peite"
+
+#: src/fe-gtk/banlist.c:254 src/fe-gtk/dccgui.c:539
+msgid "From"
+msgstr "Keneltä"
+
+#: src/fe-gtk/banlist.c:255
+msgid "Date"
+msgstr "Päiväys"
+
+#: src/fe-gtk/banlist.c:299
+#, c-format
+msgid "X-Chat: Ban List (%s)"
+msgstr "X-Chat: Banniluettelo (%s)"
+
+#: src/fe-gtk/banlist.c:315
+msgid "Unban"
+msgstr "Poista banni"
+
+#: src/fe-gtk/banlist.c:317
+msgid "Crop"
+msgstr "Poista muut"
+
+#: src/fe-gtk/banlist.c:321
+msgid "Refresh"
+msgstr "Päivitä"
+
+#: src/fe-gtk/chanlist.c:120
+#, c-format
+msgid "User and Channel Statistics: %d/%d Users on %d/%d Channels"
+msgstr "Käyttäjä- ja kanavatilasto: %d/%d käyttäjää %d/%d kanavalla"
+
+#: src/fe-gtk/chanlist.c:536
+msgid "I can't save an empty list!"
+msgstr "Tyhjää luetteloa ei voi tallentaa!"
+
+#: src/fe-gtk/chanlist.c:539 src/fe-gtk/menu.c:934 src/fe-gtk/urlgrab.c:148
+msgid "Select an output filename"
+msgstr "Valitse tulostiedoston nimi"
+
+#: src/fe-gtk/chanlist.c:607
+#, c-format
+msgid "X-Chat: Channel List (%s)"
+msgstr "X-Chat: Kanavaluettelo (%s)"
+
+#: src/fe-gtk/chanlist.c:622
+msgid "List display options:"
+msgstr "Kanavaluettelon kriteerit:"
+
+#: src/fe-gtk/chanlist.c:634
+msgid "Minimum Users:"
+msgstr "Käyttäjiä vähintään:"
+
+#: src/fe-gtk/chanlist.c:649
+msgid "Maximum Users:"
+msgstr "Käyttäjiä enintään:"
+
+#: src/fe-gtk/chanlist.c:664
+msgid "Regex Match:"
+msgstr "Haku säännöllisellä lausekkeella:"
+
+#: src/fe-gtk/chanlist.c:685
+msgid "Apply Match to:"
+msgstr "Haku täsmätään kohteisiin:"
+
+#: src/fe-gtk/chanlist.c:709
+msgid "Apply"
+msgstr "Toteuta"
+
+#: src/fe-gtk/chanlist.c:751
+msgid "Refresh the list"
+msgstr "Päivitä luettelo"
+
+#: src/fe-gtk/chanlist.c:753
+msgid "Save the list"
+msgstr "Tallenna luettelo"
+
+#: src/fe-gtk/chanlist.c:755 src/fe-gtk/menu.c:731
+msgid "Join Channel"
+msgstr "Liity kanavalle"
+
+#: src/fe-gtk/dccgui.c:117
+#, c-format
+msgid "Send file to %s"
+msgstr "Lähetä tiedosto käyttäjälle %s"
+
+#: src/fe-gtk/dccgui.c:340
+msgid "None"
+msgstr "Ei mitään"
+
+#: src/fe-gtk/dccgui.c:351
+msgid "File:"
+msgstr "Tiedosto:"
+
+#: src/fe-gtk/dccgui.c:352
+msgid "From:"
+msgstr "Keneltä:"
+
+#: src/fe-gtk/dccgui.c:352
+msgid "To:"
+msgstr "Kenelle:"
+
+#: src/fe-gtk/dccgui.c:353
+msgid "Size:"
+msgstr "Koko:"
+
+#: src/fe-gtk/dccgui.c:354
+msgid "Address:"
+msgstr "IP-osoite:"
+
+#: src/fe-gtk/dccgui.c:355
+msgid "Started:"
+msgstr "Aloitusaika:"
+
+#: src/fe-gtk/dccgui.c:356
+msgid "Speed limit:"
+msgstr "Rajanopeus:"
+
+#: src/fe-gtk/dccgui.c:381
+msgid "That file is not resumable."
+msgstr "Tiedoston siirto ei ole jatkettavissa."
+
+#: src/fe-gtk/dccgui.c:385
+#, c-format
+msgid ""
+"Cannot access file: %s\n"
+"%s.\n"
+"Resuming not possible."
+msgstr ""
+"Tiedostoa ei voi käsitellä: %s\n"
+"%s.\n"
+"Jatkaminen ei ole mahdollista."
+
+#: src/fe-gtk/dccgui.c:392
+msgid "File in download directory is larger than file offered. Resuming not possible."
+msgstr "Tiedosto latauskansiossa on suurempi kuin tarjottu tiedosto. Jatkaminen ei ole mahdollista."
+
+#: src/fe-gtk/dccgui.c:396
+msgid "Cannot resume the same file from two people."
+msgstr "Saman tiedoston siirtoa ei voi jatkaa kahdelta käyttäjältä."
+
+#: src/fe-gtk/dccgui.c:528
+msgid "MIME Type"
+msgstr "MIME-tyyppi"
+
+#: src/fe-gtk/dccgui.c:534 src/fe-gtk/dccgui.c:704 src/fe-gtk/dccgui.c:847
+#: src/fe-gtk/notifygui.c:111
+msgid "Status"
+msgstr "Tila"
+
+#: src/fe-gtk/dccgui.c:535 src/fe-gtk/dccgui.c:705 src/fe-gtk/plugingui.c:74
+msgid "File"
+msgstr "Tiedosto"
+
+#: src/fe-gtk/dccgui.c:538 src/fe-gtk/dccgui.c:709
+msgid "ETA"
+msgstr "Arvioitu aika"
+
+#: src/fe-gtk/dccgui.c:548
+msgid "X-Chat: File Receive List"
+msgstr "X-Chat: Vastaanotettavien tiedostojen luettelo"
+
+#: src/fe-gtk/dccgui.c:578 src/fe-gtk/dccgui.c:741 src/fe-gtk/dccgui.c:879
+msgid "Abort"
+msgstr "Keskeytä"
+
+#: src/fe-gtk/dccgui.c:580 src/fe-gtk/dccgui.c:880
+msgid "Accept"
+msgstr "Hyväksy"
+
+#: src/fe-gtk/dccgui.c:582
+msgid "Resume"
+msgstr "Jatka"
+
+#: src/fe-gtk/dccgui.c:586
+msgid "Open"
+msgstr "Avaa"
+
+#: src/fe-gtk/dccgui.c:708
+msgid "Ack"
+msgstr "Hyväksytty"
+
+#: src/fe-gtk/dccgui.c:710
+msgid "To"
+msgstr "Kenelle"
+
+#: src/fe-gtk/dccgui.c:720
+msgid "X-Chat: File Send List"
+msgstr "X-Chat: Lähetettävien tiedostojen luettelo"
+
+#: src/fe-gtk/dccgui.c:848
+msgid "To/From"
+msgstr "Lähettäjä/Vastaanottaja"
+
+#: src/fe-gtk/dccgui.c:849
+msgid "Recv"
+msgstr "Saapunut"
+
+#: src/fe-gtk/dccgui.c:850
+msgid "Sent"
+msgstr "Lähetetty"
+
+#: src/fe-gtk/dccgui.c:851
+msgid "StartTime"
+msgstr "Aloitusaika"
+
+#: src/fe-gtk/dccgui.c:861
+msgid "X-Chat: DCC Chat List"
+msgstr "X-Chat: DCC-keskusteluluettelo"
+
+#: src/fe-gtk/editlist.c:139
+msgid "*NEW*"
+msgstr "*UUSI*"
+
+#: src/fe-gtk/editlist.c:140
+msgid "EDIT ME"
+msgstr "MUOKKAA TÄTÄ"
+
+#: src/fe-gtk/editlist.c:305 src/fe-gtk/plugingui.c:72
+msgid "Name"
+msgstr "Nimi"
+
+#: src/fe-gtk/editlist.c:306
+msgid "Command"
+msgstr "Komento"
+
+#: src/fe-gtk/editlist.c:333
+msgid "Move Up"
+msgstr "Siirrä ylemmäs"
+
+#: src/fe-gtk/editlist.c:337
+msgid "Move Dn"
+msgstr "Siirrä alemmas"
+
+#: src/fe-gtk/editlist.c:345
+msgid "Cancel"
+msgstr "Peru"
+
+#: src/fe-gtk/editlist.c:349 src/fe-gtk/textgui.c:413 src/fe-gtk/urlgrab.c:205
+msgid "Save"
+msgstr "Tallenna"
+
+#: src/fe-gtk/editlist.c:357 src/fe-gtk/fkeys.c:747
+msgid "Add New"
+msgstr "Lisää uusi"
+
+#: src/fe-gtk/editlist.c:361 src/fe-gtk/fkeys.c:752 src/fe-gtk/ignoregui.c:386
+msgid "Delete"
+msgstr "Poista"
+
+#: src/fe-gtk/editlist.c:369
+msgid "Sort"
+msgstr "Lajittele"
+
+#: src/fe-gtk/editlist.c:373
+msgid "Help"
+msgstr "Ohje"
+
+#: src/fe-gtk/fe-gtk.c:170
+msgid "Options"
+msgstr "Asetukset"
+
+#: src/fe-gtk/fe-gtk.c:171
+msgid "don't auto connect"
+msgstr "älä yhdistä automaattisesti"
+
+#: src/fe-gtk/fe-gtk.c:172
+msgid "DIRECTORY"
+msgstr "HAKEMISTO"
+
+#: src/fe-gtk/fe-gtk.c:173
+msgid "use a different config dir"
+msgstr "käytä muuta asetushakemistoa"
+
+#: src/fe-gtk/fe-gtk.c:174
+msgid "don't auto load any plugins"
+msgstr "älä lataa mitään liitännäisiä automaattisesti"
+
+#: src/fe-gtk/fe-gtk.c:175
+msgid "show plugin auto-load dir"
+msgstr "näytä automaattisesti ladattavien liitännäisten hakemisto"
+
+#: src/fe-gtk/fe-gtk.c:176
+msgid "show user config dir"
+msgstr "näytä käyttäjän asetushakemisto"
+
+#: src/fe-gtk/fe-gtk.c:177
+msgid "show version information"
+msgstr "näytä versiotiedot"
+
+#: src/fe-gtk/fe-gtk.c:262
+#, c-format
+msgid ""
+"Failed to open font:\n"
+"\n"
+"%s"
+msgstr ""
+"Kirjasimen avaaminen ei onnistunut:\n"
+"\n"
+"%s"
+
+#: src/fe-gtk/fe-gtk.c:622
+msgid "Search buffer is empty.\n"
+msgstr "Hakupuskuri on tyhjä.\n"
+
+#: src/fe-gtk/fe-gtk.c:699
+#, c-format
+msgid "%d bytes"
+msgstr "%d tavua"
+
+#: src/fe-gtk/fkeys.c:155
+msgid "The Run Command action runs the data in Data 1 as if it has been typed into the entry box where you pressed the key sequence. Thus it can contain text (which will be sent to the channel/person), commands or user commands. When run all \\n characters in Data 1 are used to deliminate seperate commands so it is possible to run more than one command. If you want a \\ in the actual text run then enter \\\\"
+msgstr "Run Command -komento ajaa Data 1:n sisällön, kuin se olisi kirjoitettu syötekenttään, jossa näppäinyhdistelmää painettiin. Se voi siis sisältää tekstiä (joka lähetetään kanavalle/henkilölle), komentoja tai käyttäjäkomentoja. Ajettaessa kaikki Data 1:n sisältämät \\n-merkit tulkitaan komentojen erottimiksi; siten on mahdollista ajaa useampi komento. Jos haluat \\-merkin varsinaiseen tekstiin, käytä merkintää \\\\"
+
+#: src/fe-gtk/fkeys.c:157
+msgid "The Change Page command switches between pages in the notebook. Set Data 1 to the page you want to switch to. If Data 2 is set to anything then the switch will be relative to the current position"
+msgstr "Change Page -komento siirtyy välilehdeltä toiselle. Aseta Data 1:n arvoksi lehti, jolle halutaan siirtyä. Jos Data 2 on asetettu, siirtyminen on suhteessa nykyiseen sijaintiin"
+
+#: src/fe-gtk/fkeys.c:159
+msgid "The Insert in Buffer command will insert the contents of Data 1 into the entry where the key sequence was pressed at the current cursor position"
+msgstr "Insert in Buffer -komento lisää Data 1:n sisällön syöteriville kohdistimen kohdalle"
+
+#: src/fe-gtk/fkeys.c:161
+msgid "The Scroll Page command scrolls the text widget up or down one page or one line. Set Data 1 to either Up, Down, +1 or -1."
+msgstr "Scroll Page -komento vierittää tekstikenttää (Data 1:n arvosta riippuen) ylös tai alas yhden sivun (Up, Down) tai rivin (+1, -1) verran."
+
+#: src/fe-gtk/fkeys.c:163
+msgid "The Set Buffer command sets the entry where the key sequence was entered to the contents of Data 1"
+msgstr "Set Buffer -komento asettaa syöteriviksi Data 1:n sisällön"
+
+#: src/fe-gtk/fkeys.c:165
+msgid "The Last Command command sets the entry to contain the last command entered - the same as pressing up in a shell"
+msgstr "Last Command -komento asettaa syöteriviksi edellisen annetun komennon - vastaa ylänuolen painamista kuoressa"
+
+#: src/fe-gtk/fkeys.c:167
+msgid "The Next Command command sets the entry to contain the next command entered - the same as pressing down in a shell"
+msgstr "Next Command -komento asettaa syöteriviksi seuraavan annetun komennon - vastaa alanuolen painamista kuoressa"
+
+#: src/fe-gtk/fkeys.c:169
+msgid "This command changes the text in the entry to finish an incomplete nickname or command. If Data 1 is set then double-tabbing in a string will select the last nick, not the next"
+msgstr "Tämä komento täydentää syöterivillä osoittimen edellä olevan epätäydellisen kutsumanimen tai komennon. Jos Data 1 on asetettu, kaksi kertaa painaminen valitsee edellisen kutsumanimen, ei seuraavaa"
+
+#: src/fe-gtk/fkeys.c:171
+msgid "This command scrolls up and down through the list of nicks. If Data 1 is set to anything it will scroll up, else it scrolls down"
+msgstr "Tämä komento vierittää käyttäjäluetteloa ylös ja alas. Jos Data 1 on asetettu, luetteloa vieritetään ylös, muutoin alas"
+
+#: src/fe-gtk/fkeys.c:173
+msgid "This command checks the last word entered in the entry against the replace list and replaces it if it finds a match"
+msgstr "Tämä komento vertaa viimeistä annettua sanaa korvauslistaan ja muuttaa sen,jos löytyy täsmäävyys."
+
+#: src/fe-gtk/fkeys.c:175
+msgid "This command moves the front tab left by one"
+msgstr "Tämä komento siirtää päällimmäistä välilehteä yhden vasemmalle"
+
+#: src/fe-gtk/fkeys.c:177
+msgid "This command moves the front tab right by one"
+msgstr "Tämä komento siirtää päällimmäistä välilehteä yhden oikealle"
+
+#: src/fe-gtk/fkeys.c:179
+msgid "This command moves the current tab family to the left"
+msgstr "Tämä komento siirtää nykyistä välilehtiötä vasemmalle"
+
+#: src/fe-gtk/fkeys.c:181
+msgid "This command moves the current tab family to the right"
+msgstr "Tämä komento siirtää nykyistä välilehtiötä oikealle"
+
+#: src/fe-gtk/fkeys.c:183
+msgid "Push input line into history but doesn't send to server"
+msgstr "Lisää syöterivin historiaan, mutta ei lähetä palvelimelle"
+
+#: src/fe-gtk/fkeys.c:195
+msgid "There was an error loading key bindings configuration"
+msgstr "Virhe ladattaessa näppäinsidonta-asetuksia"
+
+#: src/fe-gtk/fkeys.c:440 src/fe-gtk/fkeys.c:441 src/fe-gtk/fkeys.c:442
+#: src/fe-gtk/fkeys.c:443 src/fe-gtk/fkeys.c:725 src/fe-gtk/fkeys.c:731
+#: src/fe-gtk/fkeys.c:736 src/fe-gtk/maingui.c:943 src/fe-gtk/maingui.c:959
+#: src/fe-gtk/maingui.c:1102 src/fe-gtk/maingui.c:1197
+#: src/fe-gtk/maingui.c:2619
+msgid "<none>"
+msgstr "<ei mitään>"
+
+#: src/fe-gtk/fkeys.c:689
+msgid "Mod"
+msgstr "Määre"
+
+#: src/fe-gtk/fkeys.c:690 src/fe-gtk/fkeys.c:785
+msgid "Key"
+msgstr "Näppäin"
+
+#: src/fe-gtk/fkeys.c:691
+msgid "Action"
+msgstr "Toiminto"
+
+#: src/fe-gtk/fkeys.c:700
+msgid "X-Chat: Keyboard Shortcuts"
+msgstr "X-Chat: Näppäinkomennot"
+
+#: src/fe-gtk/fkeys.c:778
+msgid "Shift"
+msgstr "Vaihto"
+
+#: src/fe-gtk/fkeys.c:780
+msgid "Alt"
+msgstr "Alt"
+
+#: src/fe-gtk/fkeys.c:782
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: src/fe-gtk/fkeys.c:789
+msgid "Data 1"
+msgstr "Data 1"
+
+#: src/fe-gtk/fkeys.c:792
+msgid "Data 2"
+msgstr "Data 2"
+
+#: src/fe-gtk/fkeys.c:835
+msgid "Error opening keys config file\n"
+msgstr "Virhe avattaessa näppäinasetustiedostoa\n"
+
+#: src/fe-gtk/fkeys.c:1006
+#, c-format
+msgid ""
+"Unknown keyname %s in key bindings config file\n"
+"Load aborted, please fix %s/keybindings.conf\n"
+msgstr ""
+"Tuntematon näppäinnimi %s näppäinsidontojen asetustiedostossa\n"
+"Lataus keskeytetty, korjaa tiedosto %s/keybindings\n"
+
+#: src/fe-gtk/fkeys.c:1044
+#, c-format
+msgid ""
+"Unknown action %s in key bindings config file\n"
+"Load aborted, Please fix %s/keybindings\n"
+msgstr ""
+"Tuntematon toiminto %s näppäinsidontojen asetustiedostossa\n"
+"Lataus keskeytetty, korjaa tiedosto %s/keybindings\n"
+
+#: src/fe-gtk/fkeys.c:1065
+#, c-format
+msgid ""
+"Expecting Data line (beginning Dx{:|!}) but got:\n"
+"%s\n"
+"\n"
+"Load aborted, Please fix %s/keybindings\n"
+msgstr ""
+"Odotettiin Datariviä (alku Dx{:|!}), mutta saatiin:\n"
+"%s\n"
+"\n"
+"Lataus keskeytetty, korjaa tiedosto %s/keybindings\n"
+
+#: src/fe-gtk/fkeys.c:1134
+#, c-format
+msgid ""
+"Key bindings config file is corrupt, load aborted\n"
+"Please fix %s/keybindings.conf\n"
+msgstr ""
+"Näppäinsidontojen asetustiedosto on turmeltunut, lataus keskeytetty\n"
+"Korjaa tiedosto %s/keybindings.conf\n"
+
+#: src/fe-gtk/gtkutil.c:154
+msgid "Cannot write to that file."
+msgstr "Antamaasi tiedostoon ei voi kirjoittaa."
+
+#: src/fe-gtk/gtkutil.c:156
+msgid "Cannot read that file."
+msgstr "Antamaasi tiedostoa ei voi lukea."
+
+#: src/fe-gtk/ignoregui.c:117 src/fe-gtk/ignoregui.c:263
+msgid "That mask already exists."
+msgstr "Kyseinen peite on jo olemassa."
+
+#: src/fe-gtk/ignoregui.c:177 src/fe-gtk/maingui.c:1668
+msgid "Private"
+msgstr "Yksityiset"
+
+#: src/fe-gtk/ignoregui.c:178
+msgid "Notice"
+msgstr "Tiedotteet"
+
+#: src/fe-gtk/ignoregui.c:179
+msgid "CTCP"
+msgstr "CTCP"
+
+#: src/fe-gtk/ignoregui.c:180
+msgid "DCC"
+msgstr "DCC"
+
+#: src/fe-gtk/ignoregui.c:181
+msgid "Invite"
+msgstr "Kutsut"
+
+#: src/fe-gtk/ignoregui.c:182
+msgid "Unignore"
+msgstr "Huomioi toistaiseksi"
+
+#: src/fe-gtk/ignoregui.c:307
+msgid "Enter mask to ignore:"
+msgstr "Anna peite huomiotta jätettäville:"
+
+#: src/fe-gtk/ignoregui.c:354
+msgid "X-Chat: Ignore list"
+msgstr "X-Chat: Huomioimattomuusluettelo"
+
+#: src/fe-gtk/ignoregui.c:361
+msgid "Ignore Stats:"
+msgstr "Huomioimattomuustilastot:"
+
+#: src/fe-gtk/ignoregui.c:369
+msgid "Channel:"
+msgstr "Kavavia:"
+
+#: src/fe-gtk/ignoregui.c:370
+msgid "Private:"
+msgstr "Yksityisiä:"
+
+#: src/fe-gtk/ignoregui.c:371
+msgid "Notice:"
+msgstr "Ilmoituksia:"
+
+#: src/fe-gtk/ignoregui.c:372
+msgid "CTCP:"
+msgstr "CTCP:"
+
+#: src/fe-gtk/ignoregui.c:373
+msgid "Invite:"
+msgstr "Kutsuja:"
+
+#: src/fe-gtk/ignoregui.c:384 src/fe-gtk/notifygui.c:307
+msgid "Add"
+msgstr "Lisää uusi"
+
+#: src/fe-gtk/maingui.c:350
+msgid "Dialog with"
+msgstr "Keskustelijana"
+
+#: src/fe-gtk/maingui.c:606
+#, c-format
+msgid "Topic for %s is: %s"
+msgstr "Kanavan %s aihe on: %s"
+
+#: src/fe-gtk/maingui.c:610
+msgid "No topic is set"
+msgstr "Aihetta ei ole asetettu"
+
+#: src/fe-gtk/maingui.c:1012
+msgid "No other tabs open, quit xchat?"
+msgstr "Muita välilehtiä ei ole auki. Lopetetaanko XChat?"
+
+#: src/fe-gtk/maingui.c:1058
+msgid "Insert color code"
+msgstr "Lisää värikoodi"
+
+#: src/fe-gtk/maingui.c:1107
+msgid "Beep on message"
+msgstr "Anna äänimerkki viestin saapuessa"
+
+#: src/fe-gtk/maingui.c:1110
+msgid "Show join/part messages"
+msgstr "Näytä liittymis/poistumisviestit"
+
+#: src/fe-gtk/maingui.c:1112
+msgid "Color paste"
+msgstr "Liitä väritysten kanssa"
+
+#: src/fe-gtk/maingui.c:1119
+msgid "Go to"
+msgstr "Siirry"
+
+#: src/fe-gtk/maingui.c:1132 src/fe-gtk/menu.c:1261
+msgid "Close Tab"
+msgstr "Sulje välilehti"
+
+#: src/fe-gtk/maingui.c:1135 src/fe-gtk/menu.c:1674
+msgid "Detach Tab"
+msgstr "Irrota välilehti"
+
+#: src/fe-gtk/maingui.c:1386
+msgid "Some file transfers still active, quit xchat?"
+msgstr "Jotkut tiedostonsiirrot ovat vielä aktiivisia. Lopetetaanko X-Chat?"
+
+#: src/fe-gtk/maingui.c:1536 src/fe-gtk/maingui.c:1642
+msgid "User limit must be a number!\n"
+msgstr "Käyttäjärajan tulee olla numero!\n"
+
+#: src/fe-gtk/maingui.c:1664
+msgid "Topic Protection"
+msgstr "Aiheensuojaus"
+
+#: src/fe-gtk/maingui.c:1665
+msgid "No outside messages"
+msgstr "Ei ulkopuolisia viestejä"
+
+#: src/fe-gtk/maingui.c:1666
+msgid "Secret"
+msgstr "Salainen"
+
+#: src/fe-gtk/maingui.c:1667
+msgid "Invite Only"
+msgstr "Vain kutsutuille"
+
+#: src/fe-gtk/maingui.c:1669
+msgid "Moderated"
+msgstr "Moderoitu"
+
+#: src/fe-gtk/maingui.c:1670
+msgid "Ban List"
+msgstr "Banniluettelo"
+
+#: src/fe-gtk/maingui.c:1672
+msgid "Keyword"
+msgstr "Tunnussana"
+
+#: src/fe-gtk/maingui.c:1684
+msgid "User Limit"
+msgstr "Käyttäjäraja"
+
+#: src/fe-gtk/maingui.c:1700
+msgid "Close this tab/window"
+msgstr "Sulje tämä välilehti/ikkuna"
+
+#: src/fe-gtk/maingui.c:1797
+msgid "Show/Hide userlist"
+msgstr "Näytä/piilota käyttäjäluettelo"
+
+#: src/fe-gtk/maingui.c:1922
+msgid ""
+"Unable to set transparent background!\n"
+"\n"
+"You may be using a non-compliant window\n"
+"manager that is not currently supported.\n"
+msgstr ""
+"Taustaa ei voi asettaa läpinäkyväksi!\n"
+"\n"
+"Ikkunointiohjelma on ehkä epäyhteensopiva,\n"
+"eikä sitä tällä hetkellä tueta.\n"
+
+#: src/fe-gtk/maingui.c:2115
+msgid "Enter new nickname:"
+msgstr "Anna uusi kutsumanimi:"
+
+#: src/fe-gtk/menu.c:116
+msgid "Host unknown"
+msgstr "Tuntematon isäntä"
+
+#: src/fe-gtk/menu.c:496
+#, c-format
+msgid "<tt><b>%-11s</b></tt> %s"
+msgstr "<tt><b>%-11s</b></tt> %s"
+
+#: src/fe-gtk/menu.c:498
+msgid "User:"
+msgstr "Käyttäjä:"
+
+#: src/fe-gtk/menu.c:502
+msgid "Country:"
+msgstr "Maa:"
+
+#: src/fe-gtk/menu.c:506
+msgid "Real Name:"
+msgstr "Oikea nimi:"
+
+#: src/fe-gtk/menu.c:510
+msgid "Server:"
+msgstr "Palvelin:"
+
+#: src/fe-gtk/menu.c:519
+msgid "Away Msg:"
+msgstr "Poissaoloviesti:"
+
+#: src/fe-gtk/menu.c:525
+msgid "Last Msg:"
+msgstr "Viimeisin viesti:"
+
+#: src/fe-gtk/menu.c:612
+msgid "Menu Bar"
+msgstr "Valikkopalkki"
+
+#: src/fe-gtk/menu.c:613
+msgid "Topic Bar"
+msgstr "Aihepalkki"
+
+#: src/fe-gtk/menu.c:617 src/fe-gtk/setup.c:159
+msgid "User List"
+msgstr "Käyttäjäluettelo"
+
+#: src/fe-gtk/menu.c:620
+msgid "Mode Buttons"
+msgstr "Tilapainikkeet"
+
+#: src/fe-gtk/menu.c:626
+msgid "User List Buttons"
+msgstr "Käyttäjäluettelon painikkeet"
+
+#: src/fe-gtk/menu.c:672 src/fe-gtk/urlgrab.c:203
+msgid "Copy selected URL"
+msgstr "Kopioi valittu URL"
+
+#: src/fe-gtk/menu.c:735
+msgid "Part Channel"
+msgstr "Poistu kanavalta"
+
+#: src/fe-gtk/menu.c:737
+msgid "Cycle Channel"
+msgstr "Liity kanavalle uudelleen"
+
+#: src/fe-gtk/menu.c:760
+msgid "X-Chat: User menu"
+msgstr "X-Chat: Käyttäjän valikko"
+
+#: src/fe-gtk/menu.c:769
+msgid "Edit This Menu..."
+msgstr "Muokkaa tätä valikkoa..."
+
+#: src/fe-gtk/menu.c:876
+msgid ""
+"*WARNING*\n"
+"Auto accepting DCC to your home directory\n"
+"can be dangerous and is exploitable. Eg:\n"
+"Someone could send you a .bash_profile"
+msgstr ""
+"*VAROITUS*\n"
+"DCC-siirtojen automaattinen hyväksyminen\n"
+"kotihakemistoon voi olla vaarallista. Esim:\n"
+"Joku voi lähettää tiedoston .bash_profile"
+
+#: src/fe-gtk/menu.c:1004
+msgid "Settings saved."
+msgstr "Asetukset tallennettu."
+
+#: src/fe-gtk/menu.c:1041
+msgid ""
+"User Commands - Special codes:\n"
+"\n"
+"%c  =  current channel\n"
+"%m  =  machine info\n"
+"%n  =  your nick\n"
+"%t  =  time/date\n"
+"%v  =  xchat version\n"
+"%2  =  word 2\n"
+"%3  =  word 3\n"
+"&2  =  word 2 to the end of line\n"
+"&3  =  word 3 to the end of line\n"
+"\n"
+"eg:\n"
+"/cmd john hello\n"
+"\n"
+"%2 would be \"john\"\n"
+"&2 would be \"john hello\"."
+msgstr ""
+"%c  =  nykyinen kanava\n"
+"%m  =  koneen tiedot\n"
+"%n  =  oma kutsumanimi\n"
+"%t  =  aika/päiväys\n"
+"%v  =  xchat-versio\n"
+"%2  =  sana 2\n"
+"%3  =  sana 3\n"
+"&2  =  sana 2 rivin loppuun\n"
+"&3  =  sana 3 rivin loppuun\n"
+"\n"
+"esim:\n"
+"/cmd jarkko terve\n"
+"\n"
+"%2 olisi \"jarkko\"\n"
+"&2 olisi \"jarkko terve\"."
+
+#: src/fe-gtk/menu.c:1056
+msgid ""
+"Userlist Buttons - Special codes:\n"
+"\n"
+"%a  =  all selected nicks\n"
+"%c  =  current channel\n"
+"%h  =  selected nick's hostname\n"
+"%m  =  machine info\n"
+"%n  =  your nick\n"
+"%s  =  selected nick\n"
+"%t  =  time/date\n"
+msgstr ""
+"Käyttäjälistapainikkeet - Erikoiskoodit:\n"
+"\n"
+"%a  =  kaikki valitut kutsumanimet\n"
+"%c  =  nykyinen kanava\n"
+"%h  =  valitun käyttäjän isäntänimi\n"
+"%m  =  koneen tiedot\n"
+"%n  =  oma kutsumanimi\n"
+"%s  =  valittu kutsumanimi\n"
+"%t  =  aika/päiväys\n"
+
+#: src/fe-gtk/menu.c:1065
+msgid ""
+"Dialog Buttons - Special codes:\n"
+"\n"
+"%a  =  all selected nicks\n"
+"%c  =  current channel\n"
+"%h  =  selected nick's hostname\n"
+"%m  =  machine info\n"
+"%n  =  your nick\n"
+"%s  =  selected nick\n"
+"%t  =  time/date\n"
+msgstr ""
+"Keskustelupainikkeet - Erikoiskoodit:\n"
+"\n"
+"%a  =  kaikki valitut kutsumanimet\n"
+"%c  =  nykyinen kanava\n"
+"%h  =  valitun käyttäjän isäntänimi\n"
+"%m  =  koneen tiedot\n"
+"%n  =  oma kutsumanimi\n"
+"%s  =  valittu kutsumanimi\n"
+"%t  =  aika/päiväys\n"
+
+#: src/fe-gtk/menu.c:1074
+msgid ""
+"CTCP Replies - Special codes:\n"
+"\n"
+"%d  =  data (the whole ctcp)\n"
+"%m  =  machine info\n"
+"%s  =  nick who sent the ctcp\n"
+"%t  =  time/date\n"
+"%2  =  word 2\n"
+"%3  =  word 3\n"
+"&2  =  word 2 to the end of line\n"
+"&3  =  word 3 to the end of line\n"
+"\n"
+msgstr ""
+"CTCP-vastaukset - Erikoiskoodit:\n"
+"\n"
+"%d  =  data (koko ctcp)\n"
+"%m  =  koneen tiedot\n"
+"%s  =  ctcp:n lähettäjän kutsumanimi\n"
+"%t  =  aika/päiväys\n"
+"%2  =  sana 2\n"
+"%3  =  sana 3\n"
+"&2  =  sana 2 rivin loppuun\n"
+"&3  =  sana 3 rivin loppuun\n"
+"\n"
+
+#: src/fe-gtk/menu.c:1084
+#, c-format
+msgid ""
+"URL Handlers - Special codes:\n"
+"\n"
+"%s  =  the URL string\n"
+"\n"
+"Putting a ! infront of the command\n"
+"indicates it should be sent to a\n"
+"shell instead of X-Chat"
+msgstr ""
+"URL-käsittelimet - Erikoiskoodit:\n"
+"\n"
+"%s  =  URL-merkkijono\n"
+"\n"
+"Huutomerkki ! komennon edessä ilmaisee,\n"
+"että komento lähetetään X-Chatin sijaan\n"
+"kuorelle."
+
+#: src/fe-gtk/menu.c:1093
+msgid "X-Chat: User Defined Commands"
+msgstr "X-Chat: Käyttäjän määrittelemät komennot"
+
+#: src/fe-gtk/menu.c:1100
+msgid "X-Chat: Userlist Popup menu"
+msgstr "X-Chat: Käyttäjäluettelon ponnahdusvalikko"
+
+#: src/fe-gtk/menu.c:1107
+msgid "X-Chat: Replace"
+msgstr "X-Chat: Korvaaminen"
+
+#: src/fe-gtk/menu.c:1114
+msgid "X-Chat: URL Handlers"
+msgstr "X-Chat: URL-käsittelimet"
+
+#: src/fe-gtk/menu.c:1133
+msgid "X-Chat: Userlist buttons"
+msgstr "X-Chat: Käyttäjäluettelon painikkeet"
+
+#: src/fe-gtk/menu.c:1140
+msgid "X-Chat: Dialog buttons"
+msgstr "X-Chat: Keskusteluikkunan painikkeet"
+
+#: src/fe-gtk/menu.c:1147
+msgid "X-Chat: CTCP Replies"
+msgstr "X-Chat: CTCP-vastaukset"
+
+#: src/fe-gtk/menu.c:1235
+msgid "_X-Chat"
+msgstr "_X-Chat"
+
+#: src/fe-gtk/menu.c:1236
+msgid "Server List..."
+msgstr "Palvelinluettelo..."
+
+#: src/fe-gtk/menu.c:1239
+msgid "New"
+msgstr "Uusi"
+
+#: src/fe-gtk/menu.c:1240
+msgid "Server Tab..."
+msgstr "Palvelinvälilehti..."
+
+#: src/fe-gtk/menu.c:1241
+msgid "Channel Tab..."
+msgstr "Kanavavälilehti..."
+
+#: src/fe-gtk/menu.c:1242
+msgid "Server Window..."
+msgstr "Palvelinikkuna..."
+
+#: src/fe-gtk/menu.c:1243
+msgid "Channel Window..."
+msgstr "Kanavaikkuna..."
+
+#: src/fe-gtk/menu.c:1248 src/fe-gtk/menu.c:1250
+msgid "Load Plugin or Script..."
+msgstr "Lataa skripti tai liitännäinen..."
+
+#: src/fe-gtk/menu.c:1254
+msgid "New Shell Tab..."
+msgstr "Uusi päätevälilehti..."
+
+#: src/fe-gtk/menu.c:1263
+msgid "Quit"
+msgstr "Lopeta"
+
+#: src/fe-gtk/menu.c:1265
+msgid "_IRC"
+msgstr "_IRC"
+
+#: src/fe-gtk/menu.c:1266
+msgid "Invisible"
+msgstr "Näkymätön"
+
+#: src/fe-gtk/menu.c:1267
+msgid "Receive Wallops"
+msgstr "Vastaanota wallopeja"
+
+#: src/fe-gtk/menu.c:1268
+msgid "Receive Server Notices"
+msgstr "Vastaanota palvelinviestejä"
+
+#: src/fe-gtk/menu.c:1270
+msgid "Marked Away"
+msgstr "Merkitty poissaolevaksi"
+
+#: src/fe-gtk/menu.c:1272
+msgid "Auto Rejoin when Kicked"
+msgstr "Palaa kanavalle potkaistaessa"
+
+#: src/fe-gtk/menu.c:1273
+msgid "Auto Reconnect to Server"
+msgstr "Palauta palvelimeen katkennut yhteys"
+
+#: src/fe-gtk/menu.c:1274
+msgid "Never-give-up ReConnect"
+msgstr "Yritä yhteyden palauttamista loputtomiin"
+
+#: src/fe-gtk/menu.c:1276
+msgid "Auto Open Dialog Windows"
+msgstr "Avaa keskusteluikkunat automaattisesti"
+
+#: src/fe-gtk/menu.c:1277
+msgid "Auto Accept Direct Chat"
+msgstr "Hyväksy DCC-keskustelut automaattisesti"
+
+#: src/fe-gtk/menu.c:1278
+msgid "Auto Accept Files"
+msgstr "Hyväksy tulevat tiedostot automaattisesti"
+
+#: src/fe-gtk/menu.c:1280
+msgid "_Server"
+msgstr "_Palvelin"
+
+#: src/fe-gtk/menu.c:1282
+msgid "S_ettings"
+msgstr "A_setukset"
+
+#: src/fe-gtk/menu.c:1283
+msgid "Preferences..."
+msgstr "Ominaisuudet..."
+
+#: src/fe-gtk/menu.c:1285
+msgid "Advanced"
+msgstr "Lisäasetukset"
+
+#: src/fe-gtk/menu.c:1286
+msgid "Auto Replace..."
+msgstr "Automaattikorvaukset..."
+
+#: src/fe-gtk/menu.c:1287
+msgid "CTCP Replies..."
+msgstr "CTCP-vastaukset..."
+
+#: src/fe-gtk/menu.c:1288
+msgid "Dialog Buttons..."
+msgstr "Keskusteluikkunan painikkeet..."
+
+#: src/fe-gtk/menu.c:1289
+msgid "Keyboard Shortcuts..."
+msgstr "Näppäinkomennot..."
+
+#: src/fe-gtk/menu.c:1290
+msgid "Text Events..."
+msgstr "Tapahtumatekstit..."
+
+#: src/fe-gtk/menu.c:1291
+msgid "URL Handlers..."
+msgstr "URL-käsittelimet..."
+
+#: src/fe-gtk/menu.c:1292
+msgid "User Commands..."
+msgstr "Käyttäjän komennot..."
+
+#: src/fe-gtk/menu.c:1293
+msgid "Userlist Buttons..."
+msgstr "Käyttäjäluettelon painikkeet..."
+
+#: src/fe-gtk/menu.c:1294
+msgid "Userlist Popup..."
+msgstr "Käyttäjäluettelon pikavalikko..."
+
+#: src/fe-gtk/menu.c:1299
+msgid "Reload Settings"
+msgstr "Palauta asetukset"
+
+#: src/fe-gtk/menu.c:1301
+msgid "Save Settings now"
+msgstr "Tallenna asetukset nyt"
+
+#: src/fe-gtk/menu.c:1302
+msgid "Save Settings on exit"
+msgstr "Tallenna asetukset lopetettaessa"
+
+#: src/fe-gtk/menu.c:1305
+msgid "_Window"
+msgstr "_Ikkuna"
+
+#: src/fe-gtk/menu.c:1306
+msgid "Ban List..."
+msgstr "Banniluettelo..."
+
+#: src/fe-gtk/menu.c:1307
+msgid "Channel List..."
+msgstr "Kanavaluettelo..."
+
+#: src/fe-gtk/menu.c:1308
+msgid "Character Chart..."
+msgstr "Merkistökartta..."
+
+#: src/fe-gtk/menu.c:1309
+msgid "Direct Chat..."
+msgstr "DCC-keskustelu..."
+
+#: src/fe-gtk/menu.c:1310
+msgid "File Receive..."
+msgstr "Tiedostojen vastaanotto..."
+
+#: src/fe-gtk/menu.c:1311
+msgid "File Send..."
+msgstr "Tiedostojen lähetys..."
+
+#: src/fe-gtk/menu.c:1312
+msgid "Ignore List..."
+msgstr "Huomioimattomuusluettelo..."
+
+#: src/fe-gtk/menu.c:1313
+msgid "Notify List..."
+msgstr "Ilmoitusluettelo..."
+
+#: src/fe-gtk/menu.c:1314
+msgid "Plugins and Scripts..."
+msgstr "Skriptit ja liitännäiset..."
+
+#: src/fe-gtk/menu.c:1315
+msgid "Raw Log..."
+msgstr "Raakaloki..."
+
+#: src/fe-gtk/menu.c:1316
+msgid "URL Grabber..."
+msgstr "URL-kaappaaja..."
+
+#: src/fe-gtk/menu.c:1318
+msgid "Reset Marker Line"
+msgstr "Siirrä lukumerkki loppuun"
+
+#: src/fe-gtk/menu.c:1319
+msgid "C_lear Text"
+msgstr "P_yyhi teksti"
+
+#: src/fe-gtk/menu.c:1320
+msgid "Search Text..."
+msgstr "Hae tekstistä..."
+
+#: src/fe-gtk/menu.c:1321
+msgid "Save Text..."
+msgstr "Tallenna teksti..."
+
+#: src/fe-gtk/menu.c:1323
+msgid "_Help"
+msgstr "_Ohje"
+
+#: src/fe-gtk/menu.c:1324
+msgid "_Contents"
+msgstr "_Sisältö"
+
+#: src/fe-gtk/menu.c:1326 src/fe-gtk/menu.c:1328
+msgid "_About"
+msgstr "_Tietoja"
+
+#: src/fe-gtk/menu.c:1676
+msgid "Attach Tab"
+msgstr "Kiinnitä välilehti"
+
+#: src/fe-gtk/notifygui.c:110
+msgid "User"
+msgstr "Käyttäjä"
+
+#: src/fe-gtk/notifygui.c:112
+msgid "Server"
+msgstr "Palvelin"
+
+#: src/fe-gtk/notifygui.c:113
+msgid "Last Seen"
+msgstr "Nähty viimeksi"
+
+#: src/fe-gtk/notifygui.c:150
+msgid "Offline"
+msgstr "Tavoittamattomissa"
+
+#: src/fe-gtk/notifygui.c:170 src/fe-gtk/setup.c:199
+msgid "Never"
+msgstr "Ei koskaan"
+
+#: src/fe-gtk/notifygui.c:188
+msgid "Online"
+msgstr "Tavoitettavissa"
+
+#: src/fe-gtk/notifygui.c:278
+msgid "Enter nickname to add:"
+msgstr "Anna lisättävä kutsumanimi:"
+
+#: src/fe-gtk/notifygui.c:294
+msgid "X-Chat: Notify List"
+msgstr "X-Chat: Ilmoitusluettelo"
+
+#: src/fe-gtk/notifygui.c:309
+msgid "Remove"
+msgstr "Poista"
+
+#: src/fe-gtk/plugingui.c:75 src/fe-gtk/textgui.c:341
+msgid "Description"
+msgstr "Kuvaus"
+
+#: src/fe-gtk/plugingui.c:150
+msgid "Select a Plugin or Script to load"
+msgstr "Valitse ladattava skripti tai liitännäinen"
+
+#: src/fe-gtk/plugingui.c:222
+msgid "X-Chat: Plugins and Scripts"
+msgstr "X-Chat: Skriptit ja liitännäiset"
+
+#: src/fe-gtk/plugingui.c:228
+msgid "_Load..."
+msgstr "_Lataa..."
+
+#: src/fe-gtk/plugingui.c:231
+msgid "_UnLoad"
+msgstr "_Poista käytöstä"
+
+#: src/fe-gtk/plugingui.c:235
+msgid "_Close"
+msgstr "_Sulje"
+
+#: src/fe-gtk/rawlog.c:78
+msgid "Save rawlog"
+msgstr "Tallenna raakaloki"
+
+#: src/fe-gtk/rawlog.c:94
+#, c-format
+msgid "X-Chat: Rawlog (%s)"
+msgstr "X-Chat: Raakaloki (%s)"
+
+#: src/fe-gtk/rawlog.c:123
+msgid "Clear rawlog"
+msgstr "Tyhjennä raakaloki"
+
+#: src/fe-gtk/rawlog.c:126
+msgid "Save rawlog..."
+msgstr "Tallenna raakaloki..."
+
+#: src/fe-gtk/search.c:47
+msgid "The window you opened this Search for doesn't exist anymore."
+msgstr "Tätä hakua varten avaamaasi ikkunaa ei enää ole."
+
+#: src/fe-gtk/search.c:91
+msgid "X-Chat: Search"
+msgstr "X-Chat: Haku"
+
+#: src/fe-gtk/search.c:100
+msgid "Find:"
+msgstr "Etsi:"
+
+#: src/fe-gtk/search.c:114
+msgid "Find"
+msgstr "Etsi"
+
+#: src/fe-gtk/search.c:119
+msgid "Close"
+msgstr "Sulje"
+
+#: src/fe-gtk/servlistgui.c:162 src/fe-gtk/servlistgui.c:261
+msgid "New Network"
+msgstr "Uusi verkko"
+
+#: src/fe-gtk/servlistgui.c:494
+#, c-format
+msgid "Really remove network \"%s\" and all its servers?"
+msgstr "Haluatko todella poistaa verkon \"%s\" ja kaikki sen palvelimet?"
+
+#: src/fe-gtk/servlistgui.c:618 src/fe-gtk/servlistgui.c:637
+msgid "User name and Real name cannot be left blank."
+msgstr "Käyttäjätunnusta ja oikeaa nimeä ei voi jättää tyhjiksi."
+
+#: src/fe-gtk/servlistgui.c:988
+#, c-format
+msgid "X-Chat: Edit %s"
+msgstr "X-Chat: Muokkaa %s-verkkoa"
+
+#: src/fe-gtk/servlistgui.c:1007
+#, c-format
+msgid "Servers for %s"
+msgstr "%s-verkon palvelimet"
+
+#: src/fe-gtk/servlistgui.c:1018
+msgid "Connect to selected server only"
+msgstr "Yhdistä vain valittuun palvelimeen"
+
+#: src/fe-gtk/servlistgui.c:1019
+msgid "Don't cycle through all the servers when the connection fails."
+msgstr "Älä yritä yhdistää muihin palvelimiin, jos valittuun palvelimeen ei saada yhteyttä."
+
+#: src/fe-gtk/servlistgui.c:1021
+msgid "Your Details"
+msgstr "Käyttäjätiedot"
+
+#: src/fe-gtk/servlistgui.c:1027
+msgid "Use global user information"
+msgstr "Käytä yleisiä käyttäjätietoja"
+
+#: src/fe-gtk/servlistgui.c:1030 src/fe-gtk/servlistgui.c:1262
+msgid "_Nick name:"
+msgstr "Kutsumanimi:"
+
+#: src/fe-gtk/servlistgui.c:1034 src/fe-gtk/servlistgui.c:1283
+msgid "_User name:"
+msgstr "Käyttäjätunnus:"
+
+#: src/fe-gtk/servlistgui.c:1038 src/fe-gtk/servlistgui.c:1290
+msgid "Rea_l name:"
+msgstr "Oikea nimi:"
+
+#: src/fe-gtk/servlistgui.c:1041
+msgid "Connecting"
+msgstr "Yhteyden muodostus"
+
+#: src/fe-gtk/servlistgui.c:1047
+msgid "Auto connect to this network at startup"
+msgstr "Yhdistä valmiiksi, kun X-Chat käynnistyy"
+
+#: src/fe-gtk/servlistgui.c:1049
+msgid "Use a proxy server"
+msgstr "Käytä välipalvelinta"
+
+#: src/fe-gtk/servlistgui.c:1051
+msgid "Use SSL for all the servers on this network"
+msgstr "Käytä SSL-yhteyttä tässä verkossa"
+
+#: src/fe-gtk/servlistgui.c:1056
+msgid "Accept invalid SSL certificate"
+msgstr "Hyväksy epäkelpo varmenne"
+
+#: src/fe-gtk/servlistgui.c:1062
+msgid "C_hannels to join:"
+msgstr "Avattavat kanavat:"
+
+#: src/fe-gtk/servlistgui.c:1064
+msgid "Channels to join, separated by commas, but not spaces!"
+msgstr "Näille kanaville liitytään automaattisesti. Erota kanavat toisistaan pilkuin (mutta ei välilyönnein!)."
+
+#: src/fe-gtk/servlistgui.c:1067
+msgid "Connect command:"
+msgstr "Yhdistämiskomento:"
+
+#: src/fe-gtk/servlistgui.c:1069
+msgid "Extra command to execute after connecting. If you need more than one, set this to LOAD -e <filename>, where <filename> is a text-file full of commands to execute."
+msgstr "Lisäkomento, joka suoritetaan yhteyden muodostuttua. Useita komentoja voi suorittaa laittamalla ne tiedostoon, ja kirjoittamalla tähän \"LOAD -e <tiedostonimi>\"."
+
+#: src/fe-gtk/servlistgui.c:1072
+msgid "Nickserv password:"
+msgstr "NickServ-salasana:"
+
+#: src/fe-gtk/servlistgui.c:1077
+msgid "Server password:"
+msgstr "Palvelimen salasana:"
+
+#: src/fe-gtk/servlistgui.c:1079
+msgid "Password for the server, if in doubt, leave blank."
+msgstr "Palvelimelle tarvittava salasana. Jätä tyhjäksi, jos olet epävarma."
+
+#: src/fe-gtk/servlistgui.c:1082
+msgid "Character set:"
+msgstr "Merkistö:"
+
+#: src/fe-gtk/servlistgui.c:1155
+msgid "_Edit"
+msgstr "_Muokkaa"
+
+#: src/fe-gtk/servlistgui.c:1236
+msgid "X-Chat: Server List"
+msgstr "X-Chat: Palvelinluettelo"
+
+#: src/fe-gtk/servlistgui.c:1252
+msgid "User Information"
+msgstr "Käyttäjätiedot"
+
+#: src/fe-gtk/servlistgui.c:1269
+msgid "Second choice:"
+msgstr "2. vaihtoehto:"
+
+#: src/fe-gtk/servlistgui.c:1276
+msgid "Third choice:"
+msgstr "3. vaihtoehto:"
+
+#: src/fe-gtk/servlistgui.c:1336
+msgid "Networks"
+msgstr "IRC-verkot"
+
+#: src/fe-gtk/servlistgui.c:1377
+msgid "Skip server list on startup"
+msgstr "Älä näytä palvelinluetteloa käynnistettäessä"
+
+#: src/fe-gtk/servlistgui.c:1408
+msgid "_Edit..."
+msgstr "_Muokkaa..."
+
+#: src/fe-gtk/servlistgui.c:1415
+msgid "_Sort"
+msgstr "Lajittele"
+
+#: src/fe-gtk/servlistgui.c:1438
+msgid "C_onnect"
+msgstr "_Yhdistä"
+
+#: src/fe-gtk/servlistgui.c:1447
+msgid "Connect in new tab"
+msgstr "Yhdistä _uuteen välilehteen"
+
+#: src/fe-gtk/setup.c:95
+msgid "Text Box Appearance"
+msgstr "Tekstilaatikon ulkonäkö"
+
+#: src/fe-gtk/setup.c:96
+msgid "Font:"
+msgstr "Kirjasin:"
+
+#: src/fe-gtk/setup.c:97
+msgid "Background image:"
+msgstr "Taustakuva:"
+
+#: src/fe-gtk/setup.c:98
+msgid "Scrollback lines:"
+msgstr "Vieritettäviä rivejä:"
+
+#: src/fe-gtk/setup.c:99
+msgid "Transparent background"
+msgstr "Läpinäkyvä tausta"
+
+#: src/fe-gtk/setup.c:100
+msgid "Indent nick names"
+msgstr "Sisennä kutsumanimet"
+
+#: src/fe-gtk/setup.c:101
+msgid "Make nick names right-justified"
+msgstr "Tasaa kutsumanimet oikealle."
+
+#: src/fe-gtk/setup.c:102
+msgid "Tint (shade) transparency"
+msgstr "Sävytetty läpinäkyvyys"
+
+#: src/fe-gtk/setup.c:103
+msgid "Colored nick names"
+msgstr "Väritä kutsumanimet"
+
+#: src/fe-gtk/setup.c:104
+msgid "Give each person on IRC a different color"
+msgstr "Anna kullekin käyttäjälle oma väri."
+
+#: src/fe-gtk/setup.c:105
+msgid "Strip mIRC colors"
+msgstr "Karsi mIRC-värit"
+
+#: src/fe-gtk/setup.c:106
+msgid "Show marker line"
+msgstr "Näytä lukumerkki"
+
+#: src/fe-gtk/setup.c:107
+msgid "Insert a red line after the last read text."
+msgstr "Erottaa luetun ja lukemattoman tekstin punaisella viivalla."
+
+#: src/fe-gtk/setup.c:108
+msgid "Tint Settings"
+msgstr "Sävyasetukset"
+
+#: src/fe-gtk/setup.c:109
+msgid "Red:"
+msgstr "Punainen:"
+
+#: src/fe-gtk/setup.c:110
+msgid "Green:"
+msgstr "Vihreä:"
+
+#: src/fe-gtk/setup.c:111
+msgid "Blue:"
+msgstr "Sininen:"
+
+#: src/fe-gtk/setup.c:113 src/fe-gtk/setup.c:313
+msgid "Time Stamps"
+msgstr "Aikaleimat"
+
+#: src/fe-gtk/setup.c:114
+msgid "Time stamp format:"
+msgstr "Aikaleiman muoto:"
+
+#: src/fe-gtk/setup.c:115
+msgid "See strftime manpage for details."
+msgstr "Katso yksityiskohtaiset ohjeet manuaalisivulta strftime(3)."
+
+#: src/fe-gtk/setup.c:116
+msgid "Enable time stamps"
+msgstr "Näytä aikaleimat"
+
+#: src/fe-gtk/setup.c:123
+msgid "Nick Completion"
+msgstr "Kutsumanimien täydennys"
+
+#: src/fe-gtk/setup.c:124
+msgid "Automatic nick completion"
+msgstr "Automaattinen kutsumanimen täydennys"
+
+#: src/fe-gtk/setup.c:125
+msgid "Completes nick names without using the TAB key"
+msgstr "Tabulaattoria ei tarvitse painaa kutsumanimien täydentämiseksi."
+
+#: src/fe-gtk/setup.c:126
+msgid "Nick completion suffix:"
+msgstr "Täydennyksen jälkiliite:"
+
+#: src/fe-gtk/setup.c:128
+msgid "Input Box Codes"
+msgstr "Syötekentän koodit"
+
+#: src/fe-gtk/setup.c:129
+#, c-format
+msgid "Interpret %nnn as an ASCII value"
+msgstr "Tulkitse %nnn ASCII-arvoksi"
+
+#: src/fe-gtk/setup.c:130
+msgid "Interpret %C, %B as Color, Bold etc"
+msgstr "Tulkitse %C väriksi, %B lihavoinniksi, jne"
+
+#: src/fe-gtk/setup.c:132
+msgid "Input Box Appearance"
+msgstr "Syötekentän ulkonäkö"
+
+#: src/fe-gtk/setup.c:133 src/fe-gtk/setup.c:163
+msgid "Use the Text box font and colors"
+msgstr "Käytä tekstilaatikon kirjasinta ja värejä"
+
+#: src/fe-gtk/setup.c:140
+msgid "Off"
+msgstr "Poissa"
+
+#: src/fe-gtk/setup.c:141
+msgid "Graph"
+msgstr "Graafinen"
+
+#: src/fe-gtk/setup.c:142
+msgid "Info text"
+msgstr "Tekstimuotoinen"
+
+#: src/fe-gtk/setup.c:143
+msgid "Both"
+msgstr "Molemmat"
+
+#: src/fe-gtk/setup.c:149
+msgid "A-Z, Ops first"
+msgstr "A-Z, opit ensimmäisinä"
+
+#: src/fe-gtk/setup.c:150
+msgid "A-Z"
+msgstr "A-Z"
+
+#: src/fe-gtk/setup.c:151
+msgid "Z-A, Ops last"
+msgstr "Z-A, opit viimeisinä"
+
+#: src/fe-gtk/setup.c:152
+msgid "Z-A"
+msgstr "Z-A"
+
+#: src/fe-gtk/setup.c:153
+msgid "Unsorted"
+msgstr "Lajittelematon"
+
+#: src/fe-gtk/setup.c:160
+msgid "User list sorted by:"
+msgstr "Lajittelutapa:"
+
+#: src/fe-gtk/setup.c:161
+msgid "Show hostnames in user list"
+msgstr "Näytä isäntänimet käyttäjäluettelossa"
+
+#: src/fe-gtk/setup.c:162
+msgid "User list buttons enabled"
+msgstr "Näytä käyttäjäluettelon painikkeet"
+
+#: src/fe-gtk/setup.c:164
+msgid "Resizable user list"
+msgstr "Käyttäjäluettelon koko muutettavissa"
+
+#: src/fe-gtk/setup.c:166
+msgid "Away tracking"
+msgstr "Poissaolojen seuranta"
+
+# Pilkku lopussa, koska lause jatkuu seuraavaan asetuskohtaan.
+#: src/fe-gtk/setup.c:167
+msgid "Enable away tracking"
+msgstr "Väritä poissaolijoitten kutsumanimet,"
+
+#: src/fe-gtk/setup.c:168
+msgid "On channels smaller than:"
+msgstr "kun kanavalla on käyttäjiä alle:"
+
+#: src/fe-gtk/setup.c:170
+msgid "Action Upon Double Click"
+msgstr "Kaksoisnapsautuksen toiminto"
+
+#: src/fe-gtk/setup.c:171
+msgid "Execute command:"
+msgstr "Suorita komento:"
+
+#: src/fe-gtk/setup.c:173
+msgid "Extra Gadgets"
+msgstr "Lisävempaimet"
+
+#: src/fe-gtk/setup.c:174
+msgid "Lag meter:"
+msgstr "Viivemittari:"
+
+# MIKÄ TÄMÄ ON???
+# "...indicates how many bytes are waiting to be sent (ie how much XChat
+# is throttling the data so that you are not considered to be flooding the
+# channel). This is referred to as the "throttle" in the Preferences."
+#: src/fe-gtk/setup.c:175
+msgid "Throttle meter:"
+msgstr "Puhetulvamittari:"
+
+#: src/fe-gtk/setup.c:182
+msgid "Windows"
+msgstr "Ikkunat"
+
+#: src/fe-gtk/setup.c:183 src/fe-gtk/setup.c:207 src/fe-gtk/setup.c:1447
+msgid "Tabs"
+msgstr "Välilehdet"
+
+#: src/fe-gtk/setup.c:189
+msgid "Bottom"
+msgstr "Alhaalla"
+
+#: src/fe-gtk/setup.c:190
+msgid "Top"
+msgstr "Ylhäällä"
+
+#: src/fe-gtk/setup.c:191
+msgid "Left"
+msgstr "Vasemmalla"
+
+#: src/fe-gtk/setup.c:192
+msgid "Right"
+msgstr "Oikealla"
+
+#: src/fe-gtk/setup.c:193
+msgid "Hidden"
+msgstr "Piilotettu"
+
+#: src/fe-gtk/setup.c:200
+msgid "Always"
+msgstr "Aina"
+
+#: src/fe-gtk/setup.c:201
+msgid "Only requested tabs"
+msgstr "Vain itse avatut"
+
+#: src/fe-gtk/setup.c:208
+msgid "Open an extra tab for server messages"
+msgstr "Palvelinviestit omaan välilehteensä"
+
+#: src/fe-gtk/setup.c:209
+msgid "Open an extra tab for server notices"
+msgstr "Palvelintiedotteet omaan välilehteensä"
+
+#: src/fe-gtk/setup.c:210
+msgid "Small tabs"
+msgstr "Pienet korvakkeet"
+
+#: src/fe-gtk/setup.c:211
+msgid "Sort tabs in alphabetical order"
+msgstr "Välilehdet aakkosjärjestykseen"
+
+#: src/fe-gtk/setup.c:212
+msgid "Focus new tabs:"
+msgstr "Uudet välilehdet etualalle:"
+
+#: src/fe-gtk/setup.c:213
+msgid "Shorten tab labels to:"
+msgstr "Typistä välilehtien nimet:"
+
+#: src/fe-gtk/setup.c:213
+msgid "letters."
+msgstr "merkin pituisiksi."
+
+#: src/fe-gtk/setup.c:215
+msgid "Tabs Location"
+msgstr "Korvakkeiden paikka"
+
+#: src/fe-gtk/setup.c:216
+msgid "Show tabs at:"
+msgstr "Näytä korvakkeet:"
+
+#: src/fe-gtk/setup.c:218
+msgid "Tabs or Windows"
+msgstr "Välilehti vai ikkuna"
+
+#: src/fe-gtk/setup.c:219
+msgid "Open channels in:"
+msgstr "Kanavien avaamispaikka:"
+
+#: src/fe-gtk/setup.c:220
+msgid "Open dialogs in:"
+msgstr "Keskusteluiden avaamispaikka:"
+
+#: src/fe-gtk/setup.c:221
+msgid "Open utilities in:"
+msgstr "Apuvälineiden avaamispaikka:"
+
+#: src/fe-gtk/setup.c:221
+msgid "Open DCC, Ignore, Notify etc, in tabs or windows?"
+msgstr "DCC:t, huomioimattomuudet, ilmoitukset jne."
+
+#: src/fe-gtk/setup.c:228
+msgid "Files and Directories"
+msgstr "Tiedostot ja hakemistot"
+
+#: src/fe-gtk/setup.c:229
+msgid "Download files to:"
+msgstr "Lataa hakemistoon:"
+
+#: src/fe-gtk/setup.c:230
+msgid "Move completed files to:"
+msgstr "Siirrä valmiit tiedostot hakemistoon:"
+
+#: src/fe-gtk/setup.c:231
+msgid "Save nick name in filenames"
+msgstr "Liitä lähettäjän kutsumanimi tiedostonimiin"
+
+#: src/fe-gtk/setup.c:232
+msgid "Convert spaces to underscore before sending"
+msgstr "Korvaa välilyönnit alaviivoilla ennen lähetystä"
+
+#: src/fe-gtk/setup.c:234
+msgid "Network Settings"
+msgstr "Verkkoasetukset"
+
+#: src/fe-gtk/setup.c:235
+msgid "DCC IP address:"
+msgstr "DCC:n IP-osoite:"
+
+#: src/fe-gtk/setup.c:236
+msgid "Claim you are at this address when offering files."
+msgstr "Tiedostoja väitetään lähetettävän tästä osoitteesta."
+
+#: src/fe-gtk/setup.c:237
+msgid "First DCC send port:"
+msgstr "Ensimmäinen DCC-lähetysportti"
+
+#: src/fe-gtk/setup.c:238
+msgid "Last DCC send port:"
+msgstr "Viimeinen DCC-lähetysportti"
+
+#: src/fe-gtk/setup.c:239
+msgid "(Leave ports at zero for full range)."
+msgstr "(Jätä nolliksi, jos haluat käyttöön kaikki portit.)"
+
+#: src/fe-gtk/setup.c:240
+msgid "Get my address from the IRC server"
+msgstr "Hae IP-osoite IRC-palvelimelta"
+
+#: src/fe-gtk/setup.c:241
+msgid "Asks the IRC server for your real address. Use this if you have a 192.168.*.* address!"
+msgstr "Tiedustelee osoittettasi IRC-palvelimelta. Rastita, mikäli osoitteesi on esimerkiksi muotoa 192.168.*.*!"
+
+#: src/fe-gtk/setup.c:243
+msgid "Maximum File Transfer Speeds (bytes per second)"
+msgstr "Siirtonopeuksien ylärajat (tavua sekunnissa)"
+
+#: src/fe-gtk/setup.c:244
+msgid "One upload:"
+msgstr "Yksittäinen lähetys:"
+
+#: src/fe-gtk/setup.c:245 src/fe-gtk/setup.c:247
+msgid "Maximum speed for one transfer"
+msgstr "Yksittäisen siirron suurin sallittu nopeus."
+
+#: src/fe-gtk/setup.c:246
+msgid "One download:"
+msgstr "Yksittäinen lataus:"
+
+#: src/fe-gtk/setup.c:248
+msgid "All uploads combined:"
+msgstr "Kaikki lähetykset yhteensä:"
+
+#: src/fe-gtk/setup.c:249 src/fe-gtk/setup.c:251
+msgid "Maximum speed for all files"
+msgstr "Yhteenlaskettujen siirtojen suurin sallittu nopeus."
+
+#: src/fe-gtk/setup.c:250
+msgid "All downloads combined:"
+msgstr "Kaikki lataukset yhteensä:"
+
+#: src/fe-gtk/setup.c:258
+msgid "Default Messages"
+msgstr "Oletusilmoitukset"
+
+#: src/fe-gtk/setup.c:259
+msgid "Quit:"
+msgstr "Lopetus:"
+
+#: src/fe-gtk/setup.c:260
+msgid "Leave channel:"
+msgstr "Kanavalta poistuminen:"
+
+#: src/fe-gtk/setup.c:261
+msgid "Away:"
+msgstr "Poissaolo:"
+
+#: src/fe-gtk/setup.c:263
+msgid "Away"
+msgstr "Poissaolo"
+
+#: src/fe-gtk/setup.c:264
+msgid "Announce away messages"
+msgstr "Kuuluta poissaoloviestit"
+
+#: src/fe-gtk/setup.c:265
+msgid "Announce your away messages to all channels"
+msgstr "Lähettää poissaoloviestit kaikille kanaville."
+
+#: src/fe-gtk/setup.c:266
+msgid "Show away once"
+msgstr "Näytä poissaoloviestit kerran"
+
+#: src/fe-gtk/setup.c:266
+msgid "Show identical away messages only once"
+msgstr "Näyttää identtiset poissaoloviestit vain kerran."
+
+#: src/fe-gtk/setup.c:267
+msgid "Automatically unmark away"
+msgstr "Lopeta oma poissaolo automaattisesti"
+
+#: src/fe-gtk/setup.c:267
+msgid "Unmark yourself as away before sending messages"
+msgstr "Merkitsee sinut läsnäolevaksi ennen viestien lähettämistä."
+
+#: src/fe-gtk/setup.c:270
+msgid "(Can be a text file relative to ~/.xchat2/)."
+msgstr "(Voi olla tekstitiedoston suhteellinen polku hakemistoon ~/.xchat2/)."
+
+#: src/fe-gtk/setup.c:272
+msgid "(Can be a text file relative to config dir)."
+msgstr "(Voi olla tekstitiedoston suhteellinen polku asetustiedoston hakemistoon)."
+
+#: src/fe-gtk/setup.c:276
+msgid "Alerts"
+msgstr "Hälytykset"
+
+#: src/fe-gtk/setup.c:278
+msgid "Flash taskbar on highlighted messages"
+msgstr "Välkytä tehtäväpalkkia korostetun viestin saapuessa"
+
+#: src/fe-gtk/setup.c:280
+msgid "Beep on highlighted messages"
+msgstr "Anna äänimerkki korostettujen saapuessa"
+
+#: src/fe-gtk/setup.c:281
+msgid "Extra words to highlight on:"
+msgstr "Korostettavat sanat:"
+
+#: src/fe-gtk/setup.c:282
+msgid "Nicks not to highlight on:"
+msgstr "Älä kuitenkaan korosta viestejä käyttäjiltä:"
+
+#: src/fe-gtk/setup.c:283
+msgid "(Separate multiple words with commas)."
+msgstr "(Erota sanat toisistaan pilkuilla.)"
+
+#: src/fe-gtk/setup.c:284
+msgid "Beep on private messages"
+msgstr "Anna äänimerkki yksityisviestin saapuessa"
+
+#: src/fe-gtk/setup.c:285
+msgid "Beep on channel messages"
+msgstr "Anna äänimerkki kanavaviestin saapuessa"
+
+#: src/fe-gtk/setup.c:292
+msgid "Advanced Settings"
+msgstr "Lisäasetukset"
+
+#: src/fe-gtk/setup.c:293
+msgid "Auto reconnect delay:"
+msgstr "Automaattisen yhdistämisen viive:"
+
+#: src/fe-gtk/setup.c:294
+msgid "Display MODEs in raw form"
+msgstr "Näytä tilat raakamuodossa"
+
+#: src/fe-gtk/setup.c:295
+msgid "Whois on notify"
+msgstr "Suorita whois ilmoituksen yhteydessä"
+
+#: src/fe-gtk/setup.c:295
+msgid "Sends a /WHOIS when a user comes online in your notify list"
+msgstr "Lähettää /WHOIS-komennon, kun ilmoitusluettelossa oleva käyttäjä on tavoitettavissa"
+
+#: src/fe-gtk/setup.c:296
+msgid "Hide join and part messages"
+msgstr "Piilota liittymis- ja poistumisviestit"
+
+#: src/fe-gtk/setup.c:296
+msgid "Hide channel join/part messages by default"
+msgstr "Piilota liittymis- ja poistumisviestit oletuksena"
+
+#: src/fe-gtk/setup.c:297
+msgid "Auto Open DCC Windows"
+msgstr "Avaa DCC-ikkunat automaattisesti"
+
+#: src/fe-gtk/setup.c:298
+msgid "Send window"
+msgstr "Lähetysikkuna"
+
+#: src/fe-gtk/setup.c:299
+msgid "Receive window"
+msgstr "Vastaanottoikkuna"
+
+#: src/fe-gtk/setup.c:300
+msgid "Chat window"
+msgstr "Kanavaikkuna"
+
+#: src/fe-gtk/setup.c:308 src/fe-gtk/setup.c:1452
+msgid "Logging"
+msgstr "Lokiasetukset"
+
+#: src/fe-gtk/setup.c:309
+msgid "Enable logging of conversations"
+msgstr "Pidä keskusteluista lokia"
+
+#: src/fe-gtk/setup.c:310
+msgid "Log filename mask:"
+msgstr "Lokitiedoston peite:"
+
+#: src/fe-gtk/setup.c:311
+#, c-format
+msgid "(%s=Server %c=Channel %n=Network)."
+msgstr "(%s=palvelin %c=kanava %n=verkko)."
+
+#: src/fe-gtk/setup.c:314
+msgid "Insert timestamps in logs"
+msgstr "Lisää lokeihin aikaleimat"
+
+#: src/fe-gtk/setup.c:315
+msgid "Log timestamp format:"
+msgstr "Lokitiedoston aikaleiman muoto:"
+
+#: src/fe-gtk/setup.c:316
+msgid "(See strftime manpage for details)."
+msgstr "(Lisätietoja strftime:n man-sivuilla.)"
+
+#: src/fe-gtk/setup.c:323
+msgid "(Disabled)"
+msgstr "(Pois käytöstä)"
+
+#: src/fe-gtk/setup.c:324
+msgid "Wingate"
+msgstr "Wingate"
+
+#: src/fe-gtk/setup.c:325
+msgid "Socks4"
+msgstr "Socks4"
+
+#: src/fe-gtk/setup.c:326
+msgid "Socks5"
+msgstr "Socks5"
+
+#: src/fe-gtk/setup.c:327
+msgid "HTTP"
+msgstr "HTTP"
+
+#: src/fe-gtk/setup.c:333
+msgid "Your Address"
+msgstr "Oma IP-osoite"
+
+#: src/fe-gtk/setup.c:334
+msgid "Bind to:"
+msgstr "Sido osoitteeseen:"
+
+#: src/fe-gtk/setup.c:335
+msgid "(Only useful for computers with multiple addresses)."
+msgstr "(Käyttökelpoinen vain tietokoneilla, joilla on monta osoitetta.)"
+
+#: src/fe-gtk/setup.c:337
+msgid "Proxy Server"
+msgstr "Välipalvelin"
+
+#: src/fe-gtk/setup.c:338
+msgid "Hostname:"
+msgstr "Isäntänimi:"
+
+#: src/fe-gtk/setup.c:339
+msgid "Username:"
+msgstr "Käyttäjänimi:"
+
+#: src/fe-gtk/setup.c:340
+msgid "Password:"
+msgstr "Salasana:"
+
+#: src/fe-gtk/setup.c:341
+msgid "Port:"
+msgstr "Portti:"
+
+#: src/fe-gtk/setup.c:342
+msgid "Type:"
+msgstr "Tyyppi:"
+
+#: src/fe-gtk/setup.c:344
+msgid "Authenticate to the proxy server (HTTP and Socks5)"
+msgstr "Tunnistaudu välipalvelimelle (vain HTTP ja Socks5)."
+
+#: src/fe-gtk/setup.c:567
+msgid "(disabled)"
+msgstr "(pois käytöstä)"
+
+#: src/fe-gtk/setup.c:568
+msgid "A star (*)"
+msgstr "Asteriski (*)"
+
+#: src/fe-gtk/setup.c:569
+msgid "A red star (*)"
+msgstr "Punainen asteriski (*)"
+
+#: src/fe-gtk/setup.c:570
+msgid "Underlined"
+msgstr "Alleviivattu"
+
+#: src/fe-gtk/setup.c:667
+msgid "Select an Image File"
+msgstr "Valitse kuvatiedosto"
+
+#: src/fe-gtk/setup.c:703
+msgid "Select font"
+msgstr "Valitse kirjasin"
+
+#: src/fe-gtk/setup.c:777
+msgid "Browse..."
+msgstr "Selaa..."
+
+#: src/fe-gtk/setup.c:894
+msgid "Mark identified users with:"
+msgstr "Merkitse tunnistetut käyttäjät seuraavasti:"
+
+#: src/fe-gtk/setup.c:896
+msgid "Mark not-identified users with:"
+msgstr "Merkitse tuntemattomat käyttäjät seuraavasti:"
+
+#: src/fe-gtk/setup.c:959
+msgid "Select color"
+msgstr "Valitse väri"
+
+#: src/fe-gtk/setup.c:1039
+msgid "Text Colors"
+msgstr "Tekstin värit"
+
+#: src/fe-gtk/setup.c:1041
+msgid "mIRC colors:"
+msgstr "mIRC-värit:"
+
+#: src/fe-gtk/setup.c:1049
+msgid "Extra colors:"
+msgstr "Lisävärit"
+
+#: src/fe-gtk/setup.c:1057 src/fe-gtk/setup.c:1062
+msgid "Foreground:"
+msgstr "Edustaväri:"
+
+#: src/fe-gtk/setup.c:1058 src/fe-gtk/setup.c:1063
+msgid "Background:"
+msgstr "Taustaväri:"
+
+#: src/fe-gtk/setup.c:1060
+msgid "Marking Text"
+msgstr "Tekstin maalaus"
+
+#: src/fe-gtk/setup.c:1065
+msgid "Interface Colors"
+msgstr "Käyttöliittymän värit"
+
+#: src/fe-gtk/setup.c:1067
+msgid "New data:"
+msgstr "Uusi data:"
+
+#: src/fe-gtk/setup.c:1068
+msgid "Marker line:"
+msgstr "Lukumerkkiviiva:"
+
+#: src/fe-gtk/setup.c:1069
+msgid "New message:"
+msgstr "Uusi viesti:"
+
+#: src/fe-gtk/setup.c:1070
+msgid "Away user:"
+msgstr "Poissaolijat:"
+
+#: src/fe-gtk/setup.c:1071
+msgid "Highlight:"
+msgstr "Korostus:"
+
+#: src/fe-gtk/setup.c:1167 src/fe-gtk/textgui.c:337
+msgid "Event"
+msgstr "Tapahtuma"
+
+#: src/fe-gtk/setup.c:1173
+msgid "Sound file"
+msgstr "Äänitiedosto"
+
+#: src/fe-gtk/setup.c:1208
+msgid "Select a sound file"
+msgstr "Valitse äänitiedosto"
+
+#: src/fe-gtk/setup.c:1280
+msgid "Sound playing method:"
+msgstr "Äänensoittotapa:"
+
+#: src/fe-gtk/setup.c:1288
+msgid "External sound playing _program:"
+msgstr "Ulkoinen soitto-ohjelma:"
+
+#: src/fe-gtk/setup.c:1306
+msgid "_External program"
+msgstr "Ulkoisella ohjelmalla"
+
+#: src/fe-gtk/setup.c:1316
+msgid "_Automatic"
+msgstr "Automaattinen"
+
+#: src/fe-gtk/setup.c:1329
+msgid "Sound files _directory:"
+msgstr "Äänitiedostojen hakemisto:"
+
+#: src/fe-gtk/setup.c:1368
+msgid "Sound file:"
+msgstr "Äänitiedosto: "
+
+#: src/fe-gtk/setup.c:1383
+msgid "_Browse..."
+msgstr "Selaa..."
+
+#: src/fe-gtk/setup.c:1394
+msgid "_Play"
+msgstr "Soita"
+
+#: src/fe-gtk/setup.c:1443
+msgid "Interface"
+msgstr "Käyttöliittymä"
+
+#: src/fe-gtk/setup.c:1444
+msgid "Text box"
+msgstr "Tekstilaatikko"
+
+#: src/fe-gtk/setup.c:1445
+msgid "Input box"
+msgstr "Syötekenttä"
+
+#: src/fe-gtk/setup.c:1446
+msgid "User list"
+msgstr "Käyttäjäluettelo"
+
+#: src/fe-gtk/setup.c:1448
+msgid "Colors"
+msgstr "Värit"
+
+#: src/fe-gtk/setup.c:1450
+msgid "Chatting"
+msgstr "Keskustelu"
+
+#: src/fe-gtk/setup.c:1451
+msgid "General"
+msgstr "Yleiset"
+
+#: src/fe-gtk/setup.c:1453
+msgid "Sound"
+msgstr "Ääni"
+
+#: src/fe-gtk/setup.c:1456
+msgid "Network"
+msgstr "Verkko"
+
+#: src/fe-gtk/setup.c:1457
+msgid "Network setup"
+msgstr "Verkkoasetukset"
+
+#: src/fe-gtk/setup.c:1458
+msgid "File transfers"
+msgstr "Tiedostonsiirrot"
+
+#: src/fe-gtk/setup.c:1565
+msgid "Categories"
+msgstr "Asetusryhmät"
+
+#: src/fe-gtk/setup.c:1695
+msgid "Some settings were changed that require a restart to take full effect."
+msgstr "Osa muutoksista tulee voimaan vasta kun ohjelma käynnistetaan uudestaan."
+
+#: src/fe-gtk/setup.c:1723
+msgid "X-Chat: Preferences"
+msgstr "X-Chat: Ominaisuudet"
+
+#: src/fe-gtk/textgui.c:160
+msgid "There was an error parsing the string"
+msgstr "Virhe jäsennettäessä merkkijonoa"
+
+#: src/fe-gtk/textgui.c:168
+#, c-format
+msgid "This signal is only passed %d args, $%d is invalid"
+msgstr "Tälle signaalille annetaan vain %d argumenttia, $%d on virheellinen"
+
+#: src/fe-gtk/textgui.c:276 src/fe-gtk/textgui.c:299
+msgid "Print Texts File"
+msgstr "Tallenna tekstitiedosto"
+
+#: src/fe-gtk/textgui.c:340
+msgid "$ Number"
+msgstr "$ Numero"
+
+#: src/fe-gtk/textgui.c:350
+msgid "Edit Events"
+msgstr "Muokkaa tapahtumatekstejä"
+
+#: src/fe-gtk/textgui.c:418
+msgid "Save As"
+msgstr "Tallenna nimellä"
+
+#: src/fe-gtk/textgui.c:423
+msgid "Load From"
+msgstr "Lataa tiedostosta"
+
+#: src/fe-gtk/textgui.c:428
+msgid "Test All"
+msgstr "Kokeile kaikki"
+
+#: src/fe-gtk/urlgrab.c:98
+msgid "URL"
+msgstr "URL"
+
+#: src/fe-gtk/urlgrab.c:188
+msgid "X-Chat: URL Grabber"
+msgstr "X-Chat: URL-kaappaaja"
+
+#: src/fe-gtk/urlgrab.c:201
+msgid "Clear list"
+msgstr "Tyhjennä luettelo"
+
+#: src/fe-gtk/urlgrab.c:203
+msgid "Copy"
+msgstr "Kopioi"
+
+#: src/fe-gtk/urlgrab.c:205
+msgid "Save list to a file"
+msgstr "Tallenna luettelo tiedostoon"
+
+#: src/fe-gtk/userlistgui.c:107
+#, c-format
+msgid "%d ops, %d total"
+msgstr "%d oppia, %d yhteensä"
+
+#~ msgid "%C2<%O$1%C2>%O$t$2%O"
+#~ msgstr "%C2<%O$1%C2>%O$t$2%O"
+
+#~ msgid "%C8,2 Type  To/From    Status  Size    Pos     File      %O%010%B%C9----------------------------------------------------%O"
+#~ msgstr "%C8,2 Laji  Kuka       Tila    Koko    Sij     Tiedosto  %O%010%B%C9----------------------------------------------------%O"
+
+#~ msgid "-%C10-%C11-%O$t$1%O"
+#~ msgstr "-%C10-%C11-%O$t$1%O"
+
+#~ msgid "%C08,02 %B-- Notify List --------------- %O"
+#~ msgstr "%C08,02 %B-- Ilmoitusluettelo ------------- %O"
+
+#~ msgid "<%C10-%C11-%O$t$1 %C14(%O$2%C14)%C has left $3 %C14(%O$4%C14)%O"
+#~ msgstr "<%C10-%C11-%O$t$1 %C14(%O$2%C14)%C poistui kanavalta $3 %C14(%O$4%C14)%O"
+
+#~ msgid "-%C10-%C11-%O$t%C12[%O$1%C12]%C $2"
+#~ msgstr "-%C10-%C11-%O$t%C12[%O$1%C12]%C $2"
+
+#~ msgid "-%C10-%C11-%O$t%C12[%O$1%C12] %O$2"
+#~ msgstr "-%C10-%C11-%O$t%C12[%O$1%C12] %O$2"
+
+#~ msgid "%C6<%O$1%C6>%O$t$2%O"
+#~ msgstr "%C6<%O$1%C6>%O$t$2%O"
+
+#~ msgid "Channel name"
+#~ msgstr "Kanavanimi"
+
+#~ msgid "Servername"
+#~ msgstr "Palvelinnimi"
+
+#~ msgid "Former Czechoslovakia"
+#~ msgstr "Entinen Tšekkoslovakia"
+
+#~ msgid "Zaire"
+#~ msgstr "Zaire"
+
+#~ msgid ""
+#~ "      File: %s\n"
+#~ "   To/From: %s\n"
+#~ "      Size: %u\n"
+#~ "      Port: %d\n"
+#~ " IP Number: %s\n"
+#~ "Start Time: %s   Max CPS: %d\n"
+#~ msgstr ""
+#~ "   Tiedosto: %s\n"
+#~ "Keneltä/lle: %s\n"
+#~ "       Koko: %u\n"
+#~ "     Portti: %d\n"
+#~ "  IP-osoite: %s\n"
+#~ "Aloitusaika: %s   Maksiminopeus: %d kt/s\n"
+
+#~ msgid "X-Chat: Edit Key Bindings"
+#~ msgstr "X-Chat: Muokkaa näppäinsidontoja"
+
+#~ msgid "Add new"
+#~ msgstr "Lisää uusi"
+
+#~ msgid "Delete All"
+#~ msgstr "Poista kaikki"
+
+#~ msgid "User: %s"
+#~ msgstr "Käyttäjä: %s"
+
+#~ msgid "Realname: %s"
+#~ msgstr "Oikea nimi: %s"
+
+#~ msgid "Lists"
+#~ msgstr "Luettelot"
+
+#~ msgid "Key Bindings..."
+#~ msgstr "Näppäinsidonnat..."
+
+#~ msgid "Settings for %s"
+#~ msgstr "Asetukset verkolle %s"
+
+#~ msgid "_Remove \"%s\""
+#~ msgstr "_Poista \"%s\""
+
+#~ msgid "_Add new server"
+#~ msgstr "_Lisää palvelin"
+
+#~ msgid "Move \"%s\" _down"
+#~ msgstr "Siirrä \"%s\" _alemmas"
+
+#~ msgid "Move \"%s\" _up"
+#~ msgstr "Siirrä \"%s\" _ylemmäs"
+
+#~ msgid "_Add new network"
+#~ msgstr "_Lisää verkko"
+
+#~ msgid "Global User Info"
+#~ msgstr "Yleiset käyttäjätiedot"
+
+#~ msgid "Nick Names:"
+#~ msgstr "Kutsumanimet:"
+
+#~ msgid "User Name:"
+#~ msgstr "Käyttäjänimi:"
+
+#~ msgid "Servers"
+#~ msgstr "Palvelimet"
+
+#~ msgid "Join Channels:"
+#~ msgstr "Liity kanaville:"
+
+#~ msgid "Command to execute after connecting. Can be used to authenticate to NickServ"
+#~ msgstr "Komento, joka suoritetaan yhdistämisen jälkeen. Voi olla esimerkiksi NickServin todennuskomento"
+
+#~ msgid "Cycle until connected"
+#~ msgstr "Yritä kunnes yhdistäminen onnistuu"
+
+#~ msgid "Use secure SSL"
+#~ msgstr "Käytä SSL-suojausta"
+
+#~ msgid "Settings for Selected Network"
+#~ msgstr "Valitun verkon asetukset"
+
+#~ msgid "Edit mode"
+#~ msgstr "Muokkaustila"
+
+#~ msgid "Tint red:"
+#~ msgstr "Punainen sävy:"
+
+#~ msgid "Tint green:"
+#~ msgstr "Vihreä sävy:"
+
+#~ msgid "Tint blue:"
+#~ msgstr "Sininen sävy:"
+
+#~ msgid "Double-click command:"
+#~ msgstr "Kaksoisnapsautuskomento:"
+
+#~ msgid "Pop new tabs to front"
+#~ msgstr "Avaa uudet välilehdet alkupäähän"
+
+#~ msgid "Auto open DCC send list"
+#~ msgstr "Avaa DCC-lähetysikkuna automaattisesti"
+
+#~ msgid "In filenames, before sending"
+#~ msgstr "Tiedostonimissä, ennen lähettämistä"
+
+#~ msgid "Auto open DCC chat list"
+#~ msgstr "Avaa DCC-keskusteluikkuna automaattisesti"
+
+#~ msgid "Auto open DCC receive list"
+#~ msgstr "Avaa DCC-vastaanottoikkuna automaattisesti"
+
+#~ msgid "Max. send CPS:"
+#~ msgstr "Suurin lähetysnopeus (kt/s):"
+
+#~ msgid "Max. receive CPS:"
+#~ msgstr "Suurin vastaanottonopeus (kt/s):"
+
+#~ msgid "Max. global send CPS:"
+#~ msgstr "Suurin kokonaislähetysnopeus (kt/s):"
+
+#~ msgid "Max. global receive CPS:"
+#~ msgstr "Suurin kokonaisvastaanottonopeus (kt/s):"
+
+#~ msgid "(Leave at zero for full speed file transfers)."
+#~ msgstr "(Jätä nollaksi täyden nopeuden käyttämiseksi)."
+
+#~ msgid "Default part message:"
+#~ msgstr "Poistumisviestin oletusarvo:"
+
+#~ msgid "Default away message:"
+#~ msgstr "Poissaoloviestin oletusarvo:"
+
+#~ msgid "Address to bind to:"
+#~ msgstr "Sidottava osoite:"
+
+#~ msgid "Mark back:"
+#~ msgstr "Valittu tausta:"
+
+#~ msgid "Select a file to save to"
+#~ msgstr "Valitse tiedosto, johon tallennetaan"
+
+#~ msgid "Error String"
+#~ msgstr "Virhemerkkijono"
+
+#~ msgid "Error name"
+#~ msgstr "Virhenimi"
+
+#~ msgid "Error string"
+#~ msgstr "Virhemerkkijono"
+
+#~ msgid "Proxy port:"
+#~ msgstr "Välipalvelimen portti:"
+
+#~ msgid "Proxy type:"
+#~ msgstr "Välipalvelimen tyyppi:"
+
+#~ msgid "Client exiting"
+#~ msgstr "Ohjelma lopetettiin"
+
+#~ msgid ""
+#~ "Options:\n"
+#~ "  -d,  --cfgdir DIRECTORY   use a different config dir\n"
+#~ "  -a,  --no-auto            don't auto connect\n"
+#~ "  -v,  --version            show version information\n"
+#~ "\n"
+#~ "URL:\n"
+#~ "  irc://server:port/channel\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Valitsimet:\n"
+#~ "  -d,  --cfgdir HAKEMISTO   käytä muuta asetushakemistoa\n"
+#~ "  -a,  --no-auto            älä yhdistä automaattisesti\n"
+#~ "  -v,  --version            näytä versiotiedot\n"
+#~ "\n"
+#~ "URL:\n"
+#~ "  irc://palvelin:portti/kanava\n"
+#~ "\n"
+
+#~ msgid "Move to tab"
+#~ msgstr "Siirrä välilehteen"
+
+#~ msgid "Attach/Detach this tab"
+#~ msgstr "Liitä/irrota tämä välilehti"
+
+#~ msgid "Hide join/parts"
+#~ msgstr "Piilota liittymiset/poistumiset"
+
+#~ msgid "No"
+#~ msgstr "Ei"
+
+#~ msgid "OK"
+#~ msgstr "OK"
+
+#~ msgid "Wipe"
+#~ msgstr "Tyhjennä"
+
+#~ msgid "Yes"
+#~ msgstr "Kyllä"
+
+#~ msgid "new!new@new.com"
+#~ msgstr "uusi!uusi@uusi.pl"
